@@ -1,11 +1,63 @@
-# 心动能量树微信小程序（私人版 V2）
+<p align="center">
+  <img src="docs/illustrations/heart-tree-readme-hero.jpg" alt="心动能量树：熊与兔子守护共同成长的心形能量树" width="100%">
+</p>
 
-这是一个原生微信小程序，用来实现“情侣运动陪伴 + 运动打卡 + 赞助者审核 + 能量币/余额记账 + 心愿金领取/手动兑现 + 能量树 + 探险地图 + 奖励商店 + 徽章统计”。私人版 V2 还包含鼓励卡、共同里程碑、每周回顾、恋爱主题 UI，以及可降级的庆祝动效。
+<h1 align="center">心动能量树微信小程序 · 私人版 V2</h1>
+
+<p align="center">
+  把运动打卡、陪伴反馈和线下承诺，做成只属于两个人的一座共同花园。
+</p>
+
+<p align="center">
+  <a href="https://github.com/728792899-create/heart-energy-tree-miniprogram/actions/workflows/ci.yml"><img src="https://github.com/728792899-create/heart-energy-tree-miniprogram/actions/workflows/ci.yml/badge.svg" alt="Public repository CI"></a>
+  <img src="https://img.shields.io/badge/tests-222%20passing-55745E" alt="222 tests passing">
+  <img src="https://img.shields.io/badge/mini%20program-native-294139" alt="Native WeChat Mini Program">
+  <img src="https://img.shields.io/badge/payment-manual%20only-6D2942" alt="Manual fulfillment only">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-ISC-C9A866" alt="ISC License"></a>
+</p>
+
+这是一个原生微信小程序，用来实现“情侣运动陪伴 + 运动打卡 + 赞助者审核 + 能量币记账 + 心愿金申请/手动兑现 + 能量树 + 探险地图 + 奖励商店 + 徽章统计”。私人版 V2 还包含情侣信笺、鼓励卡、共同里程碑、每周回顾、恋爱主题 UI，以及可以逐级降级的庆祝动效。
+
+它不是健身平台、社交产品、支付工具或金融产品。它只服务于一段固定的两人关系：一方完成行动，另一方给予反馈，共同维护一份可解释、可恢复、有边界的私人记录。
+
+## 快速导航
+
+| 想了解什么 | 从这里开始 |
+| --- | --- |
+| 先看产品长什么样 | [完整产品导览](docs/product-tour.md) · [界面截图](#界面展示) |
+| 了解视觉语言和素材来源 | [视觉与动效设计说明](docs/visual-language.md) |
+| 了解可信身份、事务和数据流 | [架构说明](docs/architecture.md) · [API 契约](docs/api-contract.md) |
+| 本地运行、测试和构建 | [运行](#运行) · [测试](#测试) · [Remotion 动效工厂](#remotion-动效素材工厂) |
+| 部署云函数和数据库 | [部署清单](docs/deployment-checklist.md) · [数据运维](docs/data-operations.md) |
+| 隐私、删除和账号恢复 | [隐私与数据生命周期](docs/privacy-data-lifecycle.md) · [安全策略](SECURITY.md) |
+| 发布前逐项验收 | [真机验收表](docs/device-acceptance.md) · [Release Checklist](docs/release-checklist.md) |
+
+## 两个人如何一起使用
+
+| 打卡者 | 赞助者 | 共同结果 |
+| --- | --- | --- |
+| 上传运动照片、填写时长与备注 | 审核或退回打卡 | 审核通过后才正式入账 |
+| 查看能量树、地图、徽章和余额 | 配置规则、奖品和关卡奖励 | 所有高风险操作有角色鉴权与审计 |
+| 兑换奖励、申请取消、申请心愿金 | 核销奖励、确认退款、线下兑现后标记 | 不接真实支付，资金状态保持可解释 |
+| 发送信笺、图片、贴纸和请求卡 | 发送鼓励、回应请求、查看陪伴数据 | 双方各自维护已读状态和共同里程碑 |
+
+```mermaid
+flowchart LR
+  P["打卡者：完成行动"] --> C["提交照片与说明"]
+  C --> S["云端内容安全"]
+  S --> R["赞助者审核"]
+  R -->|"通过"| L["事务入账"]
+  R -->|"退回"| X["允许当天重新提交"]
+  L --> T["能量树成长"]
+  L --> M["地图 / 徽章 / 里程碑"]
+  L --> W["奖励兑换 / 心愿金申请"]
+  W --> F["线下手动兑现或核销"]
+```
 
 ## 当前交付状态
 
 - 客户端与云函数 buildTag 统一为 `heart-tree-private-v2-20260713-release-safety-v2`。
-- `npm test` 当前覆盖 219 项业务、权限、并发、内容安全、UI、运维文档、设计工具和动效契约测试；公开仓库全新克隆不需要私有配置或渲染缓存。
+- `npm test` 当前覆盖 222 项业务、权限、并发、内容安全、UI、运维文档、设计工具和动效契约测试；公开仓库全新克隆不需要私有配置或渲染缓存。
 - `npm run check:shared` 用于确保客户端主版与云函数部署副本无漂移。
 - [GitHub Actions](.github/workflows/ci.yml) 在无微信账号环境运行普通质量检查、云函数干净安装，以及独立的 Remotion compositions/still smoke。
 - 图片内容安全已实现 `traceId 登记 -> wxa_media_check 回调 -> 风险图隐藏/删除 -> 审计记录` 的代码闭环；微信平台消息推送路由和真机风险图验证仍需按 [`docs/content-safety-closed-loop.md`](docs/content-safety-closed-loop.md) 人工完成。
@@ -22,6 +74,20 @@
 ### 赞助者陪伴首页
 
 ![赞助者陪伴首页](docs/screenshots/05-sponsor-home.png)
+
+更多角色路径、五阶段能量树、奖励插画和 13 个动效场景见 [完整产品导览](docs/product-tour.md)。
+
+### 五阶段能量树
+
+| 破土 | 发芽 | 成长 | 盛放 | 心愿花园 |
+| --- | --- | --- | --- | --- |
+| ![能量树第 1 阶](miniprogram/assets/generated/tree-level-1.png) | ![能量树第 2 阶](miniprogram/assets/generated/tree-level-2.png) | ![能量树第 3 阶](miniprogram/assets/generated/tree-level-3.png) | ![能量树第 4 阶](miniprogram/assets/generated/tree-level-4.png) | ![能量树第 5 阶](miniprogram/assets/generated/tree-level-5.png) |
+
+### 关键庆祝场景
+
+| 绑定成功 | 审核通过 | 连续 7 天 | 地图通关 | 心愿完成 |
+| --- | --- | --- | --- | --- |
+| ![绑定成功](miniprogram/assets/motion/binding.jpg) | ![审核通过](miniprogram/assets/motion/approval.jpg) | ![连续七天](miniprogram/assets/motion/streak-7.jpg) | ![地图通关](miniprogram/assets/motion/map-complete.jpg) | ![心愿完成](miniprogram/assets/motion/wish-fund-complete.jpg) |
 
 ## 架构概览
 
@@ -60,9 +126,9 @@ flowchart LR
 - 所有关键提交、审核、核销、退款、心愿金和奖品管理操作都有请求幂等与客户端进行中锁。
 - 现有绑定、打卡、账本和审核历史会原样保留，不需要清库或重新绑定。
 
-## Image 2 图片资产
+## ImageGen 图片资产
 
-- Image 2 原始输出保存在 `design/imagegen-source/`，用于保留生成成果和后续重新处理。
+- ImageGen 原始输出保存在 `design/imagegen-source/`，用于保留生成成果和后续重新处理；README 封面的生成说明见 [`docs/visual-language.md`](docs/visual-language.md)。
 - 小程序实际使用的透明装饰图位于 `miniprogram/assets/generated/`。原始输出如果带有棋盘格预览背景，在 macOS（需系统 Swift + Vision，以及 Python Pillow）运行 `python3 scripts/clean-generated-cutouts.py`，可通过本地前景分割重新生成真实 RGBA 透明图，并同步情侣角色图到 `motion-studio/public/characters/`；处理过程不上传图片。
 - 清理角色图后运行 `npm run motion:posters`，重新导出 13 张不含棋盘格的本地动效 poster。
 - 地图和商店横幅是完整矩形 JPG，不参与透明背景清理。
