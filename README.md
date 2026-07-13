@@ -8,7 +8,7 @@
 - `npm test` 当前覆盖 203 项业务、权限、并发、内容安全、UI 和动效契约测试。
 - `npm run check:shared` 用于确保客户端主版与云函数部署副本无漂移。
 - 图片内容安全已实现 `traceId 登记 -> wxa_media_check 回调 -> 风险图隐藏/删除 -> 审计记录` 的代码闭环；微信平台消息推送路由和真机风险图验证仍需按 [`docs/content-safety-closed-loop.md`](docs/content-safety-closed-loop.md) 人工完成。
-- 私有交付仓库不收录开发者工具私有配置、云端验证日志、账号素材、本地依赖和渲染缓存。
+- 公开仓库只保留可复现源码、虚构演示数据和经过筛选的界面素材；不收录开发者工具私有配置、云端验证日志、账号素材、本地依赖、二维码和渲染缓存。
 
 ## 界面展示
 
@@ -16,11 +16,11 @@
 
 | 打卡者首页 | 运动打卡 | 探险地图 | 奖励商店 |
 | --- | --- | --- | --- |
-| ![打卡者首页](outputs/stitch/original/participant-home.png) | ![运动打卡](outputs/stitch/original/checkin.png) | ![探险地图](outputs/stitch/original/map.png) | ![奖励商店](outputs/stitch/original/shop.png) |
+| ![打卡者首页](docs/screenshots/01-participant-home.png) | ![运动打卡](docs/screenshots/02-checkin.png) | ![探险地图](docs/screenshots/03-adventure-map.png) | ![奖励商店](docs/screenshots/04-reward-shop.png) |
 
 ### 赞助者陪伴首页
 
-![赞助者陪伴首页](outputs/stitch/original/companion-home.png)
+![赞助者陪伴首页](docs/screenshots/05-sponsor-home.png)
 
 ## 架构概览
 
