@@ -1,7 +1,10 @@
+const { chinaDateTimeParts } = require('../utils/date');
+
 function displayTime(createdAt) {
   const date = new Date(createdAt);
   if (Number.isNaN(date.getTime())) return '';
-  return `${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+  const parts = chinaDateTimeParts(date);
+  return `${String(parts.month).padStart(2, '0')}-${String(parts.day).padStart(2, '0')} ${String(parts.hour).padStart(2, '0')}:${String(parts.minute).padStart(2, '0')}`;
 }
 
 function normalizeMessage(message, currentUser) {

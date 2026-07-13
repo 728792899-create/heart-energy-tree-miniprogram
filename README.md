@@ -5,7 +5,7 @@
 ## 当前交付状态
 
 - 客户端与云函数 buildTag 统一为 `heart-tree-private-v2-20260713-release-safety-v2`。
-- `npm test` 当前覆盖 218 项业务、权限、并发、内容安全、UI、运维文档、设计工具和动效契约测试；公开仓库全新克隆不需要私有配置或渲染缓存。
+- `npm test` 当前覆盖 219 项业务、权限、并发、内容安全、UI、运维文档、设计工具和动效契约测试；公开仓库全新克隆不需要私有配置或渲染缓存。
 - `npm run check:shared` 用于确保客户端主版与云函数部署副本无漂移。
 - [GitHub Actions](.github/workflows/ci.yml) 在无微信账号环境运行普通质量检查、云函数干净安装，以及独立的 Remotion compositions/still smoke。
 - 图片内容安全已实现 `traceId 登记 -> wxa_media_check 回调 -> 风险图隐藏/删除 -> 审计记录` 的代码闭环；微信平台消息推送路由和真机风险图验证仍需按 [`docs/content-safety-closed-loop.md`](docs/content-safety-closed-loop.md) 人工完成。

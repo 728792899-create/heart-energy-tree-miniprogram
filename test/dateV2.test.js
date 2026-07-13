@@ -9,6 +9,17 @@ test('ISO timestamps are converted to China calendar dates', () => {
   assert.equal(date.monthKey('2026-07-31T16:00:00.000Z'), '2026-08');
 });
 
+test('China date-time parts are independent from the host timezone', () => {
+  assert.deepEqual(date.chinaDateTimeParts('2026-07-12T13:05:06.000Z'), {
+    year: 2026,
+    month: 7,
+    day: 12,
+    hour: 21,
+    minute: 5,
+    second: 6
+  });
+});
+
 test('China weeks run from Monday through Sunday', () => {
   assert.deepEqual(date.chinaWeekRange('2026-07-10T16:00:00.000Z'), {
     startDateKey: '2026-07-06',

@@ -12,7 +12,7 @@ const {
   WITHDRAWAL_STATUS
 } = require('./cloudRuntimeModels');
 const rewardEngine = require('./cloudRuntimeRewardEngine');
-const { chinaWeekRange, displayDate, monthKey, todayKey } = require('./cloudRuntimeDate');
+const { chinaDateTimeParts, chinaWeekRange, displayDate, monthKey, parseDateKey, todayKey } = require('./cloudRuntimeDate');
 const payoutProvider = require('./cloudRuntimeManualPayoutProvider');
 const storage = require('./cloudRuntimeStorage');
 const {
@@ -921,15 +921,16 @@ function unlockBadge(state, rel, badgeId, sourceId, story) {
 }
 
 function isWeekendDate(dateKey) {
-  const date = new Date(`${dateKey}T12:00:00`);
-  const day = date.getDay();
+  const parsed = parseDateKey(dateKey);
+  if (!parsed) return false;
+  const day = new Date(parsed.timestamp).getUTCDay();
   return day === 0 || day === 6;
 }
 
 function isEveningCheckIn(checkIn) {
   const raw = checkIn.occurredAt || checkIn.createdAt || '';
   const date = raw ? new Date(raw) : null;
-  if (date && !Number.isNaN(date.getTime()) && date.getHours() >= 18) return true;
+  if (date && !Number.isNaN(date.getTime()) && chinaDateTimeParts(date).hour >= 18) return true;
   return String(checkIn.note || '').includes('晚') || String(checkIn.note || '').includes('散步');
 }
 

@@ -37,11 +37,19 @@ function toTimestamp(value) {
 }
 
 function chinaParts(value) {
+  const { year, month, day } = chinaDateTimeParts(value);
+  return { year, month, day };
+}
+
+function chinaDateTimeParts(value) {
   const shifted = new Date(toTimestamp(value) + CHINA_OFFSET_MS);
   return {
     year: shifted.getUTCFullYear(),
     month: shifted.getUTCMonth() + 1,
-    day: shifted.getUTCDate()
+    day: shifted.getUTCDate(),
+    hour: shifted.getUTCHours(),
+    minute: shifted.getUTCMinutes(),
+    second: shifted.getUTCSeconds()
   };
 }
 
@@ -94,6 +102,7 @@ function chinaWeekRange(value, weekOffset = 0) {
 module.exports = {
   CHINA_OFFSET_MINUTES,
   addDays,
+  chinaDateTimeParts,
   chinaWeekRange,
   differenceInCalendarDays,
   displayDate,
