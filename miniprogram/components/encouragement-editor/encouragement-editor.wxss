@@ -78,7 +78,7 @@
 
 .counter {
   margin-top: 6rpx;
-  color: #927d84;
+  color: #71565f;
   text-align: right;
   font-size: 20rpx;
 }

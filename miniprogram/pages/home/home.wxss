@@ -392,7 +392,7 @@
   padding: 4rpx;
   border: 2rpx dashed #d4ae6a;
   color: #7d2f49;
-  font-size: 16rpx;
+  font-size: 20rpx;
   font-weight: 900;
   text-align: center;
   transform: rotate(5deg);
@@ -496,7 +496,7 @@
 }
 
 .partner-note-name {
-  color: #877276;
+  color: #7b6970;
   font-size: 20rpx;
 }
 
@@ -512,8 +512,8 @@
 
 .partner-note-time {
   align-self: flex-start;
-  color: #877276;
-  font-size: 18rpx;
+  color: #7b6970;
+  font-size: 20rpx;
 }
 
 .role-switch {
@@ -528,7 +528,7 @@
   min-height: 48rpx;
   padding: 0 12rpx;
   border-radius: 999rpx;
-  color: #877276;
+  color: #7b6970;
   font-size: 20rpx;
 }
 
@@ -640,7 +640,7 @@
 .home-stat-value text {
   margin-left: 5rpx;
   color: #544246;
-  font-size: 19rpx;
+  font-size: 20rpx;
   font-weight: 500;
 }
 

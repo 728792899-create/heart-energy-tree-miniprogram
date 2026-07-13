@@ -19,7 +19,7 @@
 }
 
 .profile-sheet-kicker {
-  color: #877276;
+  color: #7b6970;
   font-size: 21rpx;
   font-weight: 800;
   letter-spacing: 2rpx;
@@ -229,7 +229,7 @@
 
 .profile-role-note {
   margin-top: 14rpx;
-  color: #877276;
+  color: #7b6970;
   font-size: 21rpx;
   line-height: 1.6;
 }

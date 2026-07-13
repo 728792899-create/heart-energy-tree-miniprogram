@@ -92,6 +92,16 @@
   max-height: 330rpx;
 }
 
+.is-reduced-motion .native-fallback,
+.is-reduced-motion .native-tree,
+.is-reduced-motion .native-heart,
+.is-reduced-motion .native-ribbon,
+.is-reduced-motion .native-gift,
+.is-reduced-motion .native-coin {
+  animation: none;
+  transform: none;
+}
+
 @keyframes tree-grow {
   from { opacity: 0; transform: translateY(30rpx) scale(0.72); }
   to { opacity: 1; transform: translateY(0) scale(1); }

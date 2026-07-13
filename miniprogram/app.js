@@ -20,6 +20,7 @@ App({
     }
     appService.seedDemoIfNeeded();
     this.globalData.soundEnabled = experience.isSoundEnabled();
+    this.globalData.reducedMotion = experience.isReducedMotionEnabled();
   },
 
   onShow() {
@@ -60,6 +61,7 @@ App({
   globalData: {
     appName: '心动能量树',
     soundEnabled: true,
+    reducedMotion: false,
     currentOpenid: ''
   }
 });

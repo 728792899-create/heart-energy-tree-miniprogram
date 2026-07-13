@@ -82,3 +82,28 @@ assert client.session.calls == 2
     `TLS retry probe failed:\nSTDOUT:\n${result.stdout}\nSTDERR:\n${result.stderr}`
   );
 });
+
+test('Figma MCP bridge accepts long inline JSON without treating it as a filesystem path', () => {
+  const probe = String.raw`
+import importlib.util
+import json
+import sys
+
+spec = importlib.util.spec_from_file_location("mcp_bridge", sys.argv[1])
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+payload = {"code": "x" * 8192, "fileKey": "public-test-key"}
+parsed = module._load_json(json.dumps(payload))
+assert parsed == payload
+`;
+  const result = spawnSync('/usr/bin/python3', ['-c', probe, bridgePath], {
+    cwd: projectRoot,
+    encoding: 'utf8'
+  });
+
+  assert.equal(
+    result.status,
+    0,
+    `long inline JSON probe failed:\nSTDOUT:\n${result.stdout}\nSTDERR:\n${result.stderr}`
+  );
+});

@@ -241,3 +241,32 @@ test('letters composer protects the textarea width on real devices', () => {
   assert.match(input[1], /min-width\s*:\s*0/);
   assert.match(markup, /class="composer-icon-button" role="button"/);
 });
+
+test('small text and pale copy meet the refined romantic design floor', () => {
+  const roots = [
+    path.join(projectRoot, 'miniprogram/pages'),
+    path.join(projectRoot, 'miniprogram/components')
+  ];
+  const violations = [];
+  const lowContrastColors = /#(?:877276|9b858c|8a777e|927d84|978188|987f87|917981|ad9ca1|b9a8ad|a18c93|a38d94|c9889e|c06b86|a96a7e|a85a72)\b/i;
+
+  function inspect(directory) {
+    fs.readdirSync(directory, { withFileTypes: true }).forEach((entry) => {
+      const file = path.join(directory, entry.name);
+      if (entry.isDirectory()) return inspect(file);
+      if (!entry.isFile() || !entry.name.endsWith('.wxss')) return;
+      const styles = fs.readFileSync(file, 'utf8');
+      if (/font-size:\s*1[0-9]rpx/.test(styles)) violations.push(`${path.relative(projectRoot, file)}: text below 20rpx`);
+      if (lowContrastColors.test(styles)) violations.push(`${path.relative(projectRoot, file)}: pale text token`);
+    });
+  }
+
+  roots.forEach(inspect);
+  assert.deepEqual(violations, []);
+});
+
+test('interactive roles and native buttons share the 88rpx touch target floor', () => {
+  const styles = fs.readFileSync(path.join(projectRoot, 'miniprogram/app.wxss'), 'utf8');
+  assert.match(styles, /button\s*\{[^}]*min-height\s*:\s*88rpx/s);
+  assert.match(styles, /\[role="button"\]\s*\{[^}]*min-width\s*:\s*88rpx[^}]*min-height\s*:\s*88rpx/s);
+});

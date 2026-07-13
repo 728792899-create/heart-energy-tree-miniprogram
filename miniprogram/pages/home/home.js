@@ -62,6 +62,7 @@ Page({
     activeCelebration: null,
     shownMilestoneIds: [],
     soundMode: experience.isSoundEnabled() ? 'on' : 'off',
+    reducedMotion: experience.isReducedMotionEnabled(),
     acceptingEncouragementId: '',
     acceptingMilestoneId: '',
     sendingEncouragementKey: '',
@@ -105,6 +106,7 @@ Page({
           ? Array.from(new Set([...this.data.shownMilestoneIds, nextCelebration.id]))
           : this.data.shownMilestoneIds,
         soundMode: experience.isSoundEnabled() ? 'on' : 'off',
+        reducedMotion: experience.isReducedMotionEnabled(),
         loadingHome: false
       });
       if (nextCelebration) experience.playCue(experience.cueForScene(nextCelebration.sceneKey));

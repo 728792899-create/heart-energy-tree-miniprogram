@@ -236,7 +236,7 @@
 }
 
 .summary-label {
-  color: #8a777e;
+  color: #71565f;
   font-size: 21rpx;
 }
 
@@ -266,7 +266,7 @@
 
 .risk-note {
   margin-top: 18rpx;
-  color: #8a777e;
+  color: #71565f;
   font-size: 21rpx;
   font-style: italic;
   line-height: 1.5;

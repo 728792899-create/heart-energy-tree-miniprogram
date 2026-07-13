@@ -118,7 +118,7 @@
   position: relative;
   z-index: 1;
   margin-top: 4rpx;
-  color: #8a777e;
+  color: #71565f;
   font-size: 21rpx;
 }
 
@@ -266,7 +266,7 @@
 }
 
 .payout-context-label {
-  color: #8a777e;
+  color: #71565f;
   font-size: 21rpx;
   font-weight: 800;
 }

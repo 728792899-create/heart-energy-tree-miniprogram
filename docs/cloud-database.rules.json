@@ -1,0 +1,30 @@
+{
+  "appStates": { "read": false, "write": false },
+  "users": { "read": false, "write": false },
+  "relationships": { "read": false, "write": false },
+  "checkIns": { "read": false, "write": false },
+  "rewardLedgers": { "read": false, "write": false },
+  "claimRequests": { "read": false, "write": false },
+  "rewardItems": { "read": false, "write": false },
+  "redemptions": { "read": false, "write": false },
+  "badges": { "read": false, "write": false },
+  "badgeUnlocks": { "read": false, "write": false },
+  "surpriseCards": { "read": false, "write": false },
+  "encouragementCards": { "read": false, "write": false },
+  "companionViewNotices": { "read": false, "write": false },
+  "subscriptionGrants": { "read": false, "write": false },
+  "auditLogs": { "read": false, "write": false },
+  "rewardRules": { "read": false, "write": false },
+  "growthTreeStates": { "read": false, "write": false },
+  "coupleMessages": { "read": false, "write": false },
+  "coupleMessageInbox": {
+    "read": "doc.recipientOpenid == auth.openid",
+    "write": false
+  },
+  "coupleMessageStates": {
+    "read": "doc.recipientOpenid == auth.openid",
+    "write": false
+  },
+  "coupleMessageMigrations": { "read": false, "write": false },
+  "mediaCheckTasks": { "read": false, "write": false }
+}

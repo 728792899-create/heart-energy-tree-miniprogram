@@ -1,4 +1,5 @@
 const SOUND_STORAGE_KEY = 'heartTree.soundEnabled.v1';
+const REDUCED_MOTION_STORAGE_KEY = 'heartTree.reducedMotion.v1';
 
 const SOUND_CUES = {
   binding: '/assets/sounds/heart-chime.wav',
@@ -45,6 +46,33 @@ function setSoundEnabled(enabled) {
   return next;
 }
 
+function systemReducedMotion(host) {
+  if (!host || typeof host.getSystemSetting !== 'function') return false;
+  try {
+    const info = host.getSystemSetting() || {};
+    return info.reduceMotionEnabled === true || info.reducedMotionEnabled === true;
+  } catch (error) {
+    return false;
+  }
+}
+
+function isReducedMotionEnabled() {
+  const host = runtime();
+  if (!host || typeof host.getStorageSync !== 'function') return false;
+  const stored = host.getStorageSync(REDUCED_MOTION_STORAGE_KEY);
+  if (stored === '' || stored === undefined || stored === null) return systemReducedMotion(host);
+  return stored === true || stored === 1 || stored === 'on';
+}
+
+function setReducedMotionEnabled(enabled) {
+  const next = Boolean(enabled);
+  const host = runtime();
+  if (host && typeof host.setStorageSync === 'function') {
+    host.setStorageSync(REDUCED_MOTION_STORAGE_KEY, next);
+  }
+  return next;
+}
+
 function playCue(sceneKey) {
   const host = runtime();
   if (!isSoundEnabled() || !host || typeof host.createInnerAudioContext !== 'function') return false;
@@ -73,10 +101,13 @@ function playCue(sceneKey) {
 }
 
 module.exports = {
+  REDUCED_MOTION_STORAGE_KEY,
   SOUND_STORAGE_KEY,
   SOUND_CUES,
   cueForScene,
+  isReducedMotionEnabled,
   isSoundEnabled,
+  setReducedMotionEnabled,
   setSoundEnabled,
   playCue
 };

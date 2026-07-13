@@ -45,7 +45,7 @@
 .companion-badges-kicker,
 .companion-badges-section-kicker {
   color: #8f3653;
-  font-size: 19rpx;
+  font-size: 20rpx;
   font-weight: 900;
   letter-spacing: 0.14em;
 }
@@ -60,7 +60,7 @@
 
 .companion-badges-copy {
   margin-top: 12rpx;
-  color: #877276;
+  color: #7b6970;
   font-size: 22rpx;
   line-height: 1.55;
 }
@@ -128,7 +128,7 @@
 
 .companion-badges-summary-label {
   margin-top: 6rpx;
-  color: #877276;
+  color: #7b6970;
   font-size: 20rpx;
   font-weight: 700;
 }
@@ -159,7 +159,7 @@
 
 .companion-badges-section-note {
   flex: 0 0 auto;
-  color: #877276;
+  color: #7b6970;
   font-size: 20rpx;
 }
 
@@ -210,13 +210,13 @@
 .companion-badges-showcase-state {
   margin-top: 7rpx;
   color: #8f3653;
-  font-size: 18rpx;
+  font-size: 20rpx;
   font-weight: 750;
 }
 
 .companion-badges-showcase-empty {
   display: block;
-  color: #877276;
+  color: #7b6970;
   font-size: 22rpx;
   line-height: 1.65;
   text-align: center;
@@ -294,7 +294,7 @@
 
 .companion-badge-description {
   margin-top: 10rpx;
-  color: #877276;
+  color: #7b6970;
   font-size: 20rpx;
   line-height: 1.5;
 }
@@ -306,7 +306,7 @@
   border-radius: 999rpx;
   color: #334d31;
   background: #e8f6e4;
-  font-size: 18rpx;
+  font-size: 20rpx;
   font-weight: 800;
 }
 
@@ -351,7 +351,7 @@
 .companion-badges-empty-copy {
   max-width: 520rpx;
   margin: 14rpx auto 0;
-  color: #877276;
+  color: #7b6970;
   font-size: 23rpx;
   line-height: 1.65;
 }

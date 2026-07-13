@@ -67,7 +67,7 @@ page {
 
 .letters-days {
   margin-top: 7rpx;
-  color: #9b858c;
+  color: #71565f;
   font-size: 20rpx;
   line-height: 1.4;
 }
@@ -130,7 +130,7 @@ page {
 }
 
 .empty-envelope {
-  color: #c9889e;
+  color: #7d2f49;
   font-size: 74rpx;
 }
 
@@ -145,7 +145,7 @@ page {
 .empty-copy,
 .unbound-copy {
   margin-top: 12rpx;
-  color: #9b858c;
+  color: #71565f;
   font-size: 22rpx;
   line-height: 1.65;
 }
@@ -171,7 +171,7 @@ page {
 
 .timeline-label {
   color: #8f3653;
-  font-size: 19rpx;
+  font-size: 20rpx;
   font-weight: 700;
   letter-spacing: 1rpx;
 }
@@ -187,8 +187,8 @@ page {
 .timeline-time,
 .chat-time {
   margin-top: 8rpx;
-  color: #ad9ca1;
-  font-size: 18rpx;
+  color: #71565f;
+  font-size: 20rpx;
 }
 
 .chat-row {
@@ -209,7 +209,7 @@ page {
 .chat-avatar {
   width: 58rpx;
   height: 58rpx;
-  font-size: 19rpx;
+  font-size: 20rpx;
 }
 
 .chat-stack {
@@ -368,7 +368,7 @@ page {
   padding-left: 10rpx;
   color: #b2a3a7;
   background: #f8f4f5;
-  font-size: 16rpx;
+  font-size: 20rpx;
   line-height: 1.2;
   pointer-events: none;
 }
@@ -433,7 +433,7 @@ page {
 
 .panel-label {
   margin: 22rpx 0 12rpx;
-  color: #9b858c;
+  color: #71565f;
   font-size: 20rpx;
 }
 
@@ -477,7 +477,7 @@ page {
   border-radius: 18rpx;
   color: #836a72;
   background: transparent;
-  font-size: 17rpx;
+  font-size: 20rpx;
 }
 
 .sticker-item image {
@@ -497,7 +497,7 @@ page {
   width: 100%;
   min-height: 150rpx;
   border: 0;
-  color: #9b858c;
+  color: #71565f;
   background: transparent;
   font-size: 21rpx;
 }
@@ -517,7 +517,7 @@ page {
 }
 
 .unbound-seal {
-  color: #c06b86;
+  color: #7d2f49;
   font-size: 68rpx;
 }
 
@@ -654,8 +654,8 @@ page {
 }
 
 .request-eyebrow {
-  color: #a96a7e;
-  font-size: 19rpx;
+  color: #7d2f49;
+  font-size: 20rpx;
   font-weight: 600;
   letter-spacing: 1rpx;
 }
@@ -673,7 +673,7 @@ page {
   border-radius: 16rpx;
   color: #76565f;
   background: rgba(255, 255, 255, 0.72);
-  font-size: 19rpx;
+  font-size: 20rpx;
   line-height: 1.6;
   text-align: left;
 }
@@ -688,7 +688,7 @@ page {
   border-radius: 22rpx;
   color: #8f3653;
   background: rgba(255, 255, 255, 0.78);
-  font-size: 19rpx;
+  font-size: 20rpx;
   font-weight: 700;
 }
 
@@ -699,8 +699,8 @@ page {
 
 .request-handled-time {
   margin-top: 8rpx;
-  color: #a38d94;
-  font-size: 17rpx;
+  color: #71565f;
+  font-size: 20rpx;
 }
 
 .request-actions {
@@ -727,7 +727,7 @@ page {
   padding: 0 8rpx;
   border: 0;
   border-radius: 18rpx;
-  font-size: 19rpx;
+  font-size: 20rpx;
   font-weight: 700;
 }
 
@@ -743,7 +743,7 @@ page {
   border-radius: 28rpx;
   color: #8f3653;
   background: transparent;
-  font-size: 19rpx;
+  font-size: 20rpx;
 }
 
 .request-response-card {
@@ -783,8 +783,8 @@ page {
 
 .request-panel-tip {
   margin-top: 7rpx;
-  color: #9b858c;
-  font-size: 19rpx;
+  color: #71565f;
+  font-size: 20rpx;
   line-height: 1.5;
 }
 
@@ -841,7 +841,7 @@ page {
 }
 
 .custom-request-send[disabled] {
-  color: #b9a8ad;
+  color: #71565f;
   background: #eee8ea;
 }
 
@@ -851,8 +851,8 @@ page {
   justify-content: space-between;
   gap: 12rpx;
   margin-top: 10rpx;
-  color: #a18c93;
-  font-size: 17rpx;
+  color: #71565f;
+  font-size: 20rpx;
   line-height: 1.45;
 }
 
@@ -903,14 +903,14 @@ page {
 }
 
 .adult-mark {
-  color: #a96a7e;
-  font-size: 16rpx;
+  color: #7d2f49;
+  font-size: 20rpx;
 }
 
 @media (max-width: 340px) {
   .request-card { width: 94%; padding: 20rpx; }
   .request-actions { gap: 6rpx; }
-  .request-action { font-size: 17rpx; }
+  .request-action { font-size: 20rpx; }
   .composer-count { display: none; }
 }
 

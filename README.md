@@ -5,8 +5,9 @@
 ## 当前交付状态
 
 - 客户端与云函数 buildTag 统一为 `heart-tree-private-v2-20260713-release-safety-v2`。
-- `npm test` 当前覆盖 203 项业务、权限、并发、内容安全、UI 和动效契约测试。
+- `npm test` 当前覆盖 218 项业务、权限、并发、内容安全、UI、运维文档、设计工具和动效契约测试；公开仓库全新克隆不需要私有配置或渲染缓存。
 - `npm run check:shared` 用于确保客户端主版与云函数部署副本无漂移。
+- [GitHub Actions](.github/workflows/ci.yml) 在无微信账号环境运行普通质量检查、云函数干净安装，以及独立的 Remotion compositions/still smoke。
 - 图片内容安全已实现 `traceId 登记 -> wxa_media_check 回调 -> 风险图隐藏/删除 -> 审计记录` 的代码闭环；微信平台消息推送路由和真机风险图验证仍需按 [`docs/content-safety-closed-loop.md`](docs/content-safety-closed-loop.md) 人工完成。
 - 公开仓库只保留可复现源码、虚构演示数据和经过筛选的界面素材；不收录开发者工具私有配置、云端验证日志、账号素材、本地依赖、二维码和渲染缓存。
 
@@ -44,10 +45,11 @@ flowchart LR
 
 1. 用微信开发者工具导入仓库根目录
 2. `project.config.json` 已配置 AppID：`wxce9c3ccdb34edd43`
-3. `miniprogram/config/env.js` 已配置云环境：`cloud1-d4g55gq4eabcd1b77`，云函数名：`energyTree`
-4. 当前 `apiMode` 为 `cloud`，小程序端会强制调用云函数；需要本地 demo 时再临时改为 `local`
-5. 每次修改 `cloudfunctions/energyTree` 后，在微信开发者工具右键该云函数，选择“上传并部署：云端安装依赖（不上传 node_modules）”
-6. 部署后重新编译并真实调用 `queryDashboard`，云端响应的 `buildTag` 应为 `heart-tree-private-v2-20260713-release-safety-v2`；如果仍是旧版本，说明云函数还没更新成功
+3. 公开配置已经固定 `ignoreDevUnusedFiles=false`；如需本地私有覆盖，可从 `project.private.config.example.json` 复制并保持实际 `project.private.config.json` 不提交
+4. `miniprogram/config/env.js` 已配置云环境：`cloud1-d4g55gq4eabcd1b77`，云函数名：`energyTree`
+5. 当前 `apiMode` 为 `cloud`，小程序端会强制调用云函数；需要本地 demo 时再临时改为 `local`
+6. 每次修改 `cloudfunctions/energyTree` 后，在微信开发者工具右键该云函数，选择“上传并部署：云端安装依赖（不上传 node_modules）”
+7. 部署后重新编译并真实调用 `queryDashboard`，云端响应的 `buildTag` 应为 `heart-tree-private-v2-20260713-release-safety-v2`；如果仍是旧版本，说明云函数还没更新成功
 
 ## 私人版 V2 体验
 
@@ -62,7 +64,7 @@ flowchart LR
 
 - Image 2 原始输出保存在 `design/imagegen-source/`，用于保留生成成果和后续重新处理。
 - 小程序实际使用的透明装饰图位于 `miniprogram/assets/generated/`。原始输出如果带有棋盘格预览背景，在 macOS（需系统 Swift + Vision，以及 Python Pillow）运行 `python3 scripts/clean-generated-cutouts.py`，可通过本地前景分割重新生成真实 RGBA 透明图，并同步情侣角色图到 `motion-studio/public/characters/`；处理过程不上传图片。
-- 清理角色图后运行 `npm --prefix motion-studio run render:posters`，重新导出 13 张不含棋盘格的本地动效 poster。
+- 清理角色图后运行 `npm run motion:posters`，重新导出 13 张不含棋盘格的本地动效 poster。
 - 地图和商店横幅是完整矩形 JPG，不参与透明背景清理。
 
 ## Remotion 动效素材工厂
@@ -72,23 +74,23 @@ flowchart LR
 首次使用先安装精确锁定的依赖：
 
 ```bash
-cd motion-studio
-npm ci
+npm ci --prefix motion-studio --ignore-scripts
 ```
 
 常用命令：
 
 ```bash
-npm run compositions
-npm run render:smoke
-npm run render:preview
-npm run render:posters
+npm run motion:compositions
+npm run motion:smoke
+npm run motion:preview
+npm run motion:posters
 ```
 
-- `npm run compositions`：发现 13 个视频 composition 和 13 个 poster still。
-- `npm run render:smoke`：渲染 `motion-studio/out/smoke/binding-frame.png`。
-- `npm run render:preview`：渲染 `motion-studio/out/previews/approval.mp4`。
-- `npm run render:posters`：把 13 张压缩 poster 写入 `miniprogram/assets/motion/`。
+- `npm run motion:compositions`：发现 13 个视频 composition 和 13 个 poster still。
+- `npm run motion:smoke`：渲染 `motion-studio/out/smoke/binding-frame.png`，与普通 `npm test` 独立。
+- `npm run motion:preview`：渲染 `motion-studio/out/previews/approval.mp4`。
+- `npm run motion:posters`：把 13 张压缩 poster 写入 `miniprogram/assets/motion/`。
+- `motion-studio/out/` 和 `.cache/` 始终忽略；普通测试只校验可提交入口与 poster，不依赖这些生成物。
 - 当前 13 张 poster 合计 `108,503` 字节，低于本项目为 V2 新增动效素材设置的 `409,600` 字节预算。
 
 小程序动效采用三级降级：
@@ -98,6 +100,8 @@ npm run render:posters
 3. poster 也加载失败时，展示 300–600ms 的原生 WXML/WXSS hearts、ribbon 或 coins 动效。
 
 当前远程视频增强有意保持关闭，所有 `videoSrc` 都是空字符串，因此默认稳定展示本地 poster。以后把 MP4 上传到云存储后，只需把对应文件 ID 填入 `miniprogram/config/motion-assets.js` 的 `videoSrc`；清单中的 `cloudPath` 是建议上传路径，不代表文件已经上传。
+
+“我的”页提供持久化的声音和“简化动效”开关。简化动效开启时跳过远程视频并保留静态 poster；poster 失败仍有静止可读的原生兜底。
 
 ## 第一版心愿金流
 
@@ -120,6 +124,8 @@ npm run render:posters
 页面调用统一经过 `miniprogram/services/api.js`。接入云函数、自建服务或微信商家转账时，优先替换这一层；详细契约见 `docs/api-contract.md`。
 
 当前 `cloudfunctions/energyTree` 已作为可信云端 API 层：云函数从微信环境获取 `OPENID`，加载云数据库状态，执行业务规则后写回云数据库，并同步集合快照。部署前必须由你在云开发控制台创建环境、部署云函数，并确认数据库权限规则禁止小程序端直接写入。
+
+数据库集合、索引、规则、备份、恢复和 version 4 迁移见 [`docs/data-operations.md`](docs/data-operations.md) 与 [`docs/cloud-database.rules.json`](docs/cloud-database.rules.json)。解绑/关系解除、数据导出与删除、照片生命周期、隐私授权撤回和异常账号恢复见 [`docs/privacy-data-lifecycle.md`](docs/privacy-data-lifecycle.md)。这些高风险流程当前是人工运维说明，不是已开放的自助接口。
 
 ## 绑定与部署
 
@@ -163,6 +169,20 @@ npm test
 npm run check:shared
 ```
 
+完整公开 CI 检查：
+
+```bash
+npm run ci
+```
+
+等价的独立检查包括：
+
+```bash
+npm run check:syntax
+npm run check:cloud-deps
+npm run check:budgets
+```
+
 JavaScript 语法（排除依赖目录）：
 
 ```bash
@@ -172,11 +192,13 @@ for file in $(find miniprogram cloudfunctions scripts motion-studio \
 done
 ```
 
-Remotion 的 JSX 由 `npm run compositions` 和渲染命令通过实际 bundling 校验；不要用 `node --check` 直接解析 `.jsx`。
+Remotion 的 JSX 由 `npm run motion:compositions` 和 `npm run motion:smoke` 通过实际 bundling 校验；不要用 `node --check` 直接解析 `.jsx`。
 
 ## 微信开发者工具最终验证
 
 本地自动化通过后仍需人工完成以下步骤，不能以本地日志替代云端或双账号证据：
+
+逐项步骤和脱敏证据要求见 [`docs/deployment-checklist.md`](docs/deployment-checklist.md)、[`docs/device-acceptance.md`](docs/device-acceptance.md) 和 [`docs/release-checklist.md`](docs/release-checklist.md)。
 
 1. 用微信开发者工具打开项目，点击“编译”，记录 Problems、Errors 和 Warnings。
 2. 右键 `energyTree`，选择“上传并部署：云端安装依赖（不上传 node_modules）”。
@@ -190,4 +212,8 @@ Remotion 的 JSX 由 `npm run compositions` 和渲染命令通过实际 bundling
 - 跨账号头像、聊天图片和打卡照片由云函数在关系鉴权后通过服务端 `getTempFileURL` 签发临时访问地址，不依赖公共读规则。
 - 远程 Remotion MP4 增强尚未启用；本地 poster 和原生动画是当前正式降级路径。
 - 心愿金只做记账、申请、审批和“模拟/手动兑现”状态流，不接真实支付。
-- 本项目当前只按固定情侣关系做私人版验收。公开上线仍需完成多情侣数据隔离、服务端文件授权、规则版本化、并发规模验证和隐私合规加固。
+- 本项目只按固定两人关系做私人版发布，不包含公共注册、租户选择、陌生人匹配或多租户改造。若未来需求改变，必须另行立项，不能在本私人版发布中隐式扩展。
+
+## 许可证与安全
+
+仓库采用 [ISC License](LICENSE)。安全报告与已知依赖边界见 [SECURITY.md](SECURITY.md)；请勿在公开 issue 中粘贴秘密或私人数据。

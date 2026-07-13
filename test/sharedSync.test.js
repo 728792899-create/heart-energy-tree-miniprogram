@@ -7,6 +7,7 @@ const test = require('node:test');
 const ROOT = path.resolve(__dirname, '..');
 const SHARED_FILES = [
   'services/appService.js',
+  'services/inputPolicy.js',
   'core/rewardEngine.js',
   'utils/date.js'
 ];

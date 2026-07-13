@@ -76,7 +76,7 @@
 .reward-summary-label {
   margin-top: 4rpx;
   color: #79696e;
-  font-size: 19rpx;
+  font-size: 20rpx;
 }
 
 .reward-editor-sheet {
@@ -279,7 +279,7 @@
 
 .reward-admin-meta {
   margin-top: 10rpx;
-  color: #8a777e;
+  color: #71565f;
   font-size: 21rpx;
 }
 

@@ -1,5 +1,5 @@
-<view wx:if="{{visible}}" class="motion-scene {{compact ? 'is-compact' : ''}}" role="img" aria-label="情侣庆祝动效">
-  <video wx:if="{{resolvedSrc && !videoFailed}}" class="motion-video" src="{{resolvedSrc}}" autoplay="{{autoplay}}" loop="{{loop}}" muted="{{soundMode === 'off'}}" controls="{{false}}" show-center-play-btn="{{false}}" object-fit="cover" binderror="onVideoError" bindended="onEnded"></video>
+<view wx:if="{{visible}}" class="motion-scene {{compact ? 'is-compact' : ''}} {{reducedMotion ? 'is-reduced-motion' : ''}}" role="img" aria-label="情侣庆祝动效">
+  <video wx:if="{{!reducedMotion && resolvedSrc && !videoFailed}}" class="motion-video" src="{{resolvedSrc}}" autoplay="{{autoplay}}" loop="{{loop}}" muted="{{soundMode === 'off'}}" controls="{{false}}" show-center-play-btn="{{false}}" object-fit="cover" binderror="onVideoError" bindended="onEnded"></video>
   <image wx:elif="{{resolvedPoster && !posterFailed}}" class="motion-poster" src="{{resolvedPoster}}" mode="aspectFill" binderror="onPosterError"></image>
   <view wx:else class="native-fallback native-{{nativeVariant}} scene-{{sceneKey}}" bindanimationend="onNativeEnded">
     <block wx:if="{{nativeVariant === 'coins'}}">

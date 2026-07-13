@@ -99,7 +99,7 @@
 .companion-history-kicker,
 .companion-history-section-kicker {
   color: #8f3653;
-  font-size: 19rpx;
+  font-size: 20rpx;
   font-weight: 900;
   letter-spacing: 0.16em;
 }
@@ -191,7 +191,7 @@
 
 .companion-history-summary-label {
   margin-top: 7rpx;
-  color: #877276;
+  color: #7b6970;
   font-size: 20rpx;
   font-weight: 700;
 }
@@ -219,7 +219,7 @@
 .companion-history-latest {
   flex: 0 0 auto;
   max-width: 260rpx;
-  color: #877276;
+  color: #7b6970;
   font-size: 20rpx;
   text-align: right;
 }
@@ -257,7 +257,7 @@
   min-height: 250rpx;
   padding: 36rpx;
   box-sizing: border-box;
-  color: #877276;
+  color: #7b6970;
   background: linear-gradient(145deg, #fff0f2 0%, #f4f8f1 100%);
 }
 
@@ -326,7 +326,7 @@
 
 .companion-history-duration {
   margin-top: 6rpx;
-  color: #877276;
+  color: #7b6970;
   font-size: 21rpx;
 }
 
@@ -373,7 +373,7 @@
 }
 
 .companion-history-care-note {
-  color: #877276;
+  color: #7b6970;
   font-weight: 500;
 }
 
@@ -408,7 +408,7 @@
 .companion-history-empty-copy {
   max-width: 520rpx;
   margin: 14rpx auto 0;
-  color: #877276;
+  color: #7b6970;
   font-size: 23rpx;
   line-height: 1.65;
 }

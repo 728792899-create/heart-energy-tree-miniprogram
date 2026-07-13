@@ -18,6 +18,7 @@
 
   <motion-scene
     scene-key="binding"
+    reduced-motion="{{reducedMotion}}"
     compact
     aria-label="暖棕小熊与奶白小兔一起种下心动能量树"
   ></motion-scene>

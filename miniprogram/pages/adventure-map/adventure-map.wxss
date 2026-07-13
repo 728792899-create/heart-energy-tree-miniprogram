@@ -27,7 +27,7 @@
 
 .map-eyebrow {
   color: #544246;
-  font-size: 19rpx;
+  font-size: 20rpx;
 }
 
 .map-page-title {

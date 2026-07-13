@@ -16,7 +16,7 @@
 
 ## 权限
 
-按 `cloud-database-message-rules.json` 设置。客户端查询 `coupleMessageInbox` 和
+按全量规则基线 [`cloud-database.rules.json`](cloud-database.rules.json) 设置；`cloud-database-message-rules.json` 仅保留为信笺子集参考。客户端查询 `coupleMessageInbox` 和
 `coupleMessageStates` 时必须显式包含 `recipientOpenid == 当前登录 openid`；所有写入均由
 `energyTree` 云函数完成。
 

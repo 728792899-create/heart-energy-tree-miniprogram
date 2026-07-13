@@ -131,6 +131,38 @@ test('motion scene transitions from video to poster to native fallback and emits
   });
 });
 
+test('remote video resolution covers direct URL, cloud failure, and reduced-motion poster paths', async (t) => {
+  const definition = loadComponentDefinition('miniprogram/components/motion-scene/motion-scene.js');
+  const originalWx = global.wx;
+  t.after(() => {
+    if (originalWx === undefined) delete global.wx;
+    else global.wx = originalWx;
+  });
+
+  const direct = createComponentContext({ sceneKey: 'approval', videoFailed: false }, definition.methods);
+  definition.methods.resolveVideoSource.call(direct, 'https://example.invalid/approval.mp4', 1);
+  assert.equal(direct.data.resolvedSrc, 'https://example.invalid/approval.mp4');
+
+  delete global.wx;
+  const unavailable = createComponentContext({ sceneKey: 'approval', videoFailed: false }, definition.methods);
+  definition.methods.resolveVideoSource.call(unavailable, 'cloud://env/motion/approval.mp4', 1);
+  assert.equal(unavailable.data.videoFailed, true);
+  assert.deepEqual(unavailable.events.at(-1), {
+    name: 'fallback',
+    detail: { level: 'poster', sceneKey: 'approval' }
+  });
+
+  const reduced = createComponentContext({
+    sceneKey: 'approval',
+    src: 'https://example.invalid/approval.mp4',
+    poster: '',
+    reducedMotion: true
+  }, definition.methods);
+  definition.methods.syncAssets.call(reduced);
+  assert.equal(reduced.data.resolvedSrc, '');
+  assert.equal(reduced.data.resolvedPoster, '/assets/motion/approval.jpg');
+});
+
 test('motion scene markup and styles preserve video, poster, and 300-600ms native fallbacks', () => {
   const script = read('miniprogram/components/motion-scene/motion-scene.js');
   const markup = read('miniprogram/components/motion-scene/motion-scene.wxml');
@@ -141,13 +173,17 @@ test('motion scene markup and styles preserve video, poster, and 300-600ms nativ
   assert.match(script, /resolvedSrc/);
   assert.match(script, /resolvedPoster/);
   assert.match(script, /getTempFileURL/);
+  assert.match(script, /reducedMotion/);
   assert.match(markup, /<video[^>]*src="\{\{resolvedSrc\}\}"[^>]*binderror="onVideoError"[^>]*bindended="onEnded"/s);
+  assert.match(markup, /!reducedMotion\s*&&\s*resolvedSrc/);
   assert.match(markup, /<image[^>]*src="\{\{resolvedPoster\}\}"[^>]*binderror="onPosterError"/s);
   assert.match(markup, /native-\{\{nativeVariant\}\}/);
   assert.match(markup, /native-coin/);
   assert.match(markup, /native-ribbon/);
   assert.match(styles, /(?:300|3\d\d|4\d\d|5\d\d|600)ms/);
+  assert.match(styles, /\.is-reduced-motion[\s\S]*?animation:\s*none/);
   assert.match(celebration, /<motion-scene[^>]*scene-key="\{\{sceneKey\}\}"/s);
+  assert.match(celebration, /reduced-motion="\{\{reducedMotion\}\}"/);
 });
 
 test('new local motion posters stay within the 400KB mini program budget', () => {

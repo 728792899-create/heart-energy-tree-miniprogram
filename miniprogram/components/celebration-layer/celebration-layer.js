@@ -6,7 +6,8 @@ Component({
     sceneKey: { type: String, value: 'first-checkin' },
     motionSrc: { type: String, value: '' },
     poster: { type: String, value: '' },
-    soundMode: { type: String, value: 'on' }
+    soundMode: { type: String, value: 'on' },
+    reducedMotion: { type: Boolean, value: false }
   },
   methods: {
     close() {

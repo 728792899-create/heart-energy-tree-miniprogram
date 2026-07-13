@@ -8,7 +8,8 @@ Page({
     inviteMode: false,
     canCreateSponsor: false,
     creating: false,
-    submitting: false
+    submitting: false,
+    reducedMotion: experience.isReducedMotionEnabled()
   },
 
   onLoad(options) {
@@ -22,6 +23,7 @@ Page({
   },
 
   async onShow() {
+    this.setData({ reducedMotion: experience.isReducedMotionEnabled() });
     try {
       const dashboard = await api.queryDashboard();
       if (dashboard && !dashboard.needsBinding) {

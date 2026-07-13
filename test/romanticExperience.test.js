@@ -125,6 +125,31 @@ test('sound preference defaults on, persists locally, and prevents playback when
   assert.equal(destroyed.length, 0);
 });
 
+test('reduced-motion preference follows the system once, persists locally, and is user-overridable', (t) => {
+  const storage = new Map();
+  global.wx = {
+    getStorageSync(key) {
+      return storage.has(key) ? storage.get(key) : '';
+    },
+    setStorageSync(key, value) {
+      storage.set(key, value);
+    },
+    getSystemSetting() {
+      return { reduceMotionEnabled: true };
+    }
+  };
+  t.after(() => delete global.wx);
+
+  const modulePath = require.resolve('../miniprogram/services/experience');
+  delete require.cache[modulePath];
+  const experience = require(modulePath);
+
+  assert.equal(experience.isReducedMotionEnabled(), true);
+  assert.equal(experience.setReducedMotionEnabled(false), false);
+  assert.equal(experience.isReducedMotionEnabled(), false);
+  assert.equal(storage.get(experience.REDUCED_MOTION_STORAGE_KEY), false);
+});
+
 test('milestone scenes select distinct streak, map, badge, redemption, and payout cues', () => {
   const experience = require('../miniprogram/services/experience');
 
@@ -151,7 +176,7 @@ test('original local sound cues are small valid wave files', () => {
   });
 });
 
-test('profile exposes an accessible persisted sound switch', () => {
+test('profile exposes accessible persisted sound and reduced-motion switches', () => {
   const script = read('miniprogram/pages/profile/profile.js');
   const markup = read('miniprogram/pages/profile/profile.wxml');
 
@@ -159,6 +184,10 @@ test('profile exposes an accessible persisted sound switch', () => {
   assert.match(script, /experience\.setSoundEnabled/);
   assert.match(markup, /<switch[^>]*checked="\{\{isSoundEnabled\}\}"/);
   assert.match(markup, /aria-label="开启或关闭心动提示音"/);
+  assert.match(script, /reducedMotion:\s*experience\.isReducedMotionEnabled\(\)/);
+  assert.match(script, /experience\.setReducedMotionEnabled/);
+  assert.match(markup, /<switch[^>]*checked="\{\{reducedMotion\}\}"/);
+  assert.match(markup, /aria-label="开启或关闭简化动效"/);
 });
 
 test('legacy saturated pink surfaces are removed from page styles', () => {

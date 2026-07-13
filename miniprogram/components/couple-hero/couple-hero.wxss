@@ -94,7 +94,7 @@
   z-index: 1;
   margin-top: -6rpx;
   color: #7d2f49;
-  font-size: 18rpx;
+  font-size: 20rpx;
   font-weight: 700;
 }
 
@@ -160,9 +160,9 @@
   min-height: 32rpx;
   padding: 0;
   border: 0;
-  color: #877276;
+  color: #7b6970;
   background: transparent;
-  font-size: 18rpx;
+  font-size: 20rpx;
   letter-spacing: 1rpx;
 }
 

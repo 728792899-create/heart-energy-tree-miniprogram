@@ -34,11 +34,15 @@ Page({
     inviteShare: null,
     isCloudMode: false,
     showInvitePartner: false,
-    isSoundEnabled: experience.isSoundEnabled()
+    isSoundEnabled: experience.isSoundEnabled(),
+    reducedMotion: experience.isReducedMotionEnabled()
   },
 
   onShow() {
-    this.setData({ isSoundEnabled: experience.isSoundEnabled() });
+    this.setData({
+      isSoundEnabled: experience.isSoundEnabled(),
+      reducedMotion: experience.isReducedMotionEnabled()
+    });
     this.load();
   },
 
@@ -46,6 +50,11 @@ Page({
     const isSoundEnabled = experience.setSoundEnabled(Boolean(event.detail.value));
     this.setData({ isSoundEnabled });
     if (isSoundEnabled) experience.playCue('binding');
+  },
+
+  onReducedMotionToggle(event) {
+    const reducedMotion = experience.setReducedMotionEnabled(Boolean(event.detail.value));
+    this.setData({ reducedMotion });
   },
 
   async load() {

@@ -276,7 +276,7 @@
 .companion-redemption-cost view {
   margin-top: 4rpx;
   color: #cbb6bc;
-  font-size: 19rpx;
+  font-size: 20rpx;
 }
 
 .companion-redemption-note {
@@ -352,7 +352,7 @@
 
 .companion-redemption-card-date {
   color: #99878c;
-  font-size: 19rpx;
+  font-size: 20rpx;
 }
 
 .companion-redemption-card-cost {
@@ -393,7 +393,7 @@
 .companion-redemption-empty-kicker {
   margin-top: 25rpx;
   color: #9a5368;
-  font-size: 19rpx;
+  font-size: 20rpx;
   font-weight: 800;
   letter-spacing: 4rpx;
 }
@@ -422,7 +422,7 @@
     width: 88rpx;
     height: 88rpx;
     flex-basis: 88rpx;
-    font-size: 19rpx;
+    font-size: 20rpx;
   }
 
   .companion-redemption-title {

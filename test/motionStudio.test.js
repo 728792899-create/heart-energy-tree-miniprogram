@@ -90,15 +90,22 @@ test('motion studio exposes every approved scene and reusable character componen
   assert.doesNotMatch(sceneSource, /animation\s*:/);
 });
 
-test('motion studio has discoverable render entrypoints and real smoke, preview, and poster outputs', () => {
+test('motion studio has discoverable render entrypoints and committed poster outputs', () => {
   assertNonEmptyFile('motion-studio/src/index.jsx', 80);
   assertNonEmptyFile('motion-studio/remotion.config.js', 80);
   assertNonEmptyFile('motion-studio/scripts/render-preview.js', 120);
   assertNonEmptyFile('motion-studio/scripts/render-posters.js', 120);
-  assertNonEmptyFile('motion-studio/out/smoke/binding-frame.png', 2_000);
-  assertNonEmptyFile('motion-studio/out/previews/approval.mp4', 10_000);
 
   expectedSceneKeys.forEach((sceneKey) => {
     assertNonEmptyFile(`miniprogram/assets/motion/${sceneKey}.jpg`, 1_000);
   });
+});
+
+test('real Remotion discovery and render smoke are explicit root commands with ignored outputs', () => {
+  const packageJson = JSON.parse(read('package.json'));
+  const gitignore = read('.gitignore');
+
+  assert.equal(packageJson.scripts['motion:compositions'], 'npm --prefix motion-studio run compositions');
+  assert.equal(packageJson.scripts['motion:smoke'], 'npm --prefix motion-studio run render:smoke');
+  assert.match(gitignore, /^motion-studio\/out\/$/m);
 });

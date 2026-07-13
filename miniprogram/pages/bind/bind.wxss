@@ -115,7 +115,7 @@
   z-index: 1;
   max-width: 560rpx;
   margin: 24rpx auto 0;
-  color: #877276;
+  color: #7b6970;
   font-size: 25rpx;
   line-height: 1.75;
 }
@@ -244,7 +244,7 @@
 
 .binding-step-note {
   margin-top: 8rpx;
-  color: #877276;
+  color: #7b6970;
   font-size: 20rpx;
   line-height: 1.5;
 }
@@ -347,7 +347,7 @@
   width: 28rpx;
   height: 24rpx;
   margin-top: 8rpx;
-  border: 3rpx solid #877276;
+  border: 3rpx solid #7b6970;
   border-radius: 6rpx;
 }
 
@@ -358,7 +358,7 @@
   top: -17rpx;
   width: 14rpx;
   height: 16rpx;
-  border: 3rpx solid #877276;
+  border: 3rpx solid #7b6970;
   border-bottom: 0;
   border-radius: 12rpx 12rpx 0 0;
 }

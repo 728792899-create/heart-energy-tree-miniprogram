@@ -45,6 +45,11 @@ button[disabled] {
   opacity: 0.58;
 }
 
+[role="button"] {
+  min-width: 88rpx;
+  min-height: 88rpx;
+}
+
 .page {
   position: relative;
   width: 100%;
@@ -415,4 +420,18 @@ button[disabled] {
 @keyframes skeleton-shimmer {
   from { background-position: 200% 0; }
   to { background-position: -200% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button {
+    transition: none;
+  }
+
+  .floaty,
+  .skeleton-line,
+  .soft-hero::before,
+  .soft-hero::after {
+    animation: none;
+    transform: none;
+  }
 }

@@ -5,7 +5,15 @@
   "description": "A WeChat Mini Program prototype for warm fitness check-ins, reward ledger, and manual withdrawals.",
   "scripts": {
     "assets:sounds": "node scripts/generate-sounds.js",
+    "check:budgets": "node scripts/check-budgets.js",
+    "check:cloud-deps": "node scripts/check-cloud-dependencies.js",
     "check:shared": "node scripts/sync-shared.js --check",
+    "check:syntax": "node scripts/check-javascript.js",
+    "ci": "npm test && npm run check:shared && npm run check:syntax && npm run check:cloud-deps && npm run check:budgets",
+    "motion:compositions": "npm --prefix motion-studio run compositions",
+    "motion:smoke": "npm --prefix motion-studio run render:smoke",
+    "motion:preview": "npm --prefix motion-studio run render:preview",
+    "motion:posters": "npm --prefix motion-studio run render:posters",
     "sync:shared": "node scripts/sync-shared.js",
     "test": "node --require ./test/setup.js --test test/*.test.js"
   },

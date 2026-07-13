@@ -161,8 +161,12 @@ class FigmaMCP:
 
 def _load_json(value: str) -> Dict[str, Any]:
     candidate = Path(value)
-    if candidate.exists():
-        return json.loads(candidate.read_text(encoding="utf-8"))
+    try:
+        if candidate.exists():
+            return json.loads(candidate.read_text(encoding="utf-8"))
+    except OSError:
+        # Long inline JSON payloads are valid CLI input but invalid filesystem paths.
+        pass
     return json.loads(value)
 
 

@@ -130,7 +130,7 @@
   border-radius: 50%;
   color: #334d31;
   background: #ccebc5;
-  font-size: 18rpx;
+  font-size: 20rpx;
 }
 
 .recap-empty-note {
@@ -317,9 +317,9 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  color: #877276;
+  color: #7b6970;
   background: #f5e4e6;
-  font-size: 18rpx;
+  font-size: 20rpx;
   font-weight: 800;
 }
 
@@ -430,7 +430,7 @@
 
 .recap-footer-note {
   margin-top: 22rpx;
-  color: #877276;
+  color: #7b6970;
   font-size: 21rpx;
   line-height: 1.6;
   text-align: center;

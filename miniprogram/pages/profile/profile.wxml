@@ -39,6 +39,14 @@
     <switch checked="{{isSoundEnabled}}" color="#8F3653" aria-label="开启或关闭心动提示音" bindchange="onSoundToggle"></switch>
   </view>
 
+  <view class="card passport-setting">
+    <view class="setting-copy">
+      <view class="card-title">简化动效</view>
+      <view class="muted small">保留静态心动海报，减少循环、弹跳和爆发动画。</view>
+    </view>
+    <switch checked="{{reducedMotion}}" color="#8F3653" aria-label="开启或关闭简化动效" bindchange="onReducedMotionToggle"></switch>
+  </view>
+
   <block wx:if="{{dashboard.currentRole === 'participant'}}">
     <view class="section-title">佩戴中的成就</view>
     <view wx:if="{{dashboard.relationship.equippedBadges.length}}" class="equipped-row">

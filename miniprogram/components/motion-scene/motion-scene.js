@@ -9,7 +9,8 @@ Component({
     soundMode: { type: String, value: 'on' },
     src: { type: String, value: '' },
     poster: { type: String, value: '' },
-    compact: { type: Boolean, value: false }
+    compact: { type: Boolean, value: false },
+    reducedMotion: { type: Boolean, value: false }
   },
   data: {
     resolvedSrc: '',
@@ -28,7 +29,7 @@ Component({
     }
   },
   observers: {
-    'sceneKey,src,poster': function refreshAssets() {
+    'sceneKey,src,poster,reducedMotion': function refreshAssets() {
       this.syncAssets();
     }
   },
@@ -47,7 +48,7 @@ Component({
         videoFailed: false,
         posterFailed: false
       });
-      this.resolveVideoSource(resolved.videoSrc, requestId);
+      if (!this.data.reducedMotion) this.resolveVideoSource(resolved.videoSrc, requestId);
     },
     resolveVideoSource(source, requestId) {
       if (!source) return;

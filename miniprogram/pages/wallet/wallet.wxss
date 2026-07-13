@@ -38,7 +38,7 @@
 
 .wallet-hero-eyebrow {
   display: block;
-  color: #a85a72;
+  color: #7d2f49;
   font-size: 20rpx;
   font-weight: 800;
   letter-spacing: 5rpx;
@@ -154,7 +154,7 @@
 
 .wallet-section-subtitle {
   margin-top: 6rpx;
-  color: #978188;
+  color: #71565f;
   font-size: 21rpx;
   line-height: 1.5;
 }
@@ -206,7 +206,7 @@
 }
 
 .withdrawal-field-unit {
-  color: #987f87;
+  color: #71565f;
   font-size: 22rpx;
 }
 
@@ -230,7 +230,7 @@
   align-items: flex-start;
   gap: 12rpx;
   margin-top: 18rpx;
-  color: #917981;
+  color: #71565f;
   font-size: 21rpx;
   line-height: 1.55;
 }
@@ -246,7 +246,7 @@
   border-radius: 50%;
   color: #fff;
   background: #b8768b;
-  font-size: 19rpx;
+  font-size: 20rpx;
   font-weight: 900;
 }
 

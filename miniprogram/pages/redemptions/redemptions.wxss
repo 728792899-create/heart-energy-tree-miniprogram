@@ -20,7 +20,7 @@
 
 .redemption-eyebrow {
   display: block;
-  color: #a85a72;
+  color: #7d2f49;
   font-size: 20rpx;
   font-weight: 800;
   letter-spacing: 5rpx;
@@ -259,7 +259,7 @@
 .redemption-date {
   margin-left: auto;
   color: #a48d94;
-  font-size: 19rpx;
+  font-size: 20rpx;
 }
 
 .redemption-description {

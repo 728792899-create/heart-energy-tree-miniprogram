@@ -27,7 +27,7 @@
 
 .shop-eyebrow {
   color: #544246;
-  font-size: 19rpx;
+  font-size: 20rpx;
 }
 
 .shop-title {
@@ -95,7 +95,7 @@
 }
 
 .balance-hint {
-  color: #877276;
+  color: #7b6970;
   font-size: 20rpx;
 }
 
@@ -129,7 +129,7 @@
 
 .tab-icon {
   color: #8F3653;
-  font-size: 18rpx;
+  font-size: 20rpx;
 }
 
 .tab.active {

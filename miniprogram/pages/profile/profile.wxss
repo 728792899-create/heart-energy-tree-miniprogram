@@ -326,7 +326,7 @@
 
 .profile-cover-kicker {
   color: #A24A69;
-  font-size: 18rpx;
+  font-size: 20rpx;
   font-weight: 900;
   letter-spacing: 3rpx;
 }

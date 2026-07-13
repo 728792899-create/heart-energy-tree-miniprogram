@@ -260,7 +260,7 @@
 
 .streak-day-mark text {
   margin-left: 2rpx;
-  font-size: 17rpx;
+  font-size: 20rpx;
 }
 
 .streak-day-mark.active {
@@ -431,7 +431,7 @@
 
 .rules-save-note {
   margin-bottom: 9rpx;
-  color: #877276;
+  color: #7b6970;
   font-size: 20rpx;
   text-align: center;
 }

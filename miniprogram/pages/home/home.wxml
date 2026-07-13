@@ -254,6 +254,7 @@
     message="{{activeCelebration.message}}"
     scene-key="{{activeCelebration.sceneKey}}"
     sound-mode="{{soundMode}}"
+    reduced-motion="{{reducedMotion}}"
     bindclose="closeCelebration"
   ></celebration-layer>
 </view>

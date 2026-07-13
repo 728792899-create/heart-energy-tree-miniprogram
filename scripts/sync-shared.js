@@ -8,6 +8,7 @@ const FILES = [
   'utils/date.js',
   'services/manualPayoutProvider.js',
   'services/storage.js',
+  'services/inputPolicy.js',
   'services/appService.js'
 ];
 const FLAT_RUNTIME_FILES = {
@@ -16,6 +17,7 @@ const FLAT_RUNTIME_FILES = {
   'utils/date.js': 'cloudRuntimeDate.js',
   'services/manualPayoutProvider.js': 'cloudRuntimeManualPayoutProvider.js',
   'services/storage.js': 'cloudRuntimeStorage.js',
+  'services/inputPolicy.js': 'cloudRuntimeInputPolicy.js',
   'services/appService.js': 'cloudRuntimeAppService.js'
 };
 
@@ -28,12 +30,17 @@ function flattenRuntimeRequires(relativePath, source) {
     'services/manualPayoutProvider.js': [
       ["require('../core/models')", "require('./cloudRuntimeModels')"]
     ],
+    'services/inputPolicy.js': [
+      ["require('../core/models')", "require('./cloudRuntimeModels')"],
+      ["require('../core/rewardEngine')", "require('./cloudRuntimeRewardEngine')"]
+    ],
     'services/appService.js': [
       ["require('../core/models')", "require('./cloudRuntimeModels')"],
       ["require('../core/rewardEngine')", "require('./cloudRuntimeRewardEngine')"],
       ["require('../utils/date')", "require('./cloudRuntimeDate')"],
       ["require('./manualPayoutProvider')", "require('./cloudRuntimeManualPayoutProvider')"],
-      ["require('./storage')", "require('./cloudRuntimeStorage')"]
+      ["require('./storage')", "require('./cloudRuntimeStorage')"],
+      ["require('./inputPolicy')", "require('./cloudRuntimeInputPolicy')"]
     ]
   };
   return (replacements[relativePath] || []).reduce(

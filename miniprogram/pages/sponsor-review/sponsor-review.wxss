@@ -212,7 +212,7 @@
 }
 
 .review-meta-label {
-  color: #8a777e;
+  color: #71565f;
   font-size: 21rpx;
 }
 

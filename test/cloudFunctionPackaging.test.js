@@ -11,6 +11,7 @@ const RUNTIME_FILES = [
   'cloudRuntimeDate.js',
   'cloudRuntimeManualPayoutProvider.js',
   'cloudRuntimeStorage.js',
+  'cloudRuntimeInputPolicy.js',
   'cloudRuntimeAppService.js'
 ];
 
@@ -18,6 +19,8 @@ test('cloud entry uses root-level runtime files that incremental deployment can 
   const entry = fs.readFileSync(path.join(FUNCTION_ROOT, 'index.js'), 'utf8');
   assert.match(entry, /loadRuntimeModule\('\.\/miniprogram\/services\/appService', '\.\/cloudRuntimeAppService'\)/);
   assert.match(entry, /loadRuntimeModule\('\.\/miniprogram\/services\/storage', '\.\/cloudRuntimeStorage'\)/);
+  assert.match(entry, /require\('\.\/mediaCheck'\)/);
+  assert.ok(fs.statSync(path.join(FUNCTION_ROOT, 'mediaCheck.js')).isFile());
 
   RUNTIME_FILES.forEach((file) => {
     assert.ok(fs.statSync(path.join(FUNCTION_ROOT, file)).isFile(), file);
