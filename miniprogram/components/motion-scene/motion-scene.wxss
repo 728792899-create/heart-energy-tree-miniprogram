@@ -1,0 +1,123 @@
+.motion-scene {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 30rpx;
+  background: linear-gradient(145deg, #fff9f5, #f8e6ec);
+}
+
+.motion-video,
+.motion-poster,
+.native-fallback {
+  width: 100%;
+  height: 100%;
+}
+
+.native-fallback {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 50% 46%, #fffdf9 0, #f8e6ec 68%, #efd4dc 100%);
+  animation: fallback-in 520ms cubic-bezier(.18,.8,.2,1) both;
+}
+
+.native-tree {
+  color: #8a6244;
+  font-size: 150rpx;
+  animation: tree-grow 560ms cubic-bezier(.18,.8,.2,1) both;
+}
+
+.native-heart {
+  position: absolute;
+  color: #b74465;
+  font-size: 38rpx;
+  animation: heart-burst 520ms cubic-bezier(.18,.8,.2,1) both;
+}
+
+.heart-a { left: 22%; top: 28%; }
+.heart-b { right: 20%; top: 22%; animation-delay: 80ms; }
+.heart-c { right: 30%; bottom: 24%; animation-delay: 140ms; }
+
+.native-ribbon {
+  position: absolute;
+  bottom: 12%;
+  min-height: 46rpx;
+  padding: 8rpx 18rpx;
+  border-radius: 999rpx;
+  color: #6f512a;
+  background: #f1ddb7;
+  font-size: 20rpx;
+  font-weight: 900;
+  letter-spacing: 2rpx;
+  animation: ribbon-open 480ms cubic-bezier(.18,.8,.2,1) both;
+}
+
+.native-gift {
+  width: 150rpx;
+  height: 128rpx;
+  padding-top: 22rpx;
+  border: 8rpx solid #d4ae6a;
+  border-radius: 28rpx;
+  color: #fff9f5;
+  text-align: center;
+  background: linear-gradient(145deg, #e77c99, #b74465);
+  box-shadow: 0 22rpx 44rpx rgba(125, 47, 73, 0.2);
+  font-size: 58rpx;
+  animation: gift-pop 560ms cubic-bezier(.18,.8,.2,1) both;
+}
+
+.native-coin {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  color: #6f512a;
+  background: #f1ddb7;
+  box-shadow: 0 10rpx 20rpx rgba(111, 81, 42, 0.18);
+  font-size: 22rpx;
+  font-weight: 900;
+  animation: coin-burst 520ms cubic-bezier(.18,.8,.2,1) both;
+}
+
+.coin-a { left: 22%; top: 28%; }
+.coin-b { right: 20%; top: 22%; animation-delay: 70ms; }
+.coin-c { right: 27%; bottom: 21%; animation-delay: 130ms; }
+
+.is-compact {
+  max-height: 330rpx;
+}
+
+@keyframes tree-grow {
+  from { opacity: 0; transform: translateY(30rpx) scale(0.72); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes heart-burst {
+  from { opacity: 0; transform: translateY(20rpx) scale(0.4) rotate(-12deg); }
+  to { opacity: 1; transform: translateY(-14rpx) scale(1) rotate(8deg); }
+}
+
+@keyframes fallback-in {
+  from { opacity: 0; transform: scale(0.94); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes ribbon-open {
+  from { opacity: 0; transform: scaleX(0.3); }
+  to { opacity: 1; transform: scaleX(1); }
+}
+
+@keyframes gift-pop {
+  from { opacity: 0; transform: translateY(30rpx) scale(0.68) rotate(-6deg); }
+  to { opacity: 1; transform: translateY(0) scale(1) rotate(0); }
+}
+
+@keyframes coin-burst {
+  from { opacity: 0; transform: translateY(24rpx) scale(0.4) rotate(-18deg); }
+  to { opacity: 1; transform: translateY(-18rpx) scale(1) rotate(8deg); }
+}

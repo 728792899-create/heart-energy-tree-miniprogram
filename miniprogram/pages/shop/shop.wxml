@@ -1,0 +1,62 @@
+<view class="page shop-page">
+  <state-panel wx:if="{{loading}}" state="loading" title="正在摆好情侣礼物…" description="每一份小期待都在认真等你。"></state-panel>
+  <state-panel wx:elif="{{errorMessage}}" state="error" title="礼物商店暂时没开门" description="{{errorMessage}}" bindretry="retryLoad"></state-panel>
+  <block wx:else>
+    <view class="shop-topbar">
+      <view class="shop-brand">
+        <image class="shop-avatar" src="/assets/stitch-original/shop-avatar.jpg" mode="aspectFill"></image>
+        <view>
+          <view class="shop-eyebrow">情侣奖励商店</view>
+          <view class="shop-title">能量兑换站</view>
+        </view>
+      </view>
+      <button class="shop-record-link" aria-label="查看情侣礼物兑换记录" bindtap="goRedemptions">兑换记录</button>
+    </view>
+
+    <view class="shop-balance-card">
+      <view class="balance-glow"></view>
+      <view class="balance-label">当前能量币</view>
+      <view class="balance-value">{{dashboard.relationship.balanceText.availableCoins}}</view>
+      <view class="balance-hint">把坚持积攒成两个人的小期待</view>
+    </view>
+
+    <scroll-view scroll-x class="tabs">
+      <view class="tab-row">
+        <button wx:for="{{categories}}" wx:key="key" class="tab {{category === item.key ? 'active' : ''}}" data-category="{{item.key}}" aria-label="筛选{{item.label}}类奖励" bindtap="chooseCategory">
+          <text class="tab-icon">{{item.icon}}</text>
+          <text>{{item.label}}</text>
+        </button>
+      </view>
+    </scroll-view>
+
+    <view class="shop-section-title">
+      <text class="shop-section-icon">❧</text>
+      <text>{{category === 'all' ? '现取惊喜' : '为你筛选'}}</text>
+    </view>
+
+    <view wx:if="{{items.length}}" class="shop-grid">
+      <view wx:for="{{items}}" wx:key="id" class="reward-card" data-id="{{item.id}}" role="button" aria-label="查看奖励{{item.name}}详情" bindtap="openReward">
+        <view class="reward-image" style="background: {{item.imageTone}};">
+          <image class="reward-img" src="{{item.imageSrc || item.stitchImageSrc || (index % 3 === 0 ? '/assets/stitch-original/reward-massage.jpg' : index % 3 === 1 ? '/assets/stitch-original/reward-dishes.jpg' : '/assets/stitch-original/reward-dinner.jpg')}}" mode="aspectFill"></image>
+        </view>
+        <view class="reward-body">
+          <view class="reward-name">{{item.name}}</view>
+          <view class="reward-description">{{item.description}}</view>
+          <view class="reward-price">◉ {{item.priceText}}</view>
+          <button class="reward-action" data-id="{{item.id}}" disabled="{{item.soldOut || !item.isActive}}" aria-label="申请兑换{{item.name}}" catchtap="openReward">{{item.soldOut ? '已兑完' : item.isActive ? '申请兑换' : '已下架'}}</button>
+        </view>
+      </view>
+    </view>
+    <view wx:else class="empty">这个分类暂时没有奖励。</view>
+
+    <view wx:if="{{items.length}}" class="long-wish-card" data-id="{{items[items.length - 1].id}}" role="button" aria-label="查看长期心愿{{items[items.length - 1].name}}" bindtap="openReward">
+      <image class="long-wish-image" src="/assets/stitch-original/reward-dinner.jpg" mode="aspectFill"></image>
+      <view class="long-wish-copy">
+        <view class="long-wish-kicker">♡ 长期心愿</view>
+        <view class="long-wish-title">把能量存成一次认真约会</view>
+        <view class="muted small">慢慢积攒，不催进度；准备好时再一起兑现。</view>
+      </view>
+      <view class="long-wish-arrow">›</view>
+    </view>
+  </block>
+</view>

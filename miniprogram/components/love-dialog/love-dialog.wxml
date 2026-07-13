@@ -1,0 +1,11 @@
+<view wx:if="{{visible}}" class="dialog-backdrop" catchtouchmove="stopTouch" role="dialog" aria-label="{{title}}">
+  <view class="dialog-sheet">
+    <view class="dialog-seal">♡</view>
+    <view class="dialog-title">{{title}}</view>
+    <view class="dialog-message">{{message}}</view>
+    <view class="dialog-actions {{showCancel ? 'two' : 'one'}}">
+      <button wx:if="{{showCancel}}" class="cancel-button" disabled="{{processing}}" bindtap="cancel">{{cancelText}}</button>
+      <button class="confirm-button {{dangerous ? 'dangerous' : ''}}" loading="{{processing}}" disabled="{{processing}}" bindtap="confirm">{{confirmText}}</button>
+    </view>
+  </view>
+</view>

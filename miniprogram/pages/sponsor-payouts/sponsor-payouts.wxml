@@ -1,0 +1,162 @@
+<view class="page payout-page">
+  <state-panel
+    wx:if="{{loading}}"
+    state="loading"
+    title="正在整理心愿兑现清单"
+    description="把每一笔约定都核对清楚。"
+  ></state-panel>
+
+  <state-panel
+    wx:elif="{{errorMessage}}"
+    state="error"
+    title="心愿金处理页暂时打不开"
+    description="{{errorMessage}}"
+    bindretry="retryLoad"
+  ></state-panel>
+
+  <block wx:else>
+    <view class="payout-inbox-header">
+      <view>
+        <view class="eyebrow">WISH FUND INBOX</view>
+        <view class="payout-page-title">心愿兑现清单</view>
+        <view class="muted small">认真回应她攒下的每一份期待</view>
+      </view>
+      <view class="payout-header-count" aria-label="{{pendingTaskLabel}}">{{pendingTaskCount}}</view>
+    </view>
+
+    <view class="payout-hero-card">
+      <view class="payout-heart-seal">♡</view>
+      <view class="payout-hero-kicker">{{hasPendingTasks ? '她有新的小心愿' : '今天的心愿都已回应'}}</view>
+      <view class="payout-hero-title">{{pendingTaskLabel}}</view>
+      <view class="payout-hero-description">
+        {{hasPendingTasks ? '先确认申请，再在线下完成兑现；每一步都会留下清晰记录。' : '谢谢你把答应的事情认真做到，新的心愿会出现在这里。'}}
+      </view>
+      <view class="payout-hero-amount">
+        <text class="payout-hero-currency">¥</text>
+        <text>{{pendingAmountText}}</text>
+      </view>
+      <view class="payout-hero-caption">当前待处理心愿金额</view>
+    </view>
+
+    <view class="payout-summary-grid">
+      <view class="payout-summary-item">
+        <view class="payout-summary-value">{{pendingReviewCount}}</view>
+        <view class="payout-summary-label">等待确认</view>
+      </view>
+      <view class="payout-summary-item">
+        <view class="payout-summary-value">{{waitingTransferCount}}</view>
+        <view class="payout-summary-label">等待兑现</view>
+      </view>
+      <view class="payout-summary-item">
+        <view class="payout-summary-value">{{completedCount}}</view>
+        <view class="payout-summary-label">已经结束</view>
+      </view>
+    </view>
+
+    <view class="payout-section-heading">
+      <view>
+        <view class="section-kicker">TASKS</view>
+        <view class="section-title payout-section-title">待办处理区</view>
+      </view>
+      <view class="payout-safety-note">线下兑现 · 原生确认</view>
+    </view>
+
+    <view wx:if="{{withdrawals.length}}" class="payout-task-list">
+      <view wx:for="{{withdrawals}}" wx:key="id" class="payout-task-card card payout-task-{{item.statusTone}}">
+        <view class="payout-task-heading">
+          <view class="payout-task-icon">{{item.requestNumber}}</view>
+          <view class="payout-task-copy">
+            <view class="payout-task-name">心愿金申请</view>
+            <view class="muted tiny">提交于 {{item.createdDateText}}</view>
+          </view>
+          <view class="payout-status-badge payout-status-{{item.statusTone}}">{{item.statusText}}</view>
+        </view>
+
+        <view class="payout-request-context">
+          <view>
+            <view class="payout-context-label">她想实现的小心愿</view>
+            <view class="payout-request-note">{{item.requestNote}}</view>
+          </view>
+          <view class="payout-amount-block">
+            <view class="payout-amount">¥{{item.amountText}}</view>
+            <view class="muted tiny">{{item.statusHint}}</view>
+          </view>
+        </view>
+
+        <view wx:if="{{item.status === 'pending_review'}}" class="payout-action-panel">
+          <view class="payout-action-title">回应这份申请</view>
+          <view class="muted small">同意后金额仍保持冻结，完成线下兑现后还需再次确认。</view>
+          <view class="payout-field">
+            <view class="label">退回原因（退回时必填）</view>
+            <textarea
+              class="textarea compact-textarea"
+              maxlength="200"
+              disabled="{{processingWithdrawalId}}"
+              data-id="{{item.id}}"
+              placeholder="请写一句温柔说明，退回也要留痕。"
+              aria-label="填写{{item.amountText}}元心愿金申请的退回原因"
+              bindinput="onReasonInput"
+            ></textarea>
+          </view>
+          <view class="payout-decision-grid">
+            <button
+              class="primary-btn payout-approve-button"
+              data-id="{{item.id}}"
+              loading="{{processingWithdrawalId === item.id && processingAction === 'approve'}}"
+              disabled="{{processingWithdrawalId}}"
+              aria-label="通过{{item.amountText}}元心愿金申请"
+              bindtap="approve"
+            >立即同意</button>
+            <button
+              class="danger-btn payout-reject-button"
+              data-id="{{item.id}}"
+              loading="{{processingWithdrawalId === item.id && processingAction === 'reject'}}"
+              disabled="{{processingWithdrawalId}}"
+              aria-label="退回{{item.amountText}}元心愿金申请到余额"
+              bindtap="reject"
+            >温柔退回</button>
+          </view>
+        </view>
+
+        <view wx:if="{{item.status === 'approved_waiting_transfer'}}" class="payout-action-panel payout-transfer-panel">
+          <view class="payout-action-title">完成线下兑现</view>
+          <view class="muted small">这里不会发起平台付款。请在线下完成后填写真实备注，再进行不可撤销的确认。</view>
+          <view class="payout-field">
+            <view class="label">手动兑现备注（必填）</view>
+            <textarea
+              class="textarea compact-textarea"
+              maxlength="200"
+              disabled="{{processingWithdrawalId}}"
+              data-id="{{item.id}}"
+              placeholder="例如：已于今晚通过微信转账兑现。"
+              aria-label="填写{{item.amountText}}元心愿金的手动兑现备注"
+              bindinput="onTransferNoteInput"
+            ></textarea>
+          </view>
+          <button
+            class="primary-btn payout-paid-button"
+            data-id="{{item.id}}"
+            loading="{{processingWithdrawalId === item.id && processingAction === 'mark_paid'}}"
+            disabled="{{processingWithdrawalId}}"
+            aria-label="确认{{item.amountText}}元心愿金已手动兑现"
+            bindtap="markPaid"
+          >我已手动兑现</button>
+        </view>
+
+        <view wx:if="{{item.status === 'paid' || item.status === 'rejected'}}" class="payout-complete-panel">
+          <view class="payout-complete-mark">✓</view>
+          <view>
+            <view class="payout-complete-title">{{item.statusText}}</view>
+            <view class="muted small">{{item.transferNote || item.rejectReason || '这条心愿金申请已结束。'}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view wx:else class="payout-empty-state">
+      <view class="payout-empty-icon">♡</view>
+      <view class="payout-empty-title">还没有心愿金申请</view>
+      <view class="muted small">她提交新的心愿后，这里会出现一张等待回应的卡片。</view>
+    </view>
+  </block>
+</view>

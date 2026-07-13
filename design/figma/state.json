@@ -1,0 +1,338 @@
+{
+  "fileKey": "cRXdU1LkyMBt8V0RjrEIgo",
+  "fileUrl": "https://www.figma.com/design/cRXdU1LkyMBt8V0RjrEIgo",
+  "planKey": "team::1657388745233345468",
+  "pages": {
+    "00 — System & Library": "0:1",
+    "01 — Product Screens": "4:2",
+    "02 — Delivery & Motion": "4:3"
+  },
+  "components": {
+    "Navigation/TopBar/Default": "8:3",
+    "Navigation/TopBar/Back": "8:6",
+    "Navigation/TopBar/Action": "8:11",
+    "Navigation/TopBar/Ceremony": "8:18",
+    "Navigation/TabBar/Default": "8:25",
+    "Navigation/TabBar/Selected": "8:34",
+    "Navigation/TabBar/Badge": "8:44",
+    "Navigation/WeekSwitcher": "8:57",
+    "Button/Primary/Default": "8:64",
+    "Button/Primary/Pressed": "8:66",
+    "Button/Primary/Loading": "8:68",
+    "Button/Primary/Disabled": "8:71",
+    "Button/Secondary/Default": "8:73",
+    "Button/Tertiary/Default": "8:75",
+    "Button/Danger/Default": "8:77",
+    "Button/Danger/Pressed": "8:79",
+    "Button/Ceremony/Default": "8:81",
+    "Button/Ghost/OnDark": "8:83",
+    "IconButton/Default": "8:86",
+    "IconButton/Pressed": "8:88",
+    "IconButton/Disabled": "8:90",
+    "Documentation/ComponentUsage/Actions": "8:93",
+    "Input/Text/Default": "9:3",
+    "Input/Text/Focus": "9:7",
+    "Input/Text/Filled": "9:12",
+    "Input/Text/Error": "9:16",
+    "Input/Text/Disabled": "9:21",
+    "Input/Number/Default": "9:26",
+    "Input/Textarea/Default": "9:30",
+    "Input/InviteCode/Default": "9:34",
+    "Switch/On": "9:40",
+    "Switch/Off": "9:44",
+    "Stepper/Default": "9:48",
+    "SegmentedControl/Default": "9:54",
+    "FilterChip/Default": "9:58",
+    "FilterChip/Selected": "9:60",
+    "Form/PaperEditor": "9:63",
+    "Card/Garden": "10:3",
+    "Card/Pearl": "10:23",
+    "Card/MidnightCeremony": "10:29",
+    "Card/Amount": "10:35",
+    "Card/Milestone": "10:41",
+    "Card/WeeklyRecap": "10:49",
+    "Identity/CoupleCrest": "10:57",
+    "Card/Checkin": "10:68",
+    "Card/Reward": "10:80",
+    "Card/Redemption": "10:89",
+    "Card/Badge": "10:100",
+    "Editor/Encouragement": "10:106",
+    "Map/GardenNode": "10:114",
+    "Identity/CoupleMonogram": "10:121",
+    "List/LedgerRow": "10:127",
+    "List/TimelineRow": "10:132",
+    "List/RuleRow": "10:137",
+    "Documentation/ComponentUsage/Cards": "10:143",
+    "State/LoadingSkeleton": "11:3",
+    "State/Empty": "11:9",
+    "State/Error": "11:16",
+    "State/Offline": "11:23",
+    "State/PermissionLimited": "11:30",
+    "Status/Stamp/Pending": "11:38",
+    "Status/Stamp/Approved": "11:40",
+    "Status/Stamp/Returned": "11:42",
+    "Status/Stamp/PayoutPending": "11:44",
+    "Status/Stamp/Paid": "11:46",
+    "Status/Stamp/Cancelled": "11:48",
+    "Dialog/LoveConfirm": "11:51",
+    "Toast": "11:61",
+    "InlineNotice": "11:66",
+    "CelebrationLayer": "11:70",
+    "Documentation/ComponentUsage/Feedback": "11:76",
+    "Mobile/TopBar/Default": "12:2",
+    "Mobile/TopBar/Back": "12:5",
+    "Mobile/TabBar/Default": "12:10",
+    "Mobile/Button/Primary": "12:19",
+    "Mobile/Button/Secondary": "12:21",
+    "Mobile/Status/Pending": "12:23",
+    "Mobile/Status/Approved": "12:25",
+    "Mobile/Status/Returned": "12:27",
+    "Mobile/Card/Hero": "12:29",
+    "Mobile/Card/Notice": "12:36",
+    "Mobile/Card/Metric": "12:40",
+    "Mobile/Input/Default": "12:43"
+  },
+  "screens": {
+    "Screen/01-Bind/Default/390": "13:3",
+    "Screen/02-Home/Girlfriend/Default/390": "13:34",
+    "Screen/04-Checkin/Default/390": "13:78",
+    "Screen/06-History/Default/390": "13:119"
+  },
+  "dialogs": {},
+  "states": {},
+  "responsive": {},
+  "motion": {},
+  "verification": {
+    "status": "in_progress",
+    "lastSuccessfulPhase": "03-core-girlfriend",
+    "blockedPhase": "04-rewards-garden",
+    "blocker": "Figma MCP Starter-plan tool-call limit reached before script execution; no reward/garden nodes were written by the failed call.",
+    "physicalPageCount": 3,
+    "semanticSectionCount": 11,
+    "variableCollectionCount": 5,
+    "textStyleCount": 8,
+    "effectStyleCount": 3,
+    "componentRootCount": 83,
+    "coreScreenCount": 4,
+    "businessFrameCount": 4,
+    "targets": {
+      "physicalPages": 3,
+      "semanticSections": 11,
+      "businessFrames": 46,
+      "coreScreens": 22,
+      "dialogs": 8,
+      "states": 8,
+      "responsive": 6,
+      "motion": 2,
+      "minimumComponents": 30
+    },
+    "screenshots": {
+      "cover": "outputs/figma/2026-07-10/cover.png",
+      "foundationsColor": "outputs/figma/2026-07-10/foundations-color.png",
+      "foundationsPrinciples": "outputs/figma/2026-07-10/foundations-principles.png"
+    },
+    "visualReview": "pending: current model cannot inspect raster image content; files were verified as valid PNGs only.",
+    "sensitiveOutputRedacted": true
+  },
+  "schemaVersion": 2,
+  "updatedAt": "2026-07-10T00:00:00+08:00",
+  "fileName": "Jardin des Vœux｜心动能量树私人版 V2｜全量高保真",
+  "starterPlanLayout": {
+    "physicalPageLimit": 3,
+    "physicalPages": {
+      "00 — System & Library": "0:1",
+      "01 — Product Screens": "4:2",
+      "02 — Delivery & Motion": "4:3"
+    },
+    "semanticSections": {
+      "00 — Cover & Index": "5:2",
+      "01 — Foundations": "5:3",
+      "02 — Components": "5:4",
+      "03 — Core / Girlfriend": "5:5",
+      "04 — Core / Boyfriend": "5:6",
+      "05 — Rewards & Garden": "5:7",
+      "06 — Sponsor Operations": "5:8",
+      "07 — Profile & Weekly Recap": "5:9",
+      "08 — Dialogs & States": "5:10",
+      "09 — Responsive & Motion": "5:11",
+      "10 — Handoff Notes": "5:12"
+    },
+    "note": "Starter plan only permits 3 physical pages; the approved 11-page information architecture is preserved as 11 named Sections."
+  },
+  "sections": {
+    "00 — Cover & Index": "5:2",
+    "01 — Foundations": "5:3",
+    "02 — Components": "5:4",
+    "03 — Core / Girlfriend": "5:5",
+    "04 — Core / Boyfriend": "5:6",
+    "05 — Rewards & Garden": "5:7",
+    "06 — Sponsor Operations": "5:8",
+    "07 — Profile & Weekly Recap": "5:9",
+    "08 — Dialogs & States": "5:10",
+    "09 — Responsive & Motion": "5:11",
+    "10 — Handoff Notes": "5:12"
+  },
+  "foundations": {
+    "variables": {
+      "primitives": {
+        "collectionId": "VariableCollectionId:4:4",
+        "variables": {
+          "Cream/Ivory": "VariableID:4:5",
+          "Paper/Parchment": "VariableID:4:6",
+          "Pearl/White": "VariableID:4:7",
+          "Sage/500": "VariableID:4:8",
+          "Forest/700": "VariableID:4:9",
+          "Rose/500": "VariableID:4:10",
+          "Burgundy/700": "VariableID:4:11",
+          "Champagne/500": "VariableID:4:12",
+          "AntiqueGold/600": "VariableID:4:13",
+          "Midnight/900": "VariableID:4:14",
+          "Ink/900": "VariableID:4:15",
+          "Ink/600": "VariableID:4:16",
+          "Line/Soft": "VariableID:4:17",
+          "Success/500": "VariableID:4:18",
+          "Warning/500": "VariableID:4:19",
+          "Error/500": "VariableID:4:20"
+        }
+      },
+      "semantic": {
+        "collectionId": "VariableCollectionId:4:21",
+        "variables": {
+          "Surface/App": "VariableID:4:22",
+          "Surface/Card": "VariableID:4:23",
+          "Surface/Subtle": "VariableID:4:24",
+          "Surface/Ceremony": "VariableID:4:25",
+          "Text/Primary": "VariableID:4:26",
+          "Text/Secondary": "VariableID:4:27",
+          "Text/OnDark": "VariableID:4:28",
+          "Border/Default": "VariableID:4:29",
+          "Border/Strong": "VariableID:4:30",
+          "Action/Primary": "VariableID:4:31",
+          "Action/Secondary": "VariableID:4:32",
+          "Action/Danger": "VariableID:4:33",
+          "Accent/Gold": "VariableID:4:34",
+          "Status/Success": "VariableID:4:35",
+          "Status/Warning": "VariableID:4:36",
+          "Status/Error": "VariableID:4:37"
+        }
+      },
+      "spacing": {
+        "collectionId": "VariableCollectionId:4:38",
+        "variables": {
+          "0": "VariableID:4:39",
+          "2": "VariableID:4:40",
+          "4": "VariableID:4:41",
+          "6": "VariableID:4:42",
+          "8": "VariableID:4:43",
+          "10": "VariableID:4:44",
+          "12": "VariableID:4:45",
+          "16": "VariableID:4:46",
+          "20": "VariableID:4:47",
+          "24": "VariableID:4:48",
+          "28": "VariableID:4:49",
+          "32": "VariableID:4:50",
+          "40": "VariableID:4:51",
+          "48": "VariableID:4:52",
+          "64": "VariableID:4:53"
+        }
+      },
+      "radius": {
+        "collectionId": "VariableCollectionId:4:54",
+        "variables": {
+          "None": "VariableID:4:55",
+          "XS": "VariableID:4:56",
+          "SM": "VariableID:4:57",
+          "MD": "VariableID:4:58",
+          "LG": "VariableID:4:59",
+          "XL": "VariableID:4:60",
+          "Pill": "VariableID:4:61"
+        }
+      },
+      "motion": {
+        "collectionId": "VariableCollectionId:4:62",
+        "variables": {
+          "Duration/Press": "VariableID:4:63",
+          "Duration/Feedback": "VariableID:4:64",
+          "Duration/Enter": "VariableID:4:65",
+          "Duration/Ceremony": "VariableID:4:66",
+          "Stagger/Group": "VariableID:4:67",
+          "Stagger/Max": "VariableID:4:68",
+          "Scale/Pressed": "VariableID:4:69"
+        }
+      }
+    },
+    "styles": {
+      "paint": {
+        "Surface/Cream": "S:f40079bc6e409a59d4097bb3069a65ce4afa845d,",
+        "Surface/Parchment": "S:873b755f9bb2f5c7d9537a8759877e43a5a63d77,",
+        "Surface/Pearl": "S:402b038e7e92d31124eab5d71054da65d9a1a6c5,",
+        "Accent/Forest": "S:52da3063b31b816b3f415adcd23cf9d0f977e3ee,",
+        "Accent/Rose": "S:7259869f0f543f58c0751ce894a18c45182f0238,",
+        "Accent/Champagne": "S:d340476ef490cf0db87c2ea1f1db9dd11f0760da,",
+        "Ceremony/Midnight": "S:75777f9283bebb48b8734a192829dda9a69b580e,"
+      },
+      "text": {
+        "Display/Latin Hero": "S:f4312afd81729cb54d05bdc596cb21dd832b4070,",
+        "Display/Chinese Hero": "S:ccf4c4359801515593296a27a3c4924c102b479d,",
+        "Heading/H1": "S:707a785a7a769c85bb9a489834ba7b9f08f9cb64,",
+        "Heading/H2": "S:d27b3ffc78c8fb40caee22c3bf7412dfe90b286f,",
+        "Body/Emphasis": "S:d07efe090901ad3d83b46e4db146b06aa6dd1099,",
+        "Body/Default": "S:059381fad04c2f19c6c1c1c2e49eea6e701e459d,",
+        "Caption/Label": "S:b1a4d74876507f6b94103494c113891ff9f6ea9a,",
+        "Numeric/Metric": "S:e8bea1ff7aff6e98a8522f02a98590d532de69d3,"
+      },
+      "effect": {
+        "Effect/Paper Lift": "S:ca82be3e948af1619115a188826f32d7cba4e6b4,",
+        "Effect/Floating Card": "S:66a9821e85d09287ff0478901c4e3e3dcf00473b,",
+        "Effect/Gold Glow": "S:e20e303f2760b443013a1554610657ecb52ba71a,"
+      }
+    },
+    "fonts": {
+      "body": "Noto Sans SC",
+      "chineseDisplay": "Noto Serif SC",
+      "latinDisplay": "Cormorant Garamond",
+      "numeric": "Inter"
+    },
+    "boards": {
+      "Documentation/00-Cover": "6:2",
+      "Documentation/01-Color": "6:84",
+      "Documentation/02-Type": "6:85",
+      "Documentation/03-LayoutMotion": "6:86",
+      "Documentation/04-Principles": "6:87"
+    }
+  },
+  "componentBoards": {
+    "Library/00-Navigation-Actions": "7:2",
+    "Library/01-Inputs-Controls": "7:7",
+    "Library/02-Cards-Content": "7:12",
+    "Library/03-States-Feedback": "7:17"
+  },
+  "documentation": {
+    "Documentation/GirlfriendFlow": "13:170"
+  },
+  "localVerification": {
+    "date": "2026-07-10",
+    "figmaScriptCompile": "03-11 pass",
+    "figmaAutomationTests": "3/3 pass",
+    "projectTests": "104/104 pass",
+    "bridgeRegressionTests": "2/2 pass"
+  },
+  "mcpStatus": {
+    "date": "2026-07-10",
+    "probeTool": "get_metadata",
+    "probeNodeId": "0:1",
+    "result": "starter_plan_tool_call_limit_reached",
+    "writesAttemptedAfterProbe": false,
+    "nextAction": "wait for Figma MCP quota recovery or upgrade the existing team plan",
+    "pendingScripts": [
+      "04-rewards-garden.js",
+      "05-core-boyfriend.js",
+      "06-sponsor-operations.js",
+      "07-profile-recap.js",
+      "08-dialogs-states.js",
+      "09-responsive-motion.js",
+      "10-prototype-handoff.js",
+      "11-validate.js"
+    ]
+  }
+}

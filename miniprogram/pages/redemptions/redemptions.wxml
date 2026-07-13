@@ -1,0 +1,112 @@
+<view class="page redemption-library-page">
+  <state-panel
+    wx:if="{{loading}}"
+    state="loading"
+    title="正在整理两个人的兑现约定"
+    description="把每一份期待都放回它该在的位置。"
+  ></state-panel>
+
+  <state-panel
+    wx:elif="{{errorMessage}}"
+    state="error"
+    title="兑换记录暂时打不开"
+    description="{{errorMessage}}"
+    bindretry="retryLoad"
+  ></state-panel>
+
+  <block wx:else>
+    <view class="redemption-library-header">
+      <view class="redemption-header-copy">
+        <text class="redemption-eyebrow">GIFT ARCHIVE</text>
+        <view class="redemption-header-title">我们的礼物盒</view>
+        <view class="redemption-header-description">每一张兑换券，都是留给彼此的一件小事。</view>
+      </view>
+      <view class="redemption-header-mark" aria-hidden="true">
+        <view class="redemption-ribbon redemption-ribbon-left"></view>
+        <view class="redemption-ribbon redemption-ribbon-right"></view>
+        <view class="redemption-gift-lid"></view>
+        <view class="redemption-gift-box"></view>
+      </view>
+      <view class="redemption-summary-strip">
+        <view class="redemption-summary-item">
+          <text class="redemption-summary-number">{{redemptions.length}}</text>
+          <text class="redemption-summary-label">全部礼物</text>
+        </view>
+        <view class="redemption-summary-divider"></view>
+        <view class="redemption-summary-item">
+          <text class="redemption-summary-number">{{pendingCount}}</text>
+          <text class="redemption-summary-label">等待兑现</text>
+        </view>
+        <view class="redemption-summary-divider"></view>
+        <view class="redemption-summary-item">
+          <text class="redemption-summary-number">{{completedCount}}</text>
+          <text class="redemption-summary-label">已经完成</text>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{redemptions.length}}" class="redemption-list">
+      <view wx:for="{{redemptions}}" wx:key="id" class="redemption-voucher-card">
+        <view class="redemption-voucher-main">
+          <image class="redemption-voucher-image" src="{{item.displayImageSrc}}" mode="aspectFill"></image>
+          <view class="redemption-voucher-copy">
+            <view class="redemption-voucher-topline">
+              <text class="redemption-category">{{item.category || '专属礼物'}}</text>
+              <text class="redemption-status-badge status-{{item.statusTone}}">{{item.statusText}}</text>
+            </view>
+            <view class="redemption-title">{{item.rewardName}}</view>
+            <view class="redemption-price-row">
+              <text class="redemption-coin">◉</text>
+              <text class="redemption-price">{{item.costText}}</text>
+              <text class="redemption-date">兑换于 {{item.redeemedDateText}}</text>
+            </view>
+          </view>
+        </view>
+
+        <view wx:if="{{item.rewardDescription}}" class="redemption-description">{{item.rewardDescription}}</view>
+
+        <view wx:if="{{dashboard.currentRole === 'participant' && item.status === 'pending'}}" class="redemption-action-panel">
+          <view class="redemption-action-heading">暂时不想兑换？</view>
+          <view class="redemption-action-hint">写下原因后提交，等待陪伴者确认退款。</view>
+          <textarea class="textarea redemption-note" maxlength="200" disabled="{{processingRedemptionId}}" data-id="{{item.id}}" placeholder="取消原因，例如：想先留着能量币。" bindinput="onNoteInput"></textarea>
+          <button class="secondary-btn redemption-action-button" data-id="{{item.id}}" loading="{{processingRedemptionId === item.id && processingAction === 'request_cancel'}}" disabled="{{processingRedemptionId}}" aria-label="申请取消兑换{{item.rewardName}}" bindtap="requestCancel">{{processingRedemptionId === item.id ? '正在提交…' : '申请取消兑换'}}</button>
+        </view>
+
+        <view wx:if="{{dashboard.currentRole === 'sponsor' && item.status === 'pending'}}" class="redemption-action-panel">
+          <view class="redemption-action-heading">兑现这份约定</view>
+          <view class="redemption-action-hint">确认奖励已经在线下完成，再为这张券盖章。</view>
+          <textarea class="textarea redemption-note" maxlength="200" disabled="{{processingRedemptionId}}" data-id="{{item.id}}" placeholder="核销备注，例如：已经兑现啦。" bindinput="onNoteInput"></textarea>
+          <button class="primary-btn redemption-action-button" data-id="{{item.id}}" loading="{{processingRedemptionId === item.id && processingAction === 'verify'}}" disabled="{{processingRedemptionId}}" aria-label="确认{{item.rewardName}}已线下兑现并核销" bindtap="verify">{{processingRedemptionId === item.id ? '正在核销…' : '线下已兑现，确认核销'}}</button>
+        </view>
+
+        <view wx:if="{{dashboard.currentRole === 'sponsor' && item.status === 'cancel_requested'}}" class="redemption-action-panel">
+          <view class="redemption-action-heading">处理取消申请</view>
+          <view class="redemption-action-hint">同意后退回能量币；拒绝后兑换券恢复为待使用。</view>
+          <textarea class="textarea redemption-note" maxlength="200" disabled="{{processingRedemptionId}}" data-id="{{item.id}}" placeholder="处理备注，退款或拒绝都需要填写。" bindinput="onNoteInput"></textarea>
+          <view class="redemption-action-grid">
+            <button class="primary-btn redemption-action-button" data-id="{{item.id}}" loading="{{processingRedemptionId === item.id && processingAction === 'approve_cancel'}}" disabled="{{processingRedemptionId}}" aria-label="同意取消{{item.rewardName}}并退回能量币" bindtap="approveCancel">同意取消并退款</button>
+            <button class="danger-btn redemption-action-button" data-id="{{item.id}}" loading="{{processingRedemptionId === item.id && processingAction === 'reject_cancel'}}" disabled="{{processingRedemptionId}}" aria-label="拒绝取消{{item.rewardName}}" bindtap="rejectCancel">拒绝取消</button>
+          </view>
+        </view>
+
+        <view wx:if="{{item.verifyNote || item.cancelReason || item.cancelApproveNote || item.cancelRejectReason}}" class="redemption-note-stack">
+          <view wx:if="{{item.verifyNote}}" class="redemption-history-note">兑现备注：{{item.verifyNote}}</view>
+          <view wx:if="{{item.cancelReason}}" class="redemption-history-note">取消原因：{{item.cancelReason}}</view>
+          <view wx:if="{{item.cancelApproveNote}}" class="redemption-history-note">退款备注：{{item.cancelApproveNote}}</view>
+          <view wx:if="{{item.cancelRejectReason}}" class="redemption-history-note">拒绝原因：{{item.cancelRejectReason}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view wx:else class="redemption-empty-state">
+      <view class="redemption-empty-gift" aria-hidden="true">
+        <view class="redemption-empty-lid"></view>
+        <view class="redemption-empty-box"></view>
+        <view class="redemption-empty-bow">♡</view>
+      </view>
+      <view class="redemption-empty-title">礼物盒还空着</view>
+      <view class="redemption-empty-description">去礼物商店选一件想和对方一起完成的小事吧。</view>
+      <button class="primary-btn redemption-empty-button" aria-label="前往情侣奖励商店挑选礼物" bindtap="goShop">去礼物商店看看</button>
+    </view>
+  </block>
+</view>

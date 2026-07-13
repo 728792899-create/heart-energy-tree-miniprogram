@@ -1,0 +1,11 @@
+<view class="recap-card {{compact ? 'is-compact' : ''}}" role="button" aria-label="打开每周恋爱运动回顾" bindtap="open">
+  <view class="recap-stamp">WEEKLY LOVE LETTER</view>
+  <view class="recap-title">{{recap ? recap.headline : role === 'sponsor' ? '这周她的努力，也有你的陪伴' : '这一周，也值得被温柔记住'}}</view>
+  <view class="recap-week">{{recap ? recap.weekLabel : '不排名、不比较，只记录一起走过的路。'}}</view>
+  <view wx:if="{{recap}}" class="recap-stats">
+    <view class="recap-stat"><text class="recap-stat-value">{{recap.stats.approvedDays}}</text><text class="recap-stat-label">运动天</text></view>
+    <view class="recap-stat"><text class="recap-stat-value">{{recap.stats.durationMinutes}}</text><text class="recap-stat-label">分钟</text></view>
+    <view class="recap-stat"><text class="recap-stat-value">{{recap.stats.encouragementsReceived}}</text><text class="recap-stat-label">份鼓励</text></view>
+  </view>
+  <view class="recap-link">翻开这封周记 →</view>
+</view>

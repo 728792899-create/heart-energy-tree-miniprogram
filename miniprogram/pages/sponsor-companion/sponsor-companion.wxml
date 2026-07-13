@@ -1,0 +1,178 @@
+<view class="page sponsor-page">
+  <view class="sponsor-manager-header band">
+    <view class="sponsor-manager-profile">
+      <view class="avatar-wrap">
+        <image wx:if="{{detail.companionUser.avatarSrc}}" class="avatar-img" src="{{detail.companionUser.avatarSrc}}" mode="aspectFill"></image>
+        <view wx:else class="avatar-text">{{detail.companionUser.avatarText || '她'}}</view>
+      </view>
+      <view class="sponsor-manager-heading">
+        <view class="eyebrow">花园管理台</view>
+        <view class="companion-title">陪伴 {{detail.companionUser.name || '她'}} 的每一步</view>
+        <view class="muted small">审核、兑现与礼物管理都在这里完成，身份仍由绑定关系决定。</view>
+      </view>
+    </view>
+    <button class="sponsor-settings-button" aria-label="打开陪伴规则设置" bindtap="goRules">
+      <view class="settings-gear" aria-hidden="true">✦</view>
+      <text>规则</text>
+    </button>
+  </view>
+
+  <state-panel
+    wx:if="{{loading}}"
+    state="loading"
+    title="正在整理花园待办…"
+    description="把打卡、心愿金和礼物任务放到同一个管理台。"
+  ></state-panel>
+
+  <state-panel
+    wx:elif="{{errorMessage}}"
+    state="error"
+    title="花园管理台暂时没有打开"
+    description="{{errorMessage}}"
+    bindretry="retryLoad"
+  ></state-panel>
+
+  <block wx:else>
+    <view class="sponsor-manager-tabs" role="navigation" aria-label="花园管理分类">
+      <button class="sponsor-manager-tab active" aria-label="进入打卡审核，待处理{{detail.dashboard.pendingCount}}条" bindtap="goReview">
+        <text>打卡</text>
+        <text class="manager-tab-count">{{detail.dashboard.pendingCount || 0}}</text>
+      </button>
+      <button class="sponsor-manager-tab" aria-label="进入心愿金处理，待处理{{detail.dashboard.waitingPayoutCount}}条" bindtap="goPayouts">
+        <text>心愿金</text>
+        <text class="manager-tab-count">{{detail.dashboard.waitingPayoutCount || 0}}</text>
+      </button>
+      <button class="sponsor-manager-tab" aria-label="进入礼物管理" bindtap="goRewards">
+        <text>礼物</text>
+        <text class="manager-tab-count">{{detail.dashboard.pendingRedemptionCount || 0}}</text>
+      </button>
+    </view>
+
+    <view class="sponsor-task-overview">
+      <view>
+        <view class="section-kicker">今日管理</view>
+        <view class="task-overview-title">{{pendingTaskLabel}}</view>
+      </view>
+      <view class="task-overview-seal {{hasPendingTasks ? 'pending' : 'clear'}}" aria-label="共{{pendingTaskCount}}项待处理">
+        {{pendingTaskCount}}
+      </view>
+    </view>
+
+    <view wx:if="{{detail.dashboard.pendingCount}}" class="sponsor-pending-card card checkin-task-card">
+      <view class="pending-card-heading">
+        <view class="pending-card-icon footprint-icon" aria-hidden="true">✓</view>
+        <view class="pending-card-copy">
+          <view class="pending-card-title">有新的运动打卡等待审核</view>
+          <view class="muted small">先查看记录与照片，再决定通过、调整奖励或退回。</view>
+        </view>
+        <view class="pending-status-badge">待审核 {{detail.dashboard.pendingCount}}</view>
+      </view>
+      <view class="pending-card-summary">
+        <view>
+          <view class="summary-label">陪伴对象</view>
+          <view class="summary-value">{{detail.companionUser.name || '她'}}</view>
+        </view>
+        <view>
+          <view class="summary-label">当前连续</view>
+          <view class="summary-value">{{detail.stats.currentStreak || 0}} 天</view>
+        </view>
+        <view>
+          <view class="summary-label">建议动作</view>
+          <view class="summary-value">逐条确认</view>
+        </view>
+      </view>
+      <view class="sponsor-task-actions">
+        <button class="primary-btn task-primary-action" aria-label="进入打卡审核台" bindtap="goReview">去审核</button>
+        <button class="ghost-btn task-secondary-action" aria-label="查看她的打卡历史" bindtap="goHistory">看历史</button>
+      </view>
+    </view>
+
+    <view wx:if="{{detail.dashboard.waitingPayoutCount}}" class="sponsor-pending-card card fund-task-card">
+      <view class="pending-card-heading">
+        <view class="pending-card-icon fund-icon" aria-hidden="true">¥</view>
+        <view class="pending-card-copy">
+          <view class="pending-card-title">心愿金申请等待处理</view>
+          <view class="muted small">线下兑现后再标记完成；退回会恢复她的可用能量币。</view>
+        </view>
+        <view class="pending-status-badge">待处理 {{detail.dashboard.waitingPayoutCount}}</view>
+      </view>
+      <view class="pending-card-summary fund-summary">
+        <view>
+          <view class="summary-label">可用能量币</view>
+          <view class="summary-value">{{detail.dashboard.relationship.balanceText.availableCoins || 0}} 币</view>
+        </view>
+        <view>
+          <view class="summary-label">待兑现事项</view>
+          <view class="summary-value">{{detail.dashboard.waitingPayoutCount}} 项</view>
+        </view>
+      </view>
+      <view class="sponsor-task-actions">
+        <button class="primary-btn task-primary-action fund-action" aria-label="进入心愿金处理页" bindtap="goPayouts">去处理</button>
+        <button class="ghost-btn task-secondary-action" aria-label="查看她的能量币记录" bindtap="goLedgers">看明细</button>
+      </view>
+      <view class="risk-note">这里只展示待办摘要，确认兑现和退回仍在处理页二次确认。</view>
+    </view>
+
+    <view wx:if="{{!hasPendingTasks}}" class="sponsor-pending-card card sponsor-empty-task">
+      <view class="empty-task-mark" aria-hidden="true">♡</view>
+      <view class="pending-card-title">今天的待办都处理好啦</view>
+      <view class="muted small">可以给她送一份鼓励，或者看看这周共同积累的成长。</view>
+    </view>
+
+    <encouragement-editor
+      templates="{{encouragementTemplates}}"
+      selected-key="{{selectedTemplateKey}}"
+      message="{{customMessage}}"
+      sending="{{sendingEncouragement}}"
+      bindselect="selectEncouragementTemplate"
+      bindinput="onEncouragementInput"
+      bindsend="sendEncouragement"
+    ></encouragement-editor>
+
+    <view class="section-title">她的成长概览</view>
+    <view class="sponsor-insight-grid">
+      <view class="card stat-card">
+        <view class="stat-number">{{detail.stats.totalCheckIns || 0}}</view>
+        <view class="muted small">审核通过</view>
+      </view>
+      <view class="card stat-card">
+        <view class="stat-number">{{detail.stats.currentStreak || 0}}</view>
+        <view class="muted small">当前连续</view>
+      </view>
+      <view class="card stat-card">
+        <view class="stat-number">{{detail.stats.badgeCount || 0}}</view>
+        <view class="muted small">成就数量</view>
+      </view>
+      <view class="card stat-card">
+        <view class="stat-number">{{detail.stats.totalDurationMinutes || 0}}</view>
+        <view class="muted small">累计分钟</view>
+      </view>
+    </view>
+
+    <view class="card tree-card">
+      <view class="row-between">
+        <view>
+          <view class="card-title">{{detail.dashboard.relationship.tree.levelTitle}} Lv.{{detail.dashboard.relationship.tree.level}}</view>
+          <view class="muted small">阳光 {{detail.dashboard.relationship.tree.sunshine}} · 心愿果 {{detail.dashboard.relationship.tree.fruits}}</view>
+        </view>
+        <view class="coin">{{detail.dashboard.relationship.balanceText.availableCoins}}币</view>
+      </view>
+      <view class="progress">
+        <view class="progress-bar" style="width: {{detail.dashboard.relationship.tree.progressPercent}}%;"></view>
+      </view>
+    </view>
+
+    <view class="section-title">查看她的信息</view>
+    <view class="manager-link-grid">
+      <button class="manager-link-card" aria-label="查看她的打卡历史" bindtap="goHistory"><text>打卡历史</text><text>›</text></button>
+      <button class="manager-link-card" aria-label="查看她的成就" bindtap="goBadges"><text>她的成就</text><text>›</text></button>
+      <button class="manager-link-card" aria-label="查看她的能量币记录" bindtap="goLedgers"><text>能量币记录</text><text>›</text></button>
+      <button class="manager-link-card" aria-label="查看她的兑换记录" bindtap="goRedemptions"><text>兑换记录</text><text>›</text></button>
+    </view>
+
+    <button class="weekly-recap-entry" aria-label="查看每周恋爱运动回顾" bindtap="goWeeklyRecap">
+      <text>打开我们的每周恋爱运动回顾</text>
+      <text>›</text>
+    </button>
+  </block>
+</view>

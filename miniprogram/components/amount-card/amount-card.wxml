@@ -1,0 +1,8 @@
+<view class="amount-card tone-{{tone}}">
+  <view class="amount-label">{{label}}</view>
+  <view class="amount-row">
+    <text class="amount-value">{{value}}</text>
+    <text class="amount-unit">{{unit}}</text>
+  </view>
+  <view wx:if="{{caption}}" class="amount-caption">{{caption}}</view>
+</view>

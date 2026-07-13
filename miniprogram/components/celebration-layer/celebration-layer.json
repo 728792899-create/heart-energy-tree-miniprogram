@@ -1,0 +1,6 @@
+{
+  "component": true,
+  "usingComponents": {
+    "motion-scene": "/components/motion-scene/motion-scene"
+  }
+}

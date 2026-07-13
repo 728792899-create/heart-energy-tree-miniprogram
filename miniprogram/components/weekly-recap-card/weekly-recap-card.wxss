@@ -1,0 +1,86 @@
+.recap-card {
+  position: relative;
+  overflow: hidden;
+  padding: 30rpx;
+  border: 1rpx solid rgba(183, 68, 101, 0.16);
+  border-radius: 30rpx;
+  background: linear-gradient(150deg, #fffdf9, #f8e6ec);
+  box-shadow: 0 16rpx 38rpx rgba(125, 47, 73, 0.07);
+}
+
+.recap-card::after {
+  content: "LOVE";
+  position: absolute;
+  right: -16rpx;
+  bottom: -6rpx;
+  transform: rotate(-8deg);
+  color: rgba(183, 68, 101, 0.055);
+  font-size: 86rpx;
+  font-weight: 900;
+}
+
+.recap-stamp {
+  display: inline-flex;
+  min-height: 40rpx;
+  align-items: center;
+  padding: 0 14rpx;
+  border: 2rpx solid rgba(183, 68, 101, 0.35);
+  border-radius: 8rpx;
+  color: #7d2f49;
+  font-size: 18rpx;
+  font-weight: 900;
+  letter-spacing: 2rpx;
+}
+
+.recap-title {
+  margin-top: 18rpx;
+  color: #7d2f49;
+  font-size: 31rpx;
+  font-weight: 900;
+  line-height: 1.35;
+}
+
+.recap-week {
+  margin-top: 8rpx;
+  color: #7b6970;
+  font-size: 22rpx;
+  line-height: 1.55;
+}
+
+.recap-stats {
+  position: relative;
+  z-index: 1;
+  margin-top: 22rpx;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12rpx;
+}
+
+.recap-stat {
+  padding: 16rpx 8rpx;
+  border-radius: 20rpx;
+  text-align: center;
+  background: rgba(255, 249, 245, 0.78);
+}
+
+.recap-stat-label {
+  display: block;
+  color: #7b6970;
+  font-size: 19rpx;
+}
+
+.recap-stat-value {
+  margin-bottom: 4rpx;
+  color: #b74465;
+  font-size: 30rpx;
+  font-weight: 900;
+}
+
+.recap-link {
+  position: relative;
+  z-index: 1;
+  margin-top: 20rpx;
+  color: #b74465;
+  font-size: 23rpx;
+  font-weight: 800;
+}

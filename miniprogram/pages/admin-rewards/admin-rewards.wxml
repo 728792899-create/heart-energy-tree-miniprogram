@@ -1,0 +1,150 @@
+<view class="page rewards-admin-page">
+  <state-panel
+    wx:if="{{loading}}"
+    state="loading"
+    title="正在整理情侣礼物货架"
+    description="把值得期待的小礼物一件件摆好。"
+  ></state-panel>
+
+  <state-panel
+    wx:elif="{{errorMessage}}"
+    state="error"
+    title="奖品管理页暂时打不开"
+    description="{{errorMessage}}"
+    bindretry="retryLoad"
+  ></state-panel>
+
+  <block wx:else>
+    <view class="admin-rewards-header">
+      <view>
+        <view class="eyebrow">GIFT SHOP MANAGER</view>
+        <view class="admin-rewards-title">奖品管理</view>
+        <view class="muted small">把每一份期待放进共同的礼物货架</view>
+      </view>
+      <button class="admin-rules-link" aria-label="打开奖励规则设置" bindtap="goRules">规则</button>
+    </view>
+
+    <view class="reward-library-summary">
+      <view class="reward-summary-copy">
+        <view class="section-kicker">YOUR REWARDS</view>
+        <view class="reward-summary-title">当前有 {{items.length}} 份奖励</view>
+        <view class="muted small">上架中的奖励会出现在参与者商店；下架不会删除既有兑换记录。</view>
+      </view>
+      <view class="reward-summary-stats">
+        <view class="reward-summary-stat">
+          <view class="reward-summary-value">{{activeRewardCount}}</view>
+          <view class="reward-summary-label">上架中</view>
+        </view>
+        <view class="reward-summary-stat">
+          <view class="reward-summary-value">{{inactiveRewardCount}}</view>
+          <view class="reward-summary-label">已下架</view>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{formVisible}}" id="reward-editor" class="reward-editor-sheet card">
+      <view class="reward-editor-handle"></view>
+      <view class="reward-editor-heading">
+        <view>
+          <view class="section-kicker">{{editingId ? 'EDIT REWARD' : 'NEW REWARD'}}</view>
+          <view class="reward-editor-title">{{editingId ? '修改这份小奖励' : '新增一份小期待'}}</view>
+        </view>
+        <button class="reward-editor-close" disabled="{{saving || processingRewardId}}" aria-label="关闭奖品编辑表单" bindtap="closeEditor">×</button>
+      </view>
+
+      <button class="reward-image-picker" disabled="{{saving || processingRewardId}}" aria-label="选择奖品图片" bindtap="chooseImage">
+        <image wx:if="{{imagePreview}}" class="reward-preview" src="{{imagePreview}}" mode="aspectFill"></image>
+        <view wx:else class="reward-image-empty">
+          <image class="reward-image-empty-asset" src="/assets/stitch-original/redemption-gift.jpg" mode="aspectFill"></image>
+          <view class="reward-image-overlay">
+            <view class="reward-image-plus">＋</view>
+            <view class="reward-image-label">添加奖品图片</view>
+          </view>
+        </view>
+      </button>
+
+      <view class="reward-form-field">
+        <view class="label">奖品名称</view>
+        <input class="input" disabled="{{saving}}" value="{{name}}" data-field="name" placeholder="例如：周末野餐券" bindinput="onInput" />
+      </view>
+
+      <view class="reward-form-field">
+        <view class="label">介绍</view>
+        <textarea class="textarea" maxlength="200" disabled="{{saving}}" value="{{description}}" data-field="description" placeholder="写清楚怎么兑现，让她一看就有期待。" bindinput="onInput"></textarea>
+      </view>
+
+      <view class="reward-form-grid">
+        <view>
+          <view class="label">价格</view>
+          <input class="input" type="digit" disabled="{{saving}}" value="{{priceYuan}}" data-field="priceYuan" placeholder="例如 15" bindinput="onInput" />
+        </view>
+        <view>
+          <view class="label">库存</view>
+          <input class="input" type="number" disabled="{{saving}}" value="{{stock}}" data-field="stock" placeholder="-1 不限" bindinput="onInput" />
+        </view>
+      </view>
+
+      <view class="reward-form-field">
+        <view class="label">分类</view>
+        <picker mode="selector" range="{{categories}}" range-key="label" value="{{categoryIndex}}" disabled="{{saving}}" bindchange="onCategoryChange">
+          <view class="reward-picker-field">{{categories[categoryIndex].label}}</view>
+        </picker>
+      </view>
+
+      <view class="reward-form-actions">
+        <button class="ghost-btn" disabled="{{saving || processingRewardId}}" aria-label="取消编辑奖品" bindtap="closeEditor">取消</button>
+        <button class="primary-btn" loading="{{saving}}" disabled="{{saving || processingRewardId}}" aria-label="{{editingId ? '保存奖品修改' : '新增奖品到商店'}}" bindtap="save">{{saving ? '正在保存…' : editingId ? '保存修改' : '新增到商店'}}</button>
+      </view>
+    </view>
+
+    <view class="reward-list-heading">
+      <view>
+        <view class="section-kicker">CATALOG</view>
+        <view class="section-title reward-list-title">礼物货架</view>
+      </view>
+      <view class="muted tiny">编辑、上下架或安全删除</view>
+    </view>
+
+    <view wx:if="{{items.length}}" class="reward-admin-list">
+      <view wx:for="{{items}}" wx:key="id" class="reward-admin-card card">
+        <view class="reward-admin-main">
+          <view class="reward-admin-media" style="background: {{item.imageTone}};">
+            <image class="reward-admin-thumb" src="{{item.displayImageSrc}}" mode="aspectFill"></image>
+          </view>
+          <view class="reward-admin-info">
+            <view class="reward-admin-topline">
+              <view>
+                <view class="reward-admin-name">{{item.name}}</view>
+                <view class="reward-admin-price">✦ {{item.priceText}} 能量币</view>
+              </view>
+              <button
+                class="reward-status-switch reward-status-{{item.statusTone}}"
+                data-id="{{item.id}}"
+                disabled="{{processingRewardId}}"
+                aria-label="{{item.isActive ? '下架奖品' + item.name : '上架奖品' + item.name}}"
+                bindtap="toggle"
+              >
+                <view class="reward-switch-knob"></view>
+              </button>
+            </view>
+            <view class="reward-admin-meta">{{item.categoryLabel}} · {{item.statusText}}</view>
+            <view class="reward-admin-description">{{item.description || '一份值得期待的小奖励。'}}</view>
+          </view>
+        </view>
+        <view class="reward-admin-actions">
+          <button class="reward-edit-action" data-id="{{item.id}}" disabled="{{processingRewardId}}" aria-label="编辑奖品{{item.name}}" bindtap="edit">✎ 编辑</button>
+          <button class="reward-delete-action" data-id="{{item.id}}" disabled="{{processingRewardId}}" aria-label="删除奖品{{item.name}}" bindtap="delete">{{processingRewardId === item.id ? '处理中…' : '♧ 删除'}}</button>
+        </view>
+      </view>
+    </view>
+
+    <view wx:else class="reward-empty-state">
+      <view class="reward-empty-icon">＋</view>
+      <view class="reward-empty-title">还没有添加奖励</view>
+      <view class="muted small">创建一份奖励，让共同成长多一点期待。</view>
+      <button class="primary-btn reward-empty-action" aria-label="创建第一份奖励" bindtap="openCreate">创建第一份奖励</button>
+    </view>
+
+    <button class="reward-floating-add" disabled="{{saving || processingRewardId}}" aria-label="新增奖品" bindtap="openCreate">＋</button>
+  </block>
+</view>

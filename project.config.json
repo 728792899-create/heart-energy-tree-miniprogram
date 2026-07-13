@@ -1,0 +1,82 @@
+{
+  "description": "运动能量树微信小程序",
+  "packOptions": {
+    "ignore": [
+      {
+        "type": "file",
+        "value": "assets/generated/map-garden.jpg"
+      },
+      {
+        "type": "file",
+        "value": "assets/generated/couple-jump.png"
+      },
+      {
+        "type": "file",
+        "value": "assets/generated/couple-stand.png"
+      },
+      {
+        "type": "file",
+        "value": "assets/generated/particle-coin.png"
+      },
+      {
+        "type": "file",
+        "value": "assets/generated/particle-heart.png"
+      },
+      {
+        "type": "file",
+        "value": "assets/generated/particle-petal.png"
+      },
+      {
+        "type": "file",
+        "value": "assets/generated/particle-star.png"
+      },
+      {
+        "type": "file",
+        "value": "assets/stitch-original/participant-avatar.jpg"
+      },
+      {
+        "type": "file",
+        "value": "assets/stitch-original/profile-couple.jpg"
+      },
+      {
+        "type": "file",
+        "value": "assets/stitch-original/profile-cover.jpg"
+      }
+    ],
+    "include": []
+  },
+  "setting": {
+    "urlCheck": false,
+    "es6": true,
+    "postcss": true,
+    "minified": true,
+    "enhance": true,
+    "compileWorklet": false,
+    "uglifyFileName": false,
+    "uploadWithSourceMap": false,
+    "packNpmManually": false,
+    "packNpmRelationList": [],
+    "minifyWXSS": true,
+    "minifyWXML": true,
+    "localPlugins": false,
+    "disableUseStrict": false,
+    "useCompilerPlugins": false,
+    "condition": false,
+    "swc": false,
+    "disableSWC": true,
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    }
+  },
+  "compileType": "miniprogram",
+  "libVersion": "3.6.6",
+  "appid": "wxce9c3ccdb34edd43",
+  "projectname": "energy-tree-miniprogram",
+  "miniprogramRoot": "miniprogram/",
+  "cloudfunctionRoot": "cloudfunctions/",
+  "condition": {},
+  "simulatorPluginLibVersion": {},
+  "editorSetting": {}
+}

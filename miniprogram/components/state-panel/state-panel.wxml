@@ -1,0 +1,12 @@
+<view class="state-panel state-{{state}}" role="status" aria-label="{{state === 'loading' ? '加载中' : state === 'error' ? '加载失败' : '暂无内容'}}">
+  <view wx:if="{{state === 'loading'}}" class="state-art loading-art">
+    <view class="heart heart-one">♥</view>
+    <view class="heart heart-two">♥</view>
+    <view class="envelope">✉</view>
+  </view>
+  <view wx:elif="{{state === 'error'}}" class="state-art">🩹</view>
+  <view wx:else class="state-art">💌</view>
+  <view class="state-title">{{title || (state === 'loading' ? '正在把两个人的故事取回来…' : state === 'error' ? '刚才的小信号走丢了' : '这里会慢慢装满你们的故事')}}</view>
+  <view class="state-description">{{description || (state === 'loading' ? '加载中，请稍等一下。' : state === 'error' ? '不用着急，重新加载就好。' : '空白不是落后，是下一段心动的起点。')}}</view>
+  <button wx:if="{{state === 'error' && showAction}}" class="retry-button" aria-label="重新加载当前页面" bindtap="retry">{{actionText || '重新加载'}}</button>
+</view>

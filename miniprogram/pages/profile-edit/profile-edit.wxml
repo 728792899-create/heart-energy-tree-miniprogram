@@ -1,0 +1,71 @@
+<view class="page edit-page">
+  <view class="profile-edit-sheet">
+    <view class="profile-sheet-heading">
+      <view>
+        <view class="profile-sheet-kicker">个人资料</view>
+        <view class="profile-sheet-title">编辑个人资料</view>
+      </view>
+      <button class="profile-edit-close" disabled="{{saving}}" aria-label="关闭资料编辑页" bindtap="cancel">×</button>
+    </view>
+
+    <view class="profile-avatar-editor">
+      <button class="avatar-picker" disabled="{{saving}}" open-type="chooseAvatar" aria-label="选择微信头像" bindchooseavatar="onChooseAvatar">
+        <image wx:if="{{avatarPreview}}" class="avatar-img" src="{{avatarPreview}}" mode="aspectFill"></image>
+        <view wx:else class="avatar-text">{{dashboard.currentUser.avatarText}}</view>
+        <view class="avatar-camera-mark" aria-hidden="true"></view>
+      </button>
+      <view class="profile-avatar-copy">
+        <view class="profile-avatar-title">换一张今天喜欢的头像</view>
+        <view class="muted small">可以直接使用微信头像，也可以从相册或相机选择。</view>
+      </view>
+    </view>
+
+    <view class="profile-avatar-actions">
+      <button class="secondary-btn avatar-action" disabled="{{saving}}" open-type="chooseAvatar" aria-label="使用微信头像" bindchooseavatar="onChooseAvatar">使用微信头像</button>
+      <button class="ghost-btn avatar-action" disabled="{{saving}}" aria-label="从相册或相机选择头像" bindtap="chooseAvatarImage">从相册选择</button>
+    </view>
+
+    <view class="profile-form-block">
+      <view class="label-row">
+        <view class="label">昵称</view>
+        <view class="muted small">最多 12 个字</view>
+      </view>
+      <input class="input profile-name-input" maxlength="12" disabled="{{saving}}" value="{{name}}" aria-label="编辑个人昵称" bindinput="onNameInput" placeholder="输入你在花园里的昵称" />
+    </view>
+
+    <view class="profile-form-block">
+      <view class="label-row">
+        <view class="label">角色称呼</view>
+        <view class="muted small">由绑定关系决定</view>
+      </view>
+      <view class="profile-role-display">
+        <view class="profile-role-option {{dashboard.currentRole === 'sponsor' ? 'is-active' : ''}}">
+          <view class="profile-role-icon profile-role-leaf" aria-hidden="true"></view>
+          <view>陪伴者</view>
+        </view>
+        <view class="profile-role-option {{dashboard.currentRole === 'participant' ? 'is-active' : ''}}">
+          <view class="profile-role-icon profile-role-person" aria-hidden="true"></view>
+          <view>参与者</view>
+        </view>
+      </view>
+      <view class="profile-role-note">当前身份：{{roleLabel}} · {{roleCaption}}。角色关联微信 OpenID，不能在资料页手动切换。</view>
+    </view>
+
+    <view class="profile-quota-panel">
+      <view class="quota-panel-icon" aria-hidden="true">★</view>
+      <view class="quota-panel-copy">
+        <view class="quota-panel-title">本月修改额度</view>
+        <view class="quota-line">
+          <view>昵称</view>
+          <view class="quota-value">{{nicknameQuotaText}}</view>
+        </view>
+        <view class="quota-line">
+          <view>头像</view>
+          <view class="quota-value">{{avatarQuotaText}}</view>
+        </view>
+      </view>
+    </view>
+
+    <button class="primary-btn save-btn" loading="{{saving}}" disabled="{{saving}}" aria-label="保存头像和昵称资料" bindtap="save">{{saving ? '正在保存…' : '保存修改'}}</button>
+  </view>
+</view>

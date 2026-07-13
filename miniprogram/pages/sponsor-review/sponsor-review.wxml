@@ -1,0 +1,111 @@
+<view class="page review-page">
+  <state-panel
+    wx:if="{{loading}}"
+    state="loading"
+    title="正在打开她的成长相册"
+    description="稍等一下，认真看见她的每一次努力。"
+  ></state-panel>
+
+  <state-panel
+    wx:elif="{{errorMessage}}"
+    state="error"
+    title="审核台暂时打不开"
+    description="{{errorMessage}}"
+    bindretry="retryLoad"
+  ></state-panel>
+
+  <block wx:else>
+    <view class="review-inbox-header">
+      <view>
+        <view class="eyebrow">打卡回应</view>
+        <view class="review-page-title">认真看见她的努力</view>
+        <view class="muted small">每一条记录都需要你亲自确认，页面不会代替你做决定。</view>
+      </view>
+      <view class="review-header-count" aria-label="待审核{{pending.length}}条">{{pending.length}}</view>
+    </view>
+
+    <view class="review-hero-card">
+      <image class="review-hero-image" src="/assets/stitch-original/companion-encouragement.jpg" mode="aspectFill"></image>
+      <view class="review-hero-copy">
+        <view class="review-hero-kicker">今日回应</view>
+        <view class="review-hero-title">有 {{pending.length}} 条打卡等待你的回应</view>
+        <view class="review-hero-description">查看照片、运动时长和她留下的话，再送出奖励或温柔说明原因。</view>
+      </view>
+      <button wx:if="{{pending.length}}" class="primary-btn review-hero-action" aria-label="查看第一条待审核打卡" bindtap="focusFirstReview">查看待审核</button>
+    </view>
+
+    <view class="review-toolbar">
+      <view>
+        <view class="section-kicker">待办处理</view>
+        <view class="section-title review-section-title">打卡审核</view>
+      </view>
+      <view class="review-balance">
+        <view class="muted small">可用心愿金</view>
+        <view class="review-balance-value">¥{{dashboard.relationship.balanceText.available}}</view>
+      </view>
+    </view>
+
+    <view class="review-quick-links">
+      <button class="ghost-btn" aria-label="查看和设置奖励规则" bindtap="goRules">奖励规则</button>
+      <button class="secondary-btn" aria-label="进入心愿金处理，待处理{{dashboard.waitingPayoutCount}}条" bindtap="goPayouts">心愿金 {{dashboard.waitingPayoutCount}}</button>
+    </view>
+
+    <view id="review-queue" wx:if="{{pending.length}}" class="review-queue-list">
+      <view wx:for="{{pending}}" wx:key="id" class="review-queue-card card">
+        <view class="review-card-heading">
+          <view class="review-entry-number">{{item.reviewNumber}}</view>
+          <view class="review-entry-copy">
+            <view class="review-date">{{item.displayDate}}</view>
+            <view class="muted small">{{item.durationText}}</view>
+          </view>
+          <text class="review-status-badge">待审核</text>
+        </view>
+
+        <view class="review-evidence-panel">
+          <image wx:if="{{item.photoSrc}}" class="review-image" src="{{item.photoSrc}}" mode="aspectFill" data-index="{{index}}" binderror="onPhotoError"></image>
+          <view wx:else class="photo-unavailable" role="note" aria-label="打卡照片加载失败">
+            <view class="photo-unavailable-icon">♡</view>
+            <view class="photo-unavailable-title">照片暂时没有加载出来</view>
+            <view class="muted small">请点击页面重试；若仍无法显示，可让对方重新提交照片后再审核。</view>
+          </view>
+          <view class="review-meta-grid">
+            <view>
+              <view class="review-meta-label">运动时长</view>
+              <view class="review-meta-value">{{item.durationText}}</view>
+            </view>
+            <view>
+              <view class="review-meta-label">提交时间</view>
+              <view class="review-meta-value">{{item.displayDate}}</view>
+            </view>
+          </view>
+          <view wx:if="{{item.note}}" class="review-note">“{{item.note}}”</view>
+        </view>
+
+        <view class="review-decision-panel">
+          <view class="decision-heading">
+            <view class="decision-title">写下你的回应</view>
+            <view class="muted small">通过会记入奖励；退回不会增加余额。</view>
+          </view>
+          <view class="decision-field success-field">
+            <view class="label">通过时给她的夸夸</view>
+            <textarea class="textarea compact-textarea" maxlength="200" disabled="{{processingCheckInId}}" data-id="{{item.id}}" placeholder="例如：今天这一步我看见了，很棒。" bindinput="onPraiseInput"></textarea>
+          </view>
+          <view class="decision-field reject-field">
+            <view class="label reject-label">如果需要退回</view>
+            <textarea class="textarea compact-textarea" maxlength="200" disabled="{{processingCheckInId}}" data-id="{{item.id}}" placeholder="请说明需要补充或调整的内容。" bindinput="onReasonInput"></textarea>
+          </view>
+          <view class="review-decision-actions">
+            <button class="primary-btn action-btn" data-id="{{item.id}}" loading="{{processingCheckInId === item.id && processingDecision === 'approved'}}" disabled="{{processingCheckInId}}" aria-label="通过{{item.displayDate}}的运动打卡并记奖励" bindtap="approve">{{processingCheckInId === item.id && processingDecision === 'approved' ? '正在注入能量…' : '通过并记奖励'}}</button>
+            <button class="danger-btn action-btn" data-id="{{item.id}}" loading="{{processingCheckInId === item.id && processingDecision === 'rejected'}}" disabled="{{processingCheckInId}}" aria-label="温柔退回{{item.displayDate}}的运动打卡" bindtap="reject">{{processingCheckInId === item.id && processingDecision === 'rejected' ? '正在退回…' : '温柔退回'}}</button>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view wx:else class="review-empty-state card">
+      <view class="review-empty-heart" aria-hidden="true">♡</view>
+      <view class="review-empty-title">现在没有待审核打卡</view>
+      <view class="muted small">等她完成下一次运动后，新的记录会出现在这里。</view>
+    </view>
+  </block>
+</view>

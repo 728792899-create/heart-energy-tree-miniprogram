@@ -1,0 +1,127 @@
+<view class="page companion-redemption-page">
+  <state-panel
+    wx:if="{{loading}}"
+    state="loading"
+    title="正在整理她的小心愿"
+    description="把已经约好的期待一件件放回礼物盒。"
+  ></state-panel>
+
+  <state-panel
+    wx:elif="{{errorMessage}}"
+    state="error"
+    title="兑换记录暂时打不开"
+    description="{{errorMessage}}"
+    bindretry="retryLoad"
+  ></state-panel>
+
+  <block wx:else>
+    <view class="companion-redemption-header">
+      <view class="companion-redemption-header-copy">
+        <view class="companion-redemption-kicker">OUR GIFT BOX</view>
+        <view class="companion-redemption-title">{{companionUser.name || '她'}}的礼物归档</view>
+        <view class="companion-redemption-copy">每一次兑换都是共同约好的期待。这里仅保存服务端记录，不在页面内修改、取消或核销。</view>
+      </view>
+      <view class="companion-redemption-seal" aria-hidden="true">Gift</view>
+    </view>
+
+    <view class="companion-redemption-summary-grid">
+      <view class="companion-redemption-summary-card is-active">
+        <view class="companion-redemption-summary-value">{{pendingCount}}</view>
+        <view class="companion-redemption-summary-label">等待兑现</view>
+      </view>
+      <view class="companion-redemption-summary-card is-complete">
+        <view class="companion-redemption-summary-value">{{completedCount}}</view>
+        <view class="companion-redemption-summary-label">已经兑现</view>
+      </view>
+      <view class="companion-redemption-summary-card is-cost">
+        <view class="companion-redemption-summary-value">{{totalCostText}}</view>
+        <view class="companion-redemption-summary-label">累计能量币</view>
+      </view>
+    </view>
+
+    <block wx:if="{{featuredRedemption}}">
+      <view class="companion-redemption-section-heading">
+        <view>
+          <view class="companion-redemption-kicker">LATEST KEEPSAKE</view>
+          <view class="companion-redemption-section-title">最近收进礼物盒</view>
+        </view>
+        <view class="companion-redemption-section-count">共 {{redemptions.length}} 份</view>
+      </view>
+
+      <view class="companion-redemption-featured">
+        <image
+          class="companion-redemption-featured-image"
+          src="{{featuredRedemption.displayImageSrc}}"
+          mode="aspectFill"
+          aria-label="{{featuredRedemption.rewardName}}装饰图"
+        ></image>
+        <view class="companion-redemption-featured-overlay" aria-hidden="true"></view>
+        <view class="companion-redemption-featured-body">
+          <view class="companion-redemption-featured-topline">
+            <view class="companion-redemption-number">NO. {{featuredRedemption.entryNumber}}</view>
+            <view class="companion-redemption-status-badge is-{{featuredRedemption.statusTone}}">{{featuredRedemption.statusText}}</view>
+          </view>
+          <view class="companion-redemption-featured-name">{{featuredRedemption.rewardName}}</view>
+          <view class="companion-redemption-featured-description">{{featuredRedemption.displayDescription}}</view>
+          <view class="companion-redemption-featured-meta">
+            <view>
+              <view class="companion-redemption-meta-label">兑换日期</view>
+              <view class="companion-redemption-meta-value">{{featuredRedemption.redeemedDateText}}</view>
+            </view>
+            <view class="companion-redemption-cost">
+              <text>{{featuredRedemption.costText}}</text>
+              <view>能量币</view>
+            </view>
+          </view>
+          <view class="companion-redemption-note">{{featuredRedemption.displayNote}}</view>
+        </view>
+      </view>
+
+      <view wx:if="{{archivedRedemptions.length}}" class="companion-redemption-archive">
+        <view class="companion-redemption-section-heading is-archive">
+          <view>
+            <view class="companion-redemption-kicker">MORE GIFTS</view>
+            <view class="companion-redemption-section-title">更多心愿卡片</view>
+          </view>
+          <view class="companion-redemption-refund-count" wx:if="{{refundedCount}}">含 {{refundedCount}} 份退款归档</view>
+        </view>
+
+        <view class="companion-redemption-card-grid">
+          <view wx:for="{{archivedRedemptions}}" wx:key="id" class="companion-redemption-card">
+            <image
+              class="companion-redemption-card-image"
+              src="{{item.displayImageSrc}}"
+              mode="aspectFill"
+              aria-label="{{item.rewardName}}装饰图"
+            ></image>
+            <view class="companion-redemption-card-body">
+              <view class="companion-redemption-card-topline">
+                <view class="companion-redemption-card-number">NO. {{item.entryNumber}}</view>
+                <view class="companion-redemption-status-badge is-{{item.statusTone}}">{{item.statusText}}</view>
+              </view>
+              <view class="companion-redemption-card-name">{{item.rewardName}}</view>
+              <view class="companion-redemption-card-description">{{item.displayDescription}}</view>
+              <view class="companion-redemption-card-foot">
+                <view class="companion-redemption-card-date">{{item.redeemedDateText}}</view>
+                <view class="companion-redemption-card-cost">{{item.costText}} 能量币</view>
+              </view>
+              <view class="companion-redemption-card-note">{{item.displayNote}}</view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <view wx:else class="companion-redemption-empty-state">
+      <image
+        class="companion-redemption-empty-image"
+        src="/assets/stitch-original/redemption-gift.jpg"
+        mode="aspectFill"
+        aria-label="礼物盒装饰图"
+      ></image>
+      <view class="companion-redemption-empty-kicker">GIFT BOX</view>
+      <view class="companion-redemption-empty-title">礼物盒还在等待第一份心愿</view>
+      <view class="companion-redemption-empty-copy">她完成兑换后，服务端记录会自动出现在这里；陪伴页始终保持只读。</view>
+    </view>
+  </block>
+</view>

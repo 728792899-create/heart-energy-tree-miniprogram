@@ -1,0 +1,143 @@
+<view class="page profile-page">
+  <state-panel wx:if="{{loading}}" state="loading" title="正在翻开我们的情侣护照…" description="头像、成就和成长记录正在整理。"></state-panel>
+  <state-panel wx:elif="{{errorMessage}}" state="error" title="情侣护照暂时打不开" description="{{errorMessage}}" bindretry="retryLoad"></state-panel>
+  <block wx:else>
+  <view class="band profile-head soft-hero">
+    <view class="profile-cover">
+      <view class="profile-cover-copy">
+        <view class="profile-cover-kicker">LOVE GARDEN</view>
+        <view class="profile-cover-title">把每一天，都种成我们的纪念</view>
+      </view>
+      <image class="profile-cover-image" src="/assets/generated/couple-hold.png" mode="aspectFit"></image>
+      <view class="profile-cover-heart profile-cover-heart-one">♡</view>
+      <view class="profile-cover-heart profile-cover-heart-two">♡</view>
+      <view class="profile-couple-avatar" role="button" aria-label="编辑头像和昵称" bindtap="goProfileEdit">
+        <image wx:if="{{dashboard.currentUser.avatarSrc}}" src="{{dashboard.currentUser.avatarSrc}}" mode="aspectFill"></image>
+        <view wx:else class="profile-couple-avatar-text">{{dashboard.currentUser.avatarText || '我'}}</view>
+        <view class="profile-heart">♡</view>
+      </view>
+    </view>
+    <view class="row-between head-inner">
+      <view>
+        <text class="eyebrow">{{currentRoleText}}</text>
+        <view class="profile-title"><text class="profile-title-name">{{dashboard.currentUser.name}}</text><text class="profile-title-heart">♡</text><text class="profile-title-name">{{companionName}}</text></view>
+        <view class="muted small">{{dashboard.currentRole === 'participant' ? '今天也被认真守护着' : '你在守护这棵能量树'}}</view>
+      </view>
+    </view>
+    <button class="secondary-btn edit-btn" aria-label="编辑头像和昵称" bindtap="goProfileEdit">编辑头像和昵称</button>
+    <view wx:if="{{!isCloudMode}}" class="role-switch">
+      <button class="role-btn {{dashboard.currentRole === 'participant' ? 'active' : ''}}" data-role="participant" aria-label="切换到女友端视角" bindtap="onSwitchRole">女友端</button>
+      <button class="role-btn {{dashboard.currentRole === 'sponsor' ? 'active' : ''}}" data-role="sponsor" aria-label="切换到男友端视角" bindtap="onSwitchRole">男友端</button>
+    </view>
+  </view>
+
+  <view class="card passport-setting">
+    <view class="setting-copy">
+      <view class="card-title">心动提示音</view>
+      <view class="muted small">只在绑定、里程碑、约定兑现等关键时刻轻轻响起。</view>
+    </view>
+    <switch checked="{{isSoundEnabled}}" color="#8F3653" aria-label="开启或关闭心动提示音" bindchange="onSoundToggle"></switch>
+  </view>
+
+  <block wx:if="{{dashboard.currentRole === 'participant'}}">
+    <view class="section-title">佩戴中的成就</view>
+    <view wx:if="{{dashboard.relationship.equippedBadges.length}}" class="equipped-row">
+      <view wx:for="{{dashboard.relationship.equippedBadges}}" wx:key="id" class="equipped-badge">
+        <view class="equipped-icon">{{item.iconText}}</view>
+        <view class="equipped-name">{{item.name}}</view>
+      </view>
+    </view>
+    <view wx:else class="empty">从已解锁成就里点选 3 个，就会展示在这里。</view>
+
+    <view class="profile-bento-stats grid-2 stat-grid">
+      <view class="card stat-card">
+        <view class="stat-number">{{dashboard.relationship.stats.currentStreak}}</view>
+        <view class="muted small">当前连续</view>
+      </view>
+      <view class="card stat-card">
+        <view class="stat-number">{{dashboard.relationship.stats.totalDurationMinutes}}</view>
+        <view class="muted small">累计分钟</view>
+      </view>
+      <view class="card stat-card">
+        <view class="stat-number">{{dashboard.relationship.stats.badgeCount}}</view>
+        <view class="muted small">已解锁成就</view>
+      </view>
+      <view class="card stat-card">
+        <view class="stat-number">{{dashboard.relationship.stats.totalRedemptions}}</view>
+        <view class="muted small">兑换次数</view>
+      </view>
+    </view>
+
+    <view class="section-title">这个月的打卡</view>
+    <view class="calendar">
+      <view wx:for="{{dayCells}}" wx:key="day" class="day {{item.status}}">
+        <text>{{item.day}}</text>
+      </view>
+    </view>
+
+    <view class="section-title">成就墙</view>
+    <view class="badge-grid">
+      <view wx:for="{{badges}}" wx:key="id" data-id="{{item.id}}" role="button" aria-label="{{item.unlocked ? (item.equipped ? '取消佩戴成就' + item.name : '佩戴成就' + item.name) : '未解锁成就' + item.name}}" bindtap="toggleBadge" class="badge {{item.unlocked ? 'unlocked' : 'locked'}} {{item.equipped ? 'equipped' : ''}}">
+        <view class="badge-icon">
+          <image wx:if="{{item.iconSrc}}" class="badge-image" src="{{item.iconSrc}}" mode="aspectFit"></image>
+          <text wx:else>{{item.iconText}}</text>
+        </view>
+        <view class="badge-name">{{item.name}}</view>
+        <view class="muted small">{{item.unlocked ? item.story : item.description}}</view>
+        <view wx:if="{{item.equipped}}" class="equip-pill">佩戴</view>
+      </view>
+    </view>
+
+    <view class="section-title">常用入口</view>
+    <view class="grid-2">
+      <button class="secondary-btn" aria-label="进入心愿金领取" bindtap="goWallet">心愿金领取</button>
+      <button class="ghost-btn" aria-label="查看我的打卡历史" bindtap="goHistory">打卡历史</button>
+      <button class="ghost-btn" aria-label="查看我的兑换记录" bindtap="goRedemptions">兑换记录</button>
+      <button class="ghost-btn" aria-label="设置资料被查看提醒" bindtap="enableViewNoticeSubscription">被查看提醒</button>
+    </view>
+  </block>
+
+  <block wx:else>
+    <view class="card companion-card">
+      <view class="row-between">
+        <view>
+          <view class="companion-title">她的守护面板</view>
+          <view class="muted small">查看 {{companionName}} 的进度、成就和账本。</view>
+        </view>
+        <view class="companion-avatar">
+          <image wx:if="{{dashboard.companionUser.avatarSrc}}" class="avatar-img" src="{{dashboard.companionUser.avatarSrc}}" mode="aspectFill"></image>
+          <text wx:else>{{dashboard.companionUser.avatarText}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="section-title">女友信息</view>
+    <view class="grid-2">
+      <button class="secondary-btn" aria-label="查看女友打卡历史" bindtap="goCompanionHistory">打卡历史</button>
+      <button class="secondary-btn" aria-label="查看女友成就" bindtap="goCompanionBadges">她的成就</button>
+      <button class="ghost-btn" aria-label="查看女友能量币记录" bindtap="goCompanionLedgers">能量币记录</button>
+      <button class="ghost-btn" aria-label="查看女友兑换记录" bindtap="goCompanionRedemptions">兑换记录</button>
+    </view>
+
+    <view class="section-title">男友管理</view>
+    <view class="grid-2">
+      <button class="primary-btn" aria-label="进入打卡审核台，待处理{{dashboard.pendingCount}}条" bindtap="goReview">审核台 {{dashboard.pendingCount}}</button>
+      <button class="secondary-btn" aria-label="进入心愿金处理，待处理{{dashboard.waitingPayoutCount}}条" bindtap="goPayouts">心愿金处理 {{dashboard.waitingPayoutCount}}</button>
+      <button class="ghost-btn" aria-label="进入奖品管理" bindtap="goAdminRewards">奖品管理</button>
+      <button class="ghost-btn" aria-label="进入奖励规则设置" bindtap="goRules">奖励规则</button>
+    </view>
+
+    <view wx:if="{{showInvitePartner}}">
+      <view class="section-title">邀请另一半</view>
+      <view class="card invite-card">
+        <view>
+          <view class="invite-title">把这棵能量树分享给 TA</view>
+          <view class="muted small">TA 从你的分享卡片进入后，会自动进入绑定流程，不需要手动输入邀请码。</view>
+        </view>
+        <button class="primary-btn invite-btn" open-type="share" aria-label="分享情侣绑定邀请卡片">分享邀请卡片</button>
+        <button class="ghost-btn invite-btn" aria-label="复制测试用情侣邀请路径" bindtap="copyInvitePath">复制测试邀请路径</button>
+      </view>
+    </view>
+  </block>
+  </block>
+</view>

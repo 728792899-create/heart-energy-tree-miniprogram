@@ -1,0 +1,18 @@
+{
+  "coupleMessageInbox": {
+    "read": "doc.recipientOpenid == auth.openid",
+    "write": false
+  },
+  "coupleMessageStates": {
+    "read": "doc.recipientOpenid == auth.openid",
+    "write": false
+  },
+  "coupleMessages": {
+    "read": false,
+    "write": false
+  },
+  "coupleMessageMigrations": {
+    "read": false,
+    "write": false
+  }
+}

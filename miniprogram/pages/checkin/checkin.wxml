@@ -1,0 +1,95 @@
+<view class="page checkin-page">
+  <view class="checkin-topbar">
+    <view>
+      <view class="eyebrow">今日能量记录</view>
+      <view class="checkin-title">记录今日的汗水</view>
+    </view>
+    <image class="checkin-avatar" src="/assets/stitch-original/checkin-avatar.jpg" mode="aspectFill"></image>
+  </view>
+
+  <view wx:if="{{todaysCheckIn}}" class="card current-card">
+    <view class="row-between">
+      <view>
+        <view class="card-title">{{todaysCheckIn.displayDate}}</view>
+        <view class="muted small">状态：{{todaysCheckIn.status === 'submitted' ? '等待陪伴者审核，待确认 +' + todaysCheckIn.pendingRewardText + ' 能量币' : todaysCheckIn.status === 'approved' ? '已经通过并记账' : '这次被温柔退回，可以换张清晰照片重新提交'}}</view>
+      </view>
+      <text class="pill status-{{todaysCheckIn.status}}">{{todaysCheckIn.status === 'submitted' ? '待审核' : todaysCheckIn.status === 'approved' ? '已通过' : '已退回'}}</text>
+    </view>
+    <image wx:if="{{todaysCheckIn.photoSrc}}" class="preview" src="{{todaysCheckIn.photoSrc}}" mode="aspectFill"></image>
+    <view wx:if="{{todaysCheckIn.status === 'submitted'}}" class="pending-reward">
+      <view class="pending-plus">+{{todaysCheckIn.pendingRewardText}}</view>
+      <view class="muted small">待确认能量币，审核通过后正式入账。</view>
+    </view>
+    <view wx:if="{{todaysCheckIn.reviewNote}}" class="review-note">{{todaysCheckIn.reviewNote}}</view>
+  </view>
+
+  <view wx:if="{{canSubmitToday}}" class="submit-panel">
+    <view class="checkin-bento">
+      <view class="bento-card duration-card">
+        <view class="bento-icon">◷</view>
+        <view class="bento-label">运动时长</view>
+        <view class="duration-entry">
+          <input class="duration-input" type="number" disabled="{{submitting}}" placeholder="30" value="{{durationMinutes}}" bindinput="onDurationInput" />
+          <text>min</text>
+        </view>
+      </view>
+      <view class="bento-card type-card">
+        <view class="bento-icon">⌁</view>
+        <view class="bento-label">运动类型</view>
+        <view class="type-name">自由运动</view>
+      </view>
+    </view>
+
+    <view class="upload-section">
+      <view class="upload-label">汗水自拍 / 打卡图</view>
+      <button class="photo-picker" disabled="{{submitting || choosingPhoto}}" aria-label="选择或拍摄运动打卡照片" bindtap="choosePhoto">
+        <view wx:if="{{!photoPath}}" class="photo-empty">
+          <image class="photo-empty-asset" src="/assets/stitch-original/checkin-yoga.jpg" mode="aspectFill"></image>
+          <view class="photo-overlay"></view>
+          <view class="photo-empty-copy">
+            <view class="camera-mark">＋</view>
+            <view class="photo-title">{{choosingPhoto ? '正在打开相册...' : '点击上传照片'}}</view>
+            <view class="photo-hint">运动截图、散步照片、瑜伽记录都可以</view>
+          </view>
+        </view>
+        <image wx:else class="photo-preview" src="{{photoPath}}" mode="aspectFill"></image>
+        <view wx:if="{{photoPath}}" class="photo-change">更换照片</view>
+      </button>
+    </view>
+
+    <view class="mood-panel">
+      <view class="mood-title">今日感受</view>
+      <view class="mood-strip">
+        <button wx:for="{{moods}}" wx:key="key" class="mood-option {{selectedMood === item.key ? 'active' : ''}}" data-mood="{{item.key}}" disabled="{{submitting}}" aria-label="选择今日感受{{item.label}}" bindtap="selectMood">
+          <text class="mood-icon">{{item.icon}}</text>
+          <text>{{item.label}}</text>
+        </button>
+      </view>
+    </view>
+
+    <view class="quick-row">
+      <button class="quick-chip" data-value="10" disabled="{{submitting}}" aria-label="将运动时长设为10分钟" bindtap="onDurationInput">10 分钟</button>
+      <button class="quick-chip" data-value="20" disabled="{{submitting}}" aria-label="将运动时长设为20分钟" bindtap="onDurationInput">20 分钟</button>
+      <button class="quick-chip" data-value="30" disabled="{{submitting}}" aria-label="将运动时长设为30分钟" bindtap="onDurationInput">30 分钟</button>
+    </view>
+
+    <view class="form-block">
+      <view class="label-row">
+        <view class="label">今天想说的话</view>
+        <view class="muted small">可选</view>
+      </view>
+      <textarea class="textarea soft-textarea" maxlength="200" disabled="{{submitting}}" placeholder="今天也有好好照顾自己。" value="{{note}}" bindinput="onNoteInput"></textarea>
+    </view>
+
+    <view class="promise-card">
+      <view class="promise-dot"></view>
+      <view>
+        <view class="promise-title">提交后先进入陪伴者审核</view>
+        <view class="muted small">审核通过后，小树长阳光，+{{pendingRewardYuan}} 能量币正式入账。</view>
+      </view>
+    </view>
+
+    <button class="submit-btn" loading="{{submitting}}" disabled="{{submitting}}" aria-label="提交运动打卡给陪伴者审核" bindtap="submit">{{submitting ? '正在把今天寄给他…' : '发送给陪伴者审核'}}</button>
+  </view>
+  <view wx:else class="empty done-empty">今天已经有一条有效打卡啦，明天继续给小树加阳光。</view>
+</view>

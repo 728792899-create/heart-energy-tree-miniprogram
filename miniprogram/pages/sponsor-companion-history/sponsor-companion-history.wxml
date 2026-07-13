@@ -1,0 +1,98 @@
+<view class="page companion-history-page">
+  <state-panel
+    wx:if="{{loading}}"
+    state="loading"
+    title="正在翻开她的成长相册"
+    description="每一次认真运动，都值得被好好看见。"
+  ></state-panel>
+
+  <state-panel
+    wx:elif="{{errorMessage}}"
+    state="error"
+    title="打卡记录暂时打不开"
+    description="{{errorMessage}}"
+    bindretry="retryLoad"
+  ></state-panel>
+
+  <block wx:else>
+    <view class="companion-history-header">
+      <view class="companion-history-ornament" aria-hidden="true">
+        <view class="companion-history-footprint footprint-one"></view>
+        <view class="companion-history-footprint footprint-two"></view>
+      </view>
+      <view class="companion-history-profile">
+        <image wx:if="{{companionUser.avatarSrc}}" class="companion-history-avatar" src="{{companionUser.avatarSrc}}" mode="aspectFill"></image>
+        <view wx:else class="companion-history-avatar companion-history-avatar-text">{{companionUser.avatarText || '她'}}</view>
+        <view class="companion-history-profile-copy">
+          <view class="companion-history-kicker">CARE JOURNAL</view>
+          <view class="companion-history-title">{{companionUser.name || '她'}}的成长足迹</view>
+        </view>
+      </view>
+      <view class="companion-history-copy">你认真读过的每一条记录，都会变成一份被看见的温柔。打开本页后，她会收到一次隐私友好的查看提示。</view>
+      <view class="companion-history-notice">仅记录“已查看打卡历史”，不会向你展示她未授权的照片。</view>
+    </view>
+
+    <view class="companion-history-summary-grid">
+      <view class="companion-history-summary-card">
+        <view class="companion-history-summary-icon" aria-hidden="true">✓</view>
+        <view class="companion-history-summary-value">{{approvedCount}}</view>
+        <view class="companion-history-summary-label">通过足迹</view>
+      </view>
+      <view class="companion-history-summary-card">
+        <view class="companion-history-summary-icon is-timer" aria-hidden="true">◷</view>
+        <view class="companion-history-summary-value">{{totalMinutes}}</view>
+        <view class="companion-history-summary-label">累计分钟</view>
+      </view>
+      <view class="companion-history-summary-card is-reward">
+        <view class="companion-history-summary-icon is-reward" aria-hidden="true">¥</view>
+        <view class="companion-history-summary-value">{{totalRewardText}}</view>
+        <view class="companion-history-summary-label">累计奖励</view>
+      </view>
+    </view>
+
+    <view class="companion-history-section-heading">
+      <view>
+        <view class="companion-history-section-kicker">FOOTPRINTS</view>
+        <view class="companion-history-section-title">她留下的运动日记</view>
+      </view>
+      <view class="companion-history-latest">最近通过 {{latestApprovedDate}}</view>
+    </view>
+
+    <view wx:if="{{history.length}}" class="companion-history-entry-list">
+      <view wx:for="{{history}}" wx:key="id" class="companion-history-entry-card">
+        <view class="companion-history-entry-media">
+          <image wx:if="{{item.photoSrc}}" class="companion-history-entry-image" src="{{item.photoSrc}}" mode="aspectFill"></image>
+          <view wx:else class="companion-history-entry-placeholder">
+            <view class="companion-history-placeholder-leaf" aria-hidden="true"></view>
+            <view class="companion-history-placeholder-copy">这一页没有公开照片</view>
+          </view>
+          <view class="companion-history-status-badge is-{{item.statusTone}}">{{item.statusText}}</view>
+        </view>
+
+        <view class="companion-history-entry-body">
+          <view class="companion-history-entry-heading">
+            <view>
+              <view class="companion-history-date">{{item.displayDate}}</view>
+              <view class="companion-history-duration">{{item.durationMinutes ? item.durationMinutes + ' 分钟运动' : '运动打卡'}}</view>
+            </view>
+            <view class="companion-history-entry-number">{{item.entryNumber}}</view>
+          </view>
+
+          <view wx:if="{{item.note}}" class="companion-history-note">“{{item.note}}”</view>
+          <view wx:if="{{item.status === 'approved'}}" class="companion-history-reward-line">
+            <text>奖励 ¥{{item.rewardText}}</text>
+            <text>连续 {{item.streak || 0}} 天</text>
+          </view>
+          <view wx:if="{{item.reviewNote}}" class="companion-history-review-note">你的回应：{{item.reviewNote}}</view>
+          <view wx:else class="companion-history-care-note">认真看见，也是一种陪伴。</view>
+        </view>
+      </view>
+    </view>
+
+    <view wx:else class="companion-history-empty-state">
+      <view class="companion-history-empty-seal" aria-hidden="true">♡</view>
+      <view class="companion-history-empty-title">第一枚足迹还在路上</view>
+      <view class="companion-history-empty-copy">她完成运动打卡后，记录会按隐私权限收藏在这里。现在先给她一点不催促的鼓励吧。</view>
+    </view>
+  </block>
+</view>

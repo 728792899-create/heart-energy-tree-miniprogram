@@ -1,0 +1,95 @@
+<view class="page wallet-page">
+  <state-panel wx:if="{{loading}}" state="loading" title="正在整理心愿信箱…" description="余额和兑现记录正在认真核对。"></state-panel>
+  <state-panel wx:elif="{{errorMessage}}" state="error" title="心愿信箱暂时打不开" description="{{errorMessage}}" bindretry="retryLoad"></state-panel>
+
+  <block wx:else>
+    <view class="wallet-balance-hero">
+      <view class="wallet-hero-orb" aria-hidden="true">
+        <view class="wallet-hero-heart">♡</view>
+      </view>
+      <text class="wallet-hero-eyebrow">WISH FUND</text>
+      <view class="wallet-hero-title">两个人的心愿金</view>
+      <view class="wallet-available-label">现在可以领取</view>
+      <view class="wallet-available-value">
+        <text class="wallet-currency">¥</text>
+        <text>{{dashboard.relationship.balanceText.available || '0.00'}}</text>
+      </view>
+      <view class="wallet-hero-caption">每一次被认真确认的运动，都在为小心愿积攒能量。</view>
+
+      <view class="wallet-balance-secondary">
+        <view class="wallet-balance-mini wallet-balance-frozen">
+          <view class="wallet-mini-icon">◷</view>
+          <view>
+            <view class="wallet-mini-label">正在兑现</view>
+            <view class="wallet-mini-value">¥{{dashboard.relationship.balanceText.frozen || '0.00'}}</view>
+          </view>
+        </view>
+        <view class="wallet-balance-mini wallet-balance-paid">
+          <view class="wallet-mini-icon">✓</view>
+          <view>
+            <view class="wallet-mini-label">已经兑现</view>
+            <view class="wallet-mini-value">¥{{dashboard.relationship.balanceText.paidOut || '0.00'}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="wallet-section-heading">
+      <view>
+        <view class="wallet-section-title">申请领取心愿金</view>
+        <view class="wallet-section-subtitle">把这一份努力，变成想完成的小愿望。</view>
+      </view>
+      <text class="wallet-section-mark">♡</text>
+    </view>
+
+    <view class="withdrawal-request-card">
+      <view class="withdrawal-field-label">领取金额</view>
+      <view class="withdrawal-amount-field">
+        <text class="withdrawal-yuan-symbol">¥</text>
+        <input class="withdrawal-amount-input" type="digit" disabled="{{requesting}}" placeholder="0.00" value="{{amountYuan}}" bindinput="onAmountInput" />
+        <text class="withdrawal-field-unit">元</text>
+      </view>
+
+      <view class="withdrawal-field-label withdrawal-note-label">这笔心愿金想用来做什么？</view>
+      <textarea class="textarea withdrawal-note-input" maxlength="200" disabled="{{requesting}}" placeholder="例如：想买一本喜欢很久的书。" value="{{note}}" bindinput="onNoteInput"></textarea>
+
+      <button class="primary-btn withdrawal-submit-button" loading="{{requesting}}" disabled="{{requesting}}" aria-label="确认并提交心愿金领取申请" bindtap="requestWithdrawal">{{requesting ? '正在放进心愿信箱…' : '放进心愿信箱'}}</button>
+      <view class="withdrawal-safety-note">
+        <text class="withdrawal-safety-icon">i</text>
+        <text>提交后由陪伴者确认并在线下兑现；小程序不会自动发起平台付款。</text>
+      </view>
+    </view>
+
+    <view class="wallet-record-heading">
+      <view>
+        <view class="wallet-section-title">心愿金记录</view>
+        <view class="wallet-section-subtitle">每一笔申请，都留在两个人的约定里。</view>
+      </view>
+      <text class="wallet-record-count">{{withdrawals.length}} 笔</text>
+    </view>
+
+    <view wx:if="{{withdrawals.length}}" class="withdrawal-record-list">
+      <view wx:for="{{withdrawals}}" wx:key="id" class="withdrawal-record-card">
+        <view class="withdrawal-record-icon">♧</view>
+        <view class="withdrawal-record-main">
+          <view class="withdrawal-record-topline">
+            <view class="withdrawal-record-amount">¥{{item.amountText}}</view>
+            <text class="withdrawal-status-badge status-{{item.statusTone}}">{{item.statusText}}</text>
+          </view>
+          <view class="withdrawal-record-note">{{item.note || '心愿金领取申请'}}</view>
+          <view class="withdrawal-record-date">{{item.createdDateText}}</view>
+        </view>
+        <view wx:if="{{item.transferNote || item.rejectReason}}" class="withdrawal-result-note">
+          <view wx:if="{{item.transferNote}}">兑现备注：{{item.transferNote}}</view>
+          <view wx:if="{{item.rejectReason}}">退回原因：{{item.rejectReason}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view wx:else class="wallet-empty-state">
+      <view class="wallet-empty-icon">♡</view>
+      <view class="wallet-empty-title">还没有领取记录</view>
+      <view class="wallet-empty-description">第一笔小心愿，会从这里开始被认真保存。</view>
+    </view>
+  </block>
+</view>

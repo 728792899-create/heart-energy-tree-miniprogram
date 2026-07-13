@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>运动能量树 Demo</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="topbar">
+        <div>
+          <p class="eyebrow" id="roleLabel">打卡者视角</p>
+          <h1>运动能量树</h1>
+        </div>
+        <div class="role-toggle" aria-label="切换视角">
+          <button class="seg active" data-role="participant">她</button>
+          <button class="seg" data-role="sponsor">你</button>
+        </div>
+      </section>
+
+      <section id="view" class="view" aria-live="polite"></section>
+
+      <nav class="tabbar" aria-label="主导航">
+        <button class="tab active" data-tab="home">首页</button>
+        <button class="tab" data-tab="map">地图</button>
+        <button class="tab" data-tab="shop">商店</button>
+        <button class="tab" data-tab="profile">我的</button>
+      </nav>
+    </main>
+
+    <div id="toast" class="toast" role="status"></div>
+    <script src="./app.js"></script>
+  </body>
+</html>

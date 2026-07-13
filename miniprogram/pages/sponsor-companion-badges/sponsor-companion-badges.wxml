@@ -1,0 +1,101 @@
+<view class="page companion-badges-page">
+  <state-panel
+    wx:if="{{loading}}"
+    state="loading"
+    title="正在点亮她的小闪光"
+    description="把已经走过的每一步变成一枚温柔徽章。"
+  ></state-panel>
+
+  <state-panel
+    wx:elif="{{errorMessage}}"
+    state="error"
+    title="成就徽章暂时打不开"
+    description="{{errorMessage}}"
+    bindretry="retryLoad"
+  ></state-panel>
+
+  <block wx:else>
+    <view class="companion-badges-header">
+      <view class="companion-badges-profile">
+        <image wx:if="{{companionUser.avatarSrc}}" class="companion-badges-avatar" src="{{companionUser.avatarSrc}}" mode="aspectFill"></image>
+        <view wx:else class="companion-badges-avatar companion-badges-avatar-text">{{companionUser.avatarText || '她'}}</view>
+        <view class="companion-badges-profile-copy">
+          <view class="companion-badges-kicker">ACHIEVEMENT GARDEN</view>
+          <view class="companion-badges-title">{{companionUser.name || '她'}}的小小荣誉墙</view>
+          <view class="companion-badges-copy">这里只供你安静欣赏。徽章的解锁与佩戴仍由她自己决定。</view>
+        </view>
+      </view>
+
+      <view class="companion-badges-progress-row">
+        <view class="companion-badges-progress-copy">已点亮 {{unlockPercent}}%</view>
+        <view class="companion-badges-progress-track">
+          <view class="companion-badges-progress-fill" style="width: {{unlockPercent}}%;"></view>
+        </view>
+      </view>
+    </view>
+
+    <view class="companion-badges-summary-grid">
+      <view class="companion-badges-summary-card">
+        <view class="companion-badges-summary-value">{{unlockedCount}}</view>
+        <view class="companion-badges-summary-label">已解锁</view>
+      </view>
+      <view class="companion-badges-summary-card is-equipped">
+        <view class="companion-badges-summary-value">{{equippedCount}}</view>
+        <view class="companion-badges-summary-label">正在佩戴</view>
+      </view>
+      <view class="companion-badges-summary-card is-locked">
+        <view class="companion-badges-summary-value">{{lockedCount}}</view>
+        <view class="companion-badges-summary-label">等待点亮</view>
+      </view>
+    </view>
+
+    <view class="companion-badges-section-heading">
+      <view>
+        <view class="companion-badges-section-kicker">SHOWCASE</view>
+        <view class="companion-badges-section-title">她选择展示的成就</view>
+      </view>
+      <view class="companion-badges-section-note">最多佩戴 3 枚</view>
+    </view>
+
+    <view wx:if="{{equippedBadges.length}}" class="companion-badges-showcase">
+      <view wx:for="{{equippedBadges}}" wx:key="id" class="companion-badges-showcase-item">
+        <view class="companion-badges-showcase-icon">
+          <image wx:if="{{item.iconSrc}}" class="companion-badge-image" src="{{item.iconSrc}}" mode="aspectFit"></image>
+          <text wx:else>{{item.iconText}}</text>
+        </view>
+        <view class="companion-badges-showcase-name">{{item.name}}</view>
+        <view class="companion-badges-showcase-state">佩戴中</view>
+      </view>
+    </view>
+    <view wx:else class="companion-badges-showcase companion-badges-showcase-empty">
+      她还没有选择要佩戴的徽章，已解锁成就仍会完整保留在下方。
+    </view>
+
+    <view class="companion-badges-section-heading is-wall">
+      <view>
+        <view class="companion-badges-section-kicker">COLLECTION</view>
+        <view class="companion-badges-section-title">全部成就</view>
+      </view>
+      <view class="companion-badges-section-note">{{badges.length}} 枚</view>
+    </view>
+
+    <view wx:if="{{badges.length}}" class="companion-badge-grid">
+      <view wx:for="{{badges}}" wx:key="id" class="companion-badge-card {{item.unlocked ? 'is-unlocked' : 'is-locked'}} {{item.equipped ? 'is-equipped' : ''}}">
+        <view class="companion-badge-card-number">{{item.badgeNumber}}</view>
+        <view class="companion-badge-icon">
+          <image wx:if="{{item.iconSrc}}" class="companion-badge-image" src="{{item.iconSrc}}" mode="aspectFit"></image>
+          <text wx:else>{{item.iconText}}</text>
+        </view>
+        <view class="companion-badge-name">{{item.name}}</view>
+        <view class="companion-badge-description">{{item.displayStory}}</view>
+        <view class="companion-badge-state">{{item.statusLabel}}</view>
+      </view>
+    </view>
+
+    <view wx:else class="companion-badges-empty-state">
+      <view class="companion-badges-empty-icon" aria-hidden="true">✦</view>
+      <view class="companion-badges-empty-title">荣誉墙正在等待第一束光</view>
+      <view class="companion-badges-empty-copy">完成打卡、保持连续记录或通过成长关卡后，新的徽章会在这里出现。</view>
+    </view>
+  </block>
+</view>

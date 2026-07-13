@@ -1,0 +1,7 @@
+<view wx:if="{{item}}" class="milestone-card">
+  <view class="gold-ribbon">共同里程碑</view>
+  <view class="scene-icon">{{item.iconText || '♡'}}</view>
+  <view class="milestone-title">{{item.title}}</view>
+  <view class="milestone-message">{{item.message}}</view>
+  <button class="accept-button" disabled="{{processing}}" aria-label="收藏这段共同里程碑" bindtap="accept">{{processing ? '正在收藏…' : actionText}}</button>
+</view>

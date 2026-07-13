@@ -1,0 +1,51 @@
+<view class="page reward-confirm-page">
+  <state-panel wx:if="{{loading}}" state="loading" title="正在拆开这份小礼物…" description="稍等一下，约定和兑换信息马上就好。"></state-panel>
+  <state-panel wx:elif="{{errorMessage}}" state="error" title="这份礼物暂时没有找到" description="{{errorMessage}}" bindretry="retryLoad"></state-panel>
+
+  <block wx:else>
+    <view class="redemption-confirm-card">
+      <view class="confirm-card-header">
+        <view class="confirm-gift-mark" aria-hidden="true">
+          <view class="gift-lid"></view>
+          <view class="gift-box">礼</view>
+        </view>
+        <view class="confirm-title">确认兑换</view>
+        <view class="confirm-subtitle">你即将兑换一份属于你们的奖励</view>
+      </view>
+
+      <view class="confirm-card-body">
+        <view class="confirm-reward-preview">
+          <image class="confirm-reward-image" src="{{displayImageSrc}}" mode="aspectFill"></image>
+        </view>
+
+        <view class="confirm-reward-name">{{item.name}}</view>
+        <view class="confirm-reward-description">{{item.description}}</view>
+
+        <view class="confirm-balance-sheet">
+          <view class="confirm-balance-row">
+            <view class="confirm-balance-label">消耗</view>
+            <view class="confirm-balance-value confirm-cost">{{item.priceText}} 能量币</view>
+          </view>
+          <view class="confirm-balance-divider"></view>
+          <view class="confirm-balance-row">
+            <view class="confirm-balance-label">兑换后余额</view>
+            <view class="confirm-balance-value">{{balanceAfterText}} 能量币</view>
+          </view>
+        </view>
+
+        <view class="confirm-current-balance">当前可用 {{availableCoinsText}} 能量币</view>
+
+        <view class="confirm-action-row">
+          <button class="secondary-btn confirm-cancel-btn" aria-label="取消兑换并返回上一页" bindtap="cancelRedemption">取消</button>
+          <button
+            class="primary-btn confirm-submit-btn"
+            loading="{{redeeming}}"
+            disabled="{{redeeming || !canRedeem}}"
+            aria-label="确认兑换这份情侣奖励"
+            bindtap="redeem"
+          >{{redeeming ? '正在兑换…' : redeemButtonText}}</button>
+        </view>
+      </view>
+    </view>
+  </block>
+</view>

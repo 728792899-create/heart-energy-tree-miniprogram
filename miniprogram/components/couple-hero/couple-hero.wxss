@@ -1,0 +1,204 @@
+.couple-hero {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  min-height: 310rpx;
+  padding: 34rpx 28rpx;
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  border: 1rpx solid rgba(183, 68, 101, 0.13);
+  border-radius: 32rpx;
+  background: linear-gradient(145deg, #fffdf9 0%, #f8e6ec 66%, #fff0d8 100%);
+  box-shadow: 0 18rpx 46rpx rgba(125, 47, 73, 0.09);
+}
+
+.couple-hero::before {
+  content: "";
+  position: absolute;
+  left: -36rpx;
+  bottom: -56rpx;
+  width: 190rpx;
+  height: 190rpx;
+  border: 2rpx solid rgba(212, 174, 106, 0.18);
+  border-radius: 50%;
+}
+
+.hero-copy {
+  z-index: 2;
+  flex: 1;
+  min-width: 0;
+}
+
+.hero-eyebrow {
+  display: inline-flex;
+  min-height: 40rpx;
+  align-items: center;
+  padding: 0 14rpx;
+  border-radius: 999rpx;
+  color: #7d2f49;
+  background: rgba(255, 249, 245, 0.84);
+  border: 1rpx solid rgba(212, 174, 106, 0.48);
+  font-size: 20rpx;
+  font-weight: 800;
+  letter-spacing: 2rpx;
+}
+
+.hero-title {
+  margin-top: 16rpx;
+  color: #7d2f49;
+  font-size: 42rpx;
+  line-height: 1.2;
+  font-weight: 900;
+}
+
+.hero-subtitle {
+  margin-top: 12rpx;
+  color: #614d54;
+  font-size: 24rpx;
+  line-height: 1.62;
+}
+
+.mascot-wrap {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 250rpx;
+  width: 250rpx;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.mascot-halo {
+  position: absolute;
+  width: 220rpx;
+  height: 220rpx;
+  border-radius: 50%;
+  background: rgba(255, 249, 245, 0.76);
+  box-shadow: inset 0 0 0 1rpx rgba(212, 174, 106, 0.25);
+}
+
+.mascot-image {
+  position: relative;
+  z-index: 1;
+  width: 236rpx;
+  height: 210rpx;
+  filter: drop-shadow(0 12rpx 18rpx rgba(125, 47, 73, 0.12));
+  animation: mascot-breathe 3s ease-in-out infinite;
+}
+
+.mascot-caption {
+  position: relative;
+  z-index: 1;
+  margin-top: -6rpx;
+  color: #7d2f49;
+  font-size: 18rpx;
+  font-weight: 700;
+}
+
+.is-compact {
+  min-height: 236rpx;
+  padding: 26rpx;
+}
+
+.is-compact .hero-title {
+  font-size: 36rpx;
+}
+
+.is-compact .mascot-wrap {
+  flex-basis: 190rpx;
+  width: 190rpx;
+}
+
+.is-compact .mascot-image {
+  width: 190rpx;
+  height: 170rpx;
+}
+
+@media (max-width: 340px) {
+  .couple-hero {
+    align-items: flex-start;
+  }
+
+  .mascot-wrap {
+    flex-basis: 190rpx;
+    width: 190rpx;
+  }
+
+  .mascot-image {
+    width: 190rpx;
+  }
+
+  .mascot-caption {
+    display: none;
+  }
+}
+
+@keyframes mascot-breathe {
+  0%, 100% { transform: translateY(0) rotate(-0.6deg); }
+  50% { transform: translateY(-7rpx) rotate(0.6deg); }
+}
+
+/* Stitch 原版：紧凑的晨曦花园页首。保留组件 API，避免影响现有业务页面。 */
+.couple-hero.is-compact {
+  min-height: 174rpx;
+  padding: 22rpx 24rpx;
+  align-items: center;
+  border-color: rgba(143, 54, 83, 0.08);
+  border-radius: 24rpx;
+  background: rgba(255, 248, 248, 0.92);
+  box-shadow: none;
+}
+
+.couple-hero.is-compact::before {
+  display: none;
+}
+
+.is-compact .hero-eyebrow {
+  min-height: 32rpx;
+  padding: 0;
+  border: 0;
+  color: #877276;
+  background: transparent;
+  font-size: 18rpx;
+  letter-spacing: 1rpx;
+}
+
+.is-compact .hero-title {
+  margin-top: 6rpx;
+  color: #711E3C;
+  font-size: 34rpx;
+  line-height: 1.15;
+}
+
+.is-compact .hero-subtitle {
+  margin-top: 6rpx;
+  color: #544246;
+  font-size: 21rpx;
+  line-height: 1.45;
+}
+
+.is-compact .mascot-wrap {
+  flex-basis: 108rpx;
+  width: 108rpx;
+  min-height: 108rpx;
+}
+
+.is-compact .mascot-halo {
+  width: 98rpx;
+  height: 98rpx;
+  background: #FFF0F2;
+  box-shadow: inset 0 0 0 1rpx rgba(143, 54, 83, 0.12);
+}
+
+.is-compact .mascot-image {
+  width: 104rpx;
+  height: 104rpx;
+  filter: none;
+}
+
+.is-compact .mascot-caption {
+  display: none;
+}

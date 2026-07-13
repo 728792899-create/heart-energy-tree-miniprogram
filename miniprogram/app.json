@@ -1,0 +1,84 @@
+{
+  "pages": [
+    "pages/home/home",
+    "pages/bind/bind",
+    "pages/adventure-map/adventure-map",
+    "pages/shop/shop",
+    "pages/messages/messages",
+    "pages/profile/profile",
+    "pages/profile-edit/profile-edit",
+    "pages/checkin/checkin",
+    "pages/wallet/wallet",
+    "pages/history/history",
+    "pages/reward-detail/reward-detail",
+    "pages/redemptions/redemptions",
+    "pages/sponsor-companion/sponsor-companion",
+    "pages/sponsor-companion-history/sponsor-companion-history",
+    "pages/sponsor-companion-badges/sponsor-companion-badges",
+    "pages/sponsor-companion-ledgers/sponsor-companion-ledgers",
+    "pages/sponsor-companion-redemptions/sponsor-companion-redemptions",
+    "pages/admin-rewards/admin-rewards",
+    "pages/sponsor-review/sponsor-review",
+    "pages/sponsor-rules/sponsor-rules",
+    "pages/sponsor-payouts/sponsor-payouts",
+    "pages/weekly-recap/weekly-recap"
+  ],
+  "window": {
+    "navigationBarTitleText": "心动能量树",
+    "navigationBarBackgroundColor": "#FFF8F8",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#FFF8F8",
+    "backgroundTextStyle": "dark"
+  },
+  "usingComponents": {
+    "couple-hero": "/components/couple-hero/couple-hero",
+    "state-panel": "/components/state-panel/state-panel",
+    "amount-card": "/components/amount-card/amount-card",
+    "milestone-card": "/components/milestone-card/milestone-card",
+    "weekly-recap-card": "/components/weekly-recap-card/weekly-recap-card",
+    "encouragement-editor": "/components/encouragement-editor/encouragement-editor",
+    "motion-scene": "/components/motion-scene/motion-scene",
+    "celebration-layer": "/components/celebration-layer/celebration-layer",
+    "love-dialog": "/components/love-dialog/love-dialog"
+  },
+  "tabBar": {
+    "color": "#544246",
+    "selectedColor": "#8F3653",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/home/home",
+        "text": "心动",
+        "iconPath": "assets/tabbar/home.png",
+        "selectedIconPath": "assets/tabbar/home-selected.png"
+      },
+      {
+        "pagePath": "pages/adventure-map/adventure-map",
+        "text": "足迹",
+        "iconPath": "assets/tabbar/map.png",
+        "selectedIconPath": "assets/tabbar/map-selected.png"
+      },
+      {
+        "pagePath": "pages/shop/shop",
+        "text": "礼物",
+        "iconPath": "assets/tabbar/shop.png",
+        "selectedIconPath": "assets/tabbar/shop-selected.png"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我们",
+        "iconPath": "assets/tabbar/profile.png",
+        "selectedIconPath": "assets/tabbar/profile-selected.png"
+      },
+      {
+        "pagePath": "pages/messages/messages",
+        "text": "信笺",
+        "iconPath": "assets/tabbar/message.png",
+        "selectedIconPath": "assets/tabbar/message-selected.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

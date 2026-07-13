@@ -1,0 +1,20 @@
+<view class="encouragement-editor">
+  <view class="editor-heading">
+    <view>
+      <view class="editor-title">给她一份刚刚好的鼓励</view>
+      <view class="editor-subtitle">陪伴不是监督，是让她知道每一步都有人看见。</view>
+    </view>
+    <view class="letter-mark">💌</view>
+  </view>
+  <scroll-view scroll-x enhanced class="template-scroll" show-scrollbar="{{false}}">
+    <view class="template-row">
+      <button wx:for="{{templates}}" wx:key="key" class="template-button {{selectedKey === item.key ? 'selected' : ''}}" data-key="{{item.key}}" disabled="{{sending}}" aria-label="选择{{item.label}}鼓励" bindtap="select">
+        <text>{{item.icon || '♡'}}</text>
+        <text>{{item.label}}</text>
+      </button>
+    </view>
+  </scroll-view>
+  <textarea class="message-input" maxlength="60" value="{{message}}" disabled="{{sending}}" placeholder="再写一句真心话（最多 60 字）" bindinput="input"></textarea>
+  <view class="counter">{{message.length || 0}} / 60</view>
+  <button class="send-button" loading="{{sending}}" disabled="{{sending}}" aria-label="把鼓励发送给女朋友" bindtap="send">{{sending ? '正在把心意送过去…' : '把这份鼓励送给她'}}</button>
+</view>

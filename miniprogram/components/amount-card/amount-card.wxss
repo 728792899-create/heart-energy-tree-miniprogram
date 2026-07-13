@@ -1,0 +1,59 @@
+.amount-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 170rpx;
+  padding: 24rpx;
+  border-radius: 28rpx;
+  border: 1rpx solid rgba(183, 68, 101, 0.14);
+  background: linear-gradient(145deg, #fffdf9, #f8e6ec);
+}
+
+.amount-card::after {
+  content: "♥";
+  position: absolute;
+  right: 18rpx;
+  top: 8rpx;
+  color: rgba(183, 68, 101, 0.09);
+  font-size: 84rpx;
+}
+
+.amount-label {
+  color: #7b6970;
+  font-size: 22rpx;
+}
+
+.amount-row {
+  position: relative;
+  z-index: 1;
+  margin-top: 10rpx;
+  display: flex;
+  align-items: baseline;
+  gap: 8rpx;
+}
+
+.amount-value {
+  color: #b74465;
+  font-size: 46rpx;
+  font-weight: 900;
+}
+
+.amount-unit {
+  color: #7d2f49;
+  font-size: 20rpx;
+  font-weight: 700;
+}
+
+.amount-caption {
+  margin-top: 6rpx;
+  color: #7b6970;
+  font-size: 20rpx;
+}
+
+.tone-gold {
+  background: linear-gradient(145deg, #fffdf9, #fff1d9);
+  border-color: rgba(212, 174, 106, 0.28);
+}
+
+.tone-gold .amount-value {
+  color: #9d7330;
+}

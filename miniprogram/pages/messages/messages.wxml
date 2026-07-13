@@ -1,0 +1,231 @@
+<view class="page messages-page">
+  <state-panel wx:if="{{loading}}" state="loading" title="正在拆开你们的信笺…"></state-panel>
+  <state-panel wx:elif="{{errorMessage}}" state="error" description="{{errorMessage}}" bindretry="retryLoad"></state-panel>
+
+  <block wx:else>
+    <view class="letters-header">
+      <view class="couple-avatar">
+        <image wx:if="{{currentAvatarSrc}}" src="{{currentAvatarSrc}}" mode="aspectFill" data-key="avatar-current" binderror="onMediaError"></image>
+        <text wx:else>{{currentUser.avatarText || '我'}}</text>
+      </view>
+      <view class="letters-identity">
+        <view class="letters-title">{{currentUser.nickname || '我'}} 与 {{companionUser.nickname || 'TA'}}</view>
+        <view class="letters-days">相爱第 {{loveDays}} 天 · 把想念慢慢寄给彼此</view>
+      </view>
+      <view class="couple-avatar">
+        <image wx:if="{{companionAvatarSrc}}" src="{{companionAvatarSrc}}" mode="aspectFill" data-key="avatar-companion" binderror="onMediaError"></image>
+        <text wx:else>{{companionUser.avatarText || 'TA'}}</text>
+      </view>
+    </view>
+
+    <button wx:if="{{watchError}}" class="watch-banner" aria-label="重试信笺实时连接" bindtap="retryWatch">{{watchError}}</button>
+
+    <view wx:if="{{!canSend}}" class="unbound-card">
+      <view class="unbound-seal">♡</view>
+      <view class="unbound-title">先邀请另一半加入吧</view>
+      <view class="unbound-copy">绑定后，你们就能在这里互相写信、发图片、情侣表情和傲娇请求。</view>
+      <button class="invite-button" aria-label="邀请另一半加入" bindtap="inviteCompanion">去邀请另一半</button>
+    </view>
+
+    <block wx:else>
+      <view class="messages-stage">
+        <scroll-view
+          class="messages-scroll"
+          scroll-y
+          scroll-with-animation="{{scrollWithAnimation}}"
+          scroll-into-view="{{scrollIntoView}}"
+          enhanced
+          bindscroll="onMessageScroll"
+          bindscrolltolower="onScrollToLower"
+        >
+          <button wx:if="{{hasMore}}" class="older-button" disabled="{{loadingMore}}" aria-label="查看更早信笺" bindtap="loadMore">
+            {{loadingMore ? '正在取回更早信笺…' : '查看更早信笺'}}
+          </button>
+
+          <view wx:if="{{!messages.length}}" class="empty-letters">
+            <view class="empty-envelope">✉</view>
+            <view class="empty-title">第一封信，想从哪句话开始？</view>
+            <view class="empty-copy">不用很长，今天的想念也可以只写一句。</view>
+          </view>
+
+          <block wx:for="{{messages}}" wx:key="messageId" wx:for-item="message">
+            <view id="message-{{message.messageId}}" class="message-anchor">
+              <view wx:if="{{message.type === 'system'}}" class="timeline-card system-message">
+                <view class="timeline-label">系统关心提示</view>
+                <view class="timeline-content">{{message.content}}</view>
+                <view class="timeline-time">{{message.displayTime}}</view>
+              </view>
+
+              <view wx:elif="{{message.type === 'encouragement'}}" class="timeline-card encouragement-message">
+                <view class="timeline-label">他送来的抱抱</view>
+                <view class="timeline-content">{{message.content}}</view>
+                <view class="timeline-time">{{message.displayTime}}</view>
+              </view>
+
+              <view wx:elif="{{message.type === 'chat' && message.contentType === 'request'}}" class="request-card {{message.requestAdult ? 'is-adult-request' : ''}}">
+                <view class="request-eyebrow">{{message.isOwn ? '我发起的傲娇请求' : 'TA 向你发来请求'}}</view>
+                <view class="request-title">{{message.requestLabel}}</view>
+                <view wx:if="{{message.consentNotice}}" class="request-consent">{{message.consentNotice}}</view>
+                <view class="request-status is-{{message.requestStatus}}">{{message.requestStatusText}}</view>
+                <view wx:if="{{message.respondedDisplayTime}}" class="request-handled-time">处理于 {{message.respondedDisplayTime}}</view>
+                <view wx:if="{{message.canRespondRequest}}" class="request-actions">
+                  <button class="request-action accept" disabled="{{requestProcessingId === message.messageId}}" data-request-message-id="{{message.messageId}}" data-decision="accepted" aria-label="同意{{message.requestLabel}}" bindtap="respondCoupleRequest">同意</button>
+                  <button class="request-action later" disabled="{{requestProcessingId === message.messageId}}" data-request-message-id="{{message.messageId}}" data-decision="later" aria-label="稍后再说{{message.requestLabel}}" bindtap="respondCoupleRequest">稍后再说</button>
+                  <button class="request-action decline" disabled="{{requestProcessingId === message.messageId}}" data-request-message-id="{{message.messageId}}" data-decision="declined" aria-label="婉拒{{message.requestLabel}}" bindtap="respondCoupleRequest">婉拒</button>
+                </view>
+                <button wx:if="{{message.canCancelRequest}}" class="request-cancel" disabled="{{requestProcessingId === message.messageId}}" data-request-message-id="{{message.messageId}}" aria-label="撤回{{message.requestLabel}}" bindtap="cancelCoupleRequest">撤回请求</button>
+                <view class="timeline-time">{{message.displayTime}}</view>
+              </view>
+
+              <view wx:elif="{{message.type === 'chat' && message.contentType === 'request-response'}}" class="request-response-card">
+                <view class="request-response-icon">♡</view>
+                <view class="request-response-copy">{{message.content}}</view>
+                <view class="timeline-time">{{message.displayTime}}</view>
+              </view>
+
+              <view wx:elif="{{message.type === 'chat'}}" class="chat-row {{message.isOwn ? 'is-own' : 'is-other'}}">
+                <view class="chat-avatar" wx:if="{{!message.isOwn}}">
+                  <image wx:if="{{companionAvatarSrc}}" src="{{companionAvatarSrc}}" mode="aspectFill" data-key="avatar-companion-chat" binderror="onMediaError"></image>
+                  <text wx:else>{{companionUser.avatarText || 'TA'}}</text>
+                </view>
+                <view class="chat-stack {{message.contentType === 'image' || message.contentType === 'sticker' ? 'is-media-stack' : ''}}">
+                  <image
+                    wx:if="{{message.contentType === 'image' && message.imageSrc}}"
+                    class="message-photo"
+                    src="{{message.imageSrc}}"
+                    mode="aspectFill"
+                    data-src="{{message.imageSrc}}"
+                    data-message-id="{{message.messageId}}"
+                    data-key="message-{{message.messageId}}"
+                    bindtap="previewMessageImage"
+                    bindload="onMessageMediaLoad"
+                    binderror="onMediaError"
+                  ></image>
+                  <image
+                    wx:elif="{{message.contentType === 'sticker' && message.imageSrc}}"
+                    class="message-sticker"
+                    src="{{message.imageSrc}}"
+                    mode="aspectFit"
+                    data-message-id="{{message.messageId}}"
+                    data-key="message-{{message.messageId}}"
+                    bindload="onMessageMediaLoad"
+                    binderror="onMediaError"
+                  ></image>
+                  <view wx:else class="chat-bubble">{{message.content}}</view>
+                  <view class="chat-time">{{message.displayTime}}</view>
+                </view>
+                <view class="chat-avatar" wx:if="{{message.isOwn}}">
+                  <image wx:if="{{currentAvatarSrc}}" src="{{currentAvatarSrc}}" mode="aspectFill" data-key="avatar-current-chat" binderror="onMediaError"></image>
+                  <text wx:else>{{currentUser.avatarText || '我'}}</text>
+                </view>
+              </view>
+            </view>
+          </block>
+          <view id="{{bottomAnchorId}}" class="messages-end"></view>
+        </scroll-view>
+
+        <view wx:if="{{hasUnseenMessages}}" class="new-message-fab" role="button" aria-label="查看最新信笺" bindtap="showNewestMessages">有 {{newMessageCount}} 条新信笺</view>
+      </view>
+
+      <view class="composer {{keyboardOpen ? 'is-keyboard-open' : ''}}">
+        <scroll-view class="quick-bar" scroll-x enhanced show-scrollbar="{{false}}">
+          <view class="quick-list">
+            <view class="quick-message request-entry" role="button" aria-label="打开傲娇请求" bindtap="toggleRequestPanel">傲娇请求</view>
+            <view class="quick-message" role="button" data-text="今天也很想你" aria-label="直接发送：今天也很想你" bindtap="sendQuickMessage">今天也很想你</view>
+            <view class="quick-message" role="button" data-text="辛苦啦，抱抱你" aria-label="直接发送：辛苦啦，抱抱你" bindtap="sendQuickMessage">辛苦啦，抱抱你</view>
+            <view class="quick-message" role="button" data-text="记得好好休息" aria-label="直接发送：记得好好休息" bindtap="sendQuickMessage">记得好好休息</view>
+            <view class="quick-message" role="button" data-text="有你在真好" aria-label="直接发送：有你在真好" bindtap="sendQuickMessage">有你在真好</view>
+          </view>
+        </scroll-view>
+
+        <view class="composer-toolbar">
+          <view class="composer-icon-button" role="button" aria-label="打开更多发送方式" bindtap="toggleMorePanel">＋</view>
+          <view class="composer-input-shell">
+            <textarea
+              class="message-input"
+              value="{{draft}}"
+              maxlength="200"
+              auto-height
+              adjust-position="{{true}}"
+              cursor-spacing="96"
+              confirm-type="send"
+              bindconfirm="sendDraft"
+              bindfocus="onComposerFocus"
+              bindblur="onComposerBlur"
+              bindkeyboardheightchange="onKeyboardHeightChange"
+              hold-keyboard="{{true}}"
+              placeholder="输入消息…"
+              bindinput="onDraftInput"
+            ></textarea>
+            <view wx:if="{{draft.length}}" class="composer-count {{draft.length >= 180 ? 'is-near-limit' : ''}}">{{draft.length}} / 200</view>
+          </view>
+          <button wx:if="{{draft.length}}" class="send-button" disabled="{{sending || !canSendDraft}}" aria-label="发送当前消息" bindtap="sendDraft">
+            {{sending ? '发送中' : '发送'}}
+          </button>
+          <view wx:else class="composer-icon-button sticker-toggle" role="button" aria-label="打开情侣表情" bindtap="toggleStickerPanel">☺</view>
+        </view>
+
+        <view wx:if="{{composerPanel === 'more'}}" class="composer-panel more-panel">
+          <view class="more-actions">
+            <button class="more-action" disabled="{{uploadingImage}}" aria-label="从相册选择图片" bindtap="chooseAlbumImage"><text class="more-icon">▧</text><text>相册</text></button>
+            <button class="more-action" disabled="{{uploadingImage}}" aria-label="拍照发送图片" bindtap="takePhoto"><text class="more-icon">◎</text><text>拍照</text></button>
+          </view>
+        </view>
+
+        <view wx:if="{{composerPanel === 'stickers'}}" class="composer-panel">
+          <view class="sticker-panel">
+            <view wx:if="{{stickerLoading}}" class="panel-status">正在拿来情侣表情…</view>
+            <button wx:elif="{{stickerError}}" class="panel-status panel-retry" aria-label="重新加载情侣表情" bindtap="loadStickerCatalog">{{stickerError}}，点击重试</button>
+            <view wx:else class="sticker-grid">
+              <button wx:for="{{stickers}}" wx:key="stickerId" class="sticker-item" data-sticker-id="{{item.stickerId}}" aria-label="发送表情：{{item.label}}" bindtap="sendSticker">
+                <image src="{{item.imageSrc}}" mode="aspectFit"></image>
+                <text>{{item.label}}</text>
+              </button>
+            </view>
+          </view>
+        </view>
+
+        <view wx:if="{{composerPanel === 'requests'}}" class="composer-panel request-panel">
+          <view class="request-panel-title">想让 TA 答应你什么？</view>
+          <view class="request-panel-tip">双方都可以发起，对方可以同意、稍后再说或婉拒。</view>
+          <view class="custom-request-shell">
+            <view class="custom-request-row">
+              <input
+                class="custom-request-input"
+                value="{{customRequestDraft}}"
+                maxlength="30"
+                adjust-position="{{true}}"
+                cursor-spacing="96"
+                confirm-type="send"
+                hold-keyboard="{{true}}"
+                placeholder="自定义一个请求，最多30字……"
+                bindinput="onCustomRequestInput"
+                bindfocus="onCustomRequestFocus"
+                bindblur="onComposerBlur"
+                bindkeyboardheightchange="onKeyboardHeightChange"
+                bindconfirm="sendCustomCoupleRequest"
+              />
+              <button class="custom-request-send" disabled="{{!canSendCustomRequest || requestProcessingId}}" aria-label="发送自定义请求" bindtap="sendCustomCoupleRequest">
+                {{requestProcessingId === 'custom-request' ? '发送中' : '发送'}}
+              </button>
+            </view>
+            <view class="custom-request-meta">
+              <text>这是一次邀请，对方可以拒绝或改变主意。</text>
+              <text>{{customRequestCount}} / 30</text>
+            </view>
+          </view>
+          <view wx:if="{{requestLoading}}" class="panel-status">正在整理傲娇请求…</view>
+          <button wx:elif="{{requestError}}" class="panel-status panel-retry" aria-label="重新加载傲娇请求" bindtap="loadRequestCatalog">{{requestError}}，点击重试</button>
+          <scroll-view wx:else class="request-catalog-scroll" scroll-y enhanced>
+            <view class="request-catalog-grid">
+              <button wx:for="{{requests}}" wx:key="requestTemplateId" class="request-template {{item.requestAdult ? 'is-adult-template' : ''}}" disabled="{{requestProcessingId}}" data-request-template-id="{{item.requestTemplateId}}" aria-label="发起{{item.requestLabel}}" bindtap="sendCoupleRequest">
+                <text class="request-template-label">{{item.requestLabel}}</text>
+                <text wx:if="{{item.requestAdult}}" class="adult-mark">成年邀请</text>
+              </button>
+            </view>
+          </scroll-view>
+        </view>
+      </view>
+    </block>
+  </block>
+</view>

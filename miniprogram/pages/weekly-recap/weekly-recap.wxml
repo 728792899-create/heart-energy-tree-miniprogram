@@ -1,0 +1,123 @@
+<view class="page recap-page">
+  <view class="recap-topbar">
+    <view>
+      <view class="recap-kicker">我们的运动日记</view>
+      <view class="recap-page-title">每周回顾</view>
+    </view>
+    <view class="recap-week-pill">{{recap.weekLabel || '正在整理这一周'}}</view>
+  </view>
+
+  <view class="week-nav">
+    <button class="week-button" aria-label="查看上一周回顾" disabled="{{!canPrevious || loading}}" bindtap="showPreviousWeek">‹ 上一周</button>
+    <button class="week-button" aria-label="查看下一周回顾" disabled="{{!canNext || loading}}" bindtap="showNextWeek">下一周 ›</button>
+  </view>
+
+  <state-panel
+    wx:if="{{loading}}"
+    state="loading"
+    title="正在整理这一周的恋爱来信…"
+    description="不排名、不比较，只收藏两个人一起走过的路。"
+  ></state-panel>
+
+  <state-panel
+    wx:elif="{{errorMessage}}"
+    state="error"
+    title="这封信暂时迷路了"
+    description="{{errorMessage}}"
+    bindretry="retry"
+  ></state-panel>
+
+  <block wx:else>
+    <view class="recap-summary-card">
+      <view class="summary-leaf">⌁</view>
+      <view class="summary-label">THIS WEEK</view>
+      <view class="summary-headline">{{recap.headline}}</view>
+      <view class="summary-copy">{{recap.summaryCopy}}</view>
+      <view class="summary-status">
+        <text class="summary-status-icon">✓</text>
+        <text>{{recap.statusText}}</text>
+      </view>
+    </view>
+
+    <view wx:if="{{recap.isEmpty}}" class="recap-empty-note">
+      <view class="empty-note-icon">☁</view>
+      <view>
+        <view class="empty-note-title">这一周也可以慢慢来</view>
+        <view class="empty-note-copy">休息不是退步，我们会在舒服的时候再一起出发。</view>
+      </view>
+    </view>
+
+    <view class="recap-metric-grid">
+      <view class="recap-metric-card metric-coral">
+        <view class="metric-icon">◇</view>
+        <view class="metric-label">运动次数</view>
+        <view class="metric-value">{{recap.stats.approvedDays || 0}}<text> 天</text></view>
+      </view>
+      <view class="recap-metric-card metric-sage">
+        <view class="metric-icon">◷</view>
+        <view class="metric-label">运动时间</view>
+        <view class="metric-value">{{recap.stats.durationMinutes || 0}}<text> 分钟</text></view>
+      </view>
+      <view class="recap-metric-card metric-cream">
+        <view class="metric-icon">⌁</view>
+        <view class="metric-label">最长连续</view>
+        <view class="metric-value">{{recap.stats.maxStreak || 0}}<text> 天</text></view>
+      </view>
+      <view class="recap-metric-card metric-berry">
+        <view class="metric-label">获得能量</view>
+        <view class="metric-value">+{{recap.stats.sunshine || 0}}<text> 阳光</text></view>
+        <view class="metric-sub">奖励 ¥{{recap.stats.cashRewardText || '0.00'}}</view>
+      </view>
+    </view>
+
+    <view class="recap-map-card">
+      <view class="map-card-copy">
+        <view class="map-card-kicker">成长地图</view>
+        <view class="map-card-title">{{recap.bestMoment.title}}</view>
+        <view class="map-card-description">{{recap.bestMoment.message}}</view>
+        <view class="map-progress-note">本周前进 {{recap.stats.mapSteps || 0}} 步 · 通关 {{recap.stats.completedLevels || 0}} 关</view>
+      </view>
+      <view class="map-card-mark">⌖</view>
+    </view>
+
+    <view class="recap-section-label">运动足迹</view>
+    <view class="recap-activity-strip">
+      <view class="activity-main">
+        <view class="activity-value">{{recap.stats.approvedDays || 0}} / 7</view>
+        <view class="activity-copy">天留下了运动记录</view>
+      </view>
+      <view class="activity-dots" aria-label="本周完成 {{recap.stats.approvedDays || 0}} 天运动">
+        <view wx:for="{{activityDots}}" wx:key="index" class="activity-dot {{item.active ? 'is-active' : ''}}">{{item.label}}</view>
+      </view>
+    </view>
+
+    <view class="recap-partner-quote">
+      <view class="quote-mark">“</view>
+      <view class="quote-copy">{{recap.partnerQuote}}</view>
+      <view class="quote-from">来自另一半的陪伴</view>
+    </view>
+
+    <view wx:if="{{recap.encouragements.length}}" class="encouragement-list">
+      <view wx:for="{{recap.encouragements}}" wx:key="id" class="encouragement-item">
+        <view class="encouragement-heart">♥</view>
+        <view>
+          <view class="encouragement-title">{{item.title}}</view>
+          <view class="encouragement-copy">{{item.message}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="recap-next-goal">
+      <view class="goal-kicker">下一周的小约定</view>
+      <view class="goal-title">{{recap.nextGoal}}</view>
+      <view class="goal-copy">不追赶别人，只比这一周多照顾自己一点点。</view>
+    </view>
+
+    <view class="recap-footer-actions">
+      <button class="secondary-btn recap-action" aria-label="返回小程序首页" bindtap="goHome">返回首页</button>
+      <button class="primary-btn recap-action" aria-label="查看全部打卡记录" bindtap="goHistory">查看打卡记录</button>
+    </view>
+
+    <view class="recap-footer-note">不比较、不催促，只把我们一起走过的路好好收藏。</view>
+  </block>
+</view>

@@ -1,0 +1,21 @@
+{
+  "name": "heart-tree-motion-studio",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Offline Remotion asset factory for the Heart Tree private mini program.",
+  "scripts": {
+    "studio": "remotion studio src/index.jsx",
+    "compositions": "remotion compositions src/index.jsx",
+    "render:smoke": "remotion still src/index.jsx poster-binding out/smoke/binding-frame.png --image-format=png --overwrite",
+    "render:preview": "node scripts/render-preview.js",
+    "render:posters": "node scripts/render-posters.js"
+  },
+  "dependencies": {
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
+    "remotion": "4.0.487"
+  },
+  "devDependencies": {
+    "@remotion/cli": "4.0.487"
+  }
+}

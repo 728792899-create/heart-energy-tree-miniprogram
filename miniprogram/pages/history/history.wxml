@@ -1,0 +1,75 @@
+<view class="page history-page">
+  <state-panel wx:if="{{loading}}" state="loading" title="正在翻开成长相册…" description="每一次认真运动都会留在这里。"></state-panel>
+  <state-panel wx:elif="{{errorMessage}}" state="error" title="成长相册暂时打不开" description="{{errorMessage}}" bindretry="retryLoad"></state-panel>
+  <block wx:else>
+    <view class="history-journal-header">
+      <view class="history-journal-ornament" aria-hidden="true">
+        <view class="history-footprint history-footprint-one"></view>
+        <view class="history-footprint history-footprint-two"></view>
+      </view>
+      <view class="history-journal-kicker">成长足迹</view>
+      <view class="history-journal-title">每一步，都在让花园慢慢长大</view>
+      <view class="history-journal-copy">这里收藏每一次运动、每一句记录，以及被认真看见的努力。</view>
+    </view>
+
+    <view class="history-summary-grid">
+      <view class="history-summary-card">
+        <view class="history-summary-label">通过打卡</view>
+        <view class="history-summary-value">{{approvedCount}}</view>
+        <view class="history-summary-unit">次足迹</view>
+      </view>
+      <view class="history-summary-card">
+        <view class="history-summary-label">累计运动</view>
+        <view class="history-summary-value">{{totalMinutes}}</view>
+        <view class="history-summary-unit">分钟</view>
+      </view>
+      <view class="history-summary-card history-summary-reward">
+        <view class="history-summary-label">收获心愿金</view>
+        <view class="history-summary-value history-summary-money">¥{{totalRewardText}}</view>
+        <view class="history-summary-unit">认真都有回音</view>
+      </view>
+    </view>
+
+    <view class="history-section-heading">
+      <view>
+        <view class="history-section-kicker">JOURNAL</view>
+        <view class="history-section-title">足迹日记</view>
+      </view>
+      <view class="history-entry-count">{{history.length}} 条</view>
+    </view>
+
+    <view wx:if="{{history.length}}" class="history-entry-list">
+      <view wx:for="{{history}}" wx:key="id" class="history-entry-card">
+        <view class="history-entry-media">
+          <image wx:if="{{item.photoSrc}}" class="history-entry-image" src="{{item.photoSrc}}" mode="aspectFill"></image>
+          <view wx:else class="history-entry-placeholder">
+            <view class="history-placeholder-leaf" aria-hidden="true"></view>
+            <view>第 {{item.entryNumber}} 个足迹</view>
+          </view>
+          <view class="history-status-badge is-{{item.statusTone}}">{{item.statusText}}</view>
+        </view>
+        <view class="history-entry-body">
+          <view class="history-entry-heading">
+            <view>
+              <view class="history-date">{{item.displayDate}}</view>
+              <view class="history-duration">{{item.durationMinutes ? item.durationMinutes + ' 分钟运动' : '运动打卡'}}</view>
+            </view>
+            <view class="history-entry-number">{{item.entryNumber}}</view>
+          </view>
+          <view wx:if="{{item.note}}" class="history-note">“{{item.note}}”</view>
+          <view wx:if="{{item.status === 'approved'}}" class="history-reward-line">
+            <view>奖励 ¥{{item.rewardText}}</view>
+            <view>连续 {{item.streak}} 天</view>
+          </view>
+          <view wx:if="{{item.reviewNote}}" class="history-review-note">回应：{{item.reviewNote}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view wx:else class="history-empty-state">
+      <view class="history-empty-seal" aria-hidden="true">♡</view>
+      <view class="history-empty-title">第一枚足迹正等你留下</view>
+      <view class="history-empty-copy">完成一次运动打卡后，它会像日记一样收藏在这里。</view>
+    </view>
+  </block>
+</view>

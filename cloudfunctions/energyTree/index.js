@@ -1,0 +1,1161 @@
+let cloud = null;
+let crypto = null;
+
+try {
+  cloud = require('wx-server-sdk');
+  cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
+} catch (error) {
+  cloud = null;
+}
+
+try {
+  crypto = require('crypto');
+} catch (error) {
+  crypto = null;
+}
+
+function loadRuntimeModule(sharedPath, flatPath) {
+  try {
+    return require(sharedPath);
+  } catch (error) {
+    if (!error || error.code !== 'MODULE_NOT_FOUND') throw error;
+    return require(flatPath);
+  }
+}
+
+const appService = loadRuntimeModule('./miniprogram/services/appService', './cloudRuntimeAppService');
+const storage = loadRuntimeModule('./miniprogram/services/storage', './cloudRuntimeStorage');
+const { createCloudRepository, createCoupleMessageService } = require('./coupleMessages');
+const { STICKER_CATALOG } = require('./stickerCatalog');
+const { REQUEST_CATALOG } = require('./requestCatalog');
+const { createContentSafetyService } = require('./contentSafety');
+
+const contentSafety = createContentSafetyService({
+  cloud,
+  logger: console
+});
+
+const STATE_COLLECTION = 'appStates';
+const STATE_DOC_ID = 'main';
+const STATE_KEY = appService.__private.DB_KEY;
+const CLOUD_BUILD_TAG = 'heart-tree-private-v2-20260713-release-safety-v2';
+
+const SNAPSHOT_COLLECTIONS = {
+  users: 'users',
+  relationships: 'relationships',
+  checkIns: 'checkIns',
+  ledgers: 'rewardLedgers',
+  withdrawals: 'claimRequests',
+  rewardItems: 'rewardItems',
+  redemptions: 'redemptions',
+  badges: 'badges',
+  badgeUnlocks: 'badgeUnlocks',
+  surpriseCards: 'surpriseCards',
+  encouragementCards: 'encouragementCards',
+  companionViewNotices: 'companionViewNotices',
+  subscriptionGrants: 'subscriptionGrants',
+  auditLogs: 'auditLogs'
+};
+const REQUIRED_COLLECTIONS = Array.from(new Set([
+  STATE_COLLECTION,
+  ...Object.values(SNAPSHOT_COLLECTIONS),
+  'rewardRules',
+  'growthTreeStates',
+  'coupleMessages',
+  'coupleMessageInbox',
+  'coupleMessageStates',
+  'coupleMessageMigrations',
+  'mediaCheckTasks'
+]));
+let collectionsReadyPromise = null;
+
+function nowIso() {
+  return new Date().toISOString();
+}
+
+function clone(value) {
+  return JSON.parse(JSON.stringify(value));
+}
+
+function randomToken() {
+  if (crypto && typeof crypto.randomBytes === 'function') {
+    return crypto.randomBytes(18).toString('base64url');
+  }
+  return `${Date.now()}_${Math.random().toString(36).slice(2, 14)}`;
+}
+
+function ensureInviteTokens(relationship) {
+  relationship.inviteTokens = relationship.inviteTokens || {};
+  if (!relationship.inviteTokens.participant) {
+    relationship.inviteTokens.participant = randomToken();
+  }
+  return relationship.inviteTokens;
+}
+
+
+function collectAuthorizedMediaFileIds(value, result = []) {
+  if (!value) return result;
+  if (Array.isArray(value)) {
+    value.forEach((item) => collectAuthorizedMediaFileIds(item, result));
+    return result;
+  }
+  if (typeof value !== 'object') return result;
+  ['avatarFileId', 'imageFileId', 'photoFileId'].forEach((key) => {
+    const fileId = value[key];
+    if (typeof fileId === 'string' && fileId.startsWith('cloud://')) result.push(fileId);
+  });
+  Object.keys(value).forEach((key) => {
+    if (value[key] && typeof value[key] === 'object') collectAuthorizedMediaFileIds(value[key], result);
+  });
+  return result;
+}
+
+async function resolveAuthorizedTempUrls(fileIds) {
+  const unique = Array.from(new Set(fileIds || []));
+  if (!unique.length) return {};
+  if (!cloud || typeof cloud.getTempFileURL !== 'function') return {};
+  try {
+    const response = await cloud.getTempFileURL({ fileList: unique });
+    return Object.fromEntries(((response && response.fileList) || [])
+      .filter((item) => item && item.fileID && item.tempFileURL && (item.status === 0 || item.status === undefined))
+      .map((item) => [item.fileID, item.tempFileURL]));
+  } catch (error) {
+    console.warn('[energy-tree] authorized media hydration failed', error && error.message);
+    return {};
+  }
+}
+
+async function hydrateAuthorizedMedia(value, resolver = resolveAuthorizedTempUrls) {
+  const hydrated = clone(value);
+  const fileIds = Array.from(new Set(collectAuthorizedMediaFileIds(hydrated)));
+  if (!fileIds.length) return hydrated;
+  const urls = await resolver(fileIds);
+  function decorate(node) {
+    if (!node) return;
+    if (Array.isArray(node)) {
+      node.forEach(decorate);
+      return;
+    }
+    if (typeof node !== 'object') return;
+    if (node.avatarFileId && urls[node.avatarFileId]) node.avatarSrc = urls[node.avatarFileId];
+    if (node.imageFileId && urls[node.imageFileId]) node.imageSrc = urls[node.imageFileId];
+    if (node.photoFileId && urls[node.photoFileId]) node.photoSrc = urls[node.photoFileId];
+    Object.keys(node).forEach((key) => decorate(node[key]));
+  }
+  decorate(hydrated);
+  return hydrated;
+}
+
+function getDb() {
+  if (!cloud || typeof cloud.database !== 'function') {
+    throw new Error('云函数环境无法连接云数据库');
+  }
+  return cloud.database();
+}
+
+async function ensureCollections() {
+  if (collectionsReadyPromise) return collectionsReadyPromise;
+  const db = getDb();
+  if (typeof db.createCollection !== 'function') {
+    collectionsReadyPromise = Promise.resolve();
+    return collectionsReadyPromise;
+  }
+  collectionsReadyPromise = Promise.all(REQUIRED_COLLECTIONS.map((collectionName) => (
+    db.createCollection(collectionName).catch((error) => {
+      const message = [
+        error && error.message,
+        error && error.errMsg,
+        error && error.errCode,
+        error && error.code
+      ].filter(Boolean).join(' ');
+      const code = String((error && (error.errCode || error.code)) || '');
+      if (
+        message.includes('already exists')
+        || message.includes('collection exists')
+        || message.includes('Table exist')
+        || message.includes('ResourceExist')
+        || message.includes('DATABASE_COLLECTION_ALREADY_EXIST')
+        || message.includes('已存在')
+        || code.includes('DATABASE_COLLECTION_ALREADY_EXIST')
+      ) {
+        return null;
+      }
+      throw error;
+    })
+  ))).catch((error) => {
+    collectionsReadyPromise = null;
+    throw error;
+  });
+  return collectionsReadyPromise;
+}
+
+function getAuthContext(event) {
+  if (cloud && typeof cloud.getWXContext === 'function') {
+    const wxContext = cloud.getWXContext();
+    if (wxContext && wxContext.OPENID) return { openid: wxContext.OPENID };
+  }
+  // Test-only fallback: production cloud functions must never trust client-sent openid fields.
+  if (
+    !cloud
+    && process.env.ENERGY_TREE_ALLOW_TEST_AUTH === '1'
+    && event
+    && event.__testOpenid
+  ) {
+    return { openid: event.__testOpenid };
+  }
+  throw new Error('云函数环境无法获取可信 openid');
+}
+
+function createCloudInitialState() {
+  const state = appService.__private.createInitialState();
+  const relationship = state.relationships[0];
+  const sponsor = state.users.find((item) => item.id === relationship.sponsorId);
+  const participant = state.users.find((item) => item.id === relationship.participantId);
+
+  sponsor.name = '男朋友';
+  sponsor.openid = '';
+  participant.name = '小鹿';
+  participant.openid = '';
+  relationship.sponsorOpenid = '';
+  relationship.participantOpenid = '';
+  relationship.inviteTokens = {
+    participant: randomToken()
+  };
+  state.currentRole = 'participant';
+  state.meta.cloudMode = true;
+  state.meta.createdAt = nowIso();
+  return state;
+}
+
+async function loadCloudState(dbOverride) {
+  const db = dbOverride || getDb();
+  if (!dbOverride) await ensureCollections();
+  let doc = null;
+  try {
+    doc = await db.collection(STATE_COLLECTION).doc(STATE_DOC_ID).get();
+  } catch (error) {
+    if (!isDocumentNotFound(error)) throw error;
+  }
+  if (doc && doc.data && doc.data.state) return doc.data.state;
+  return runStateMutationTransaction(db, async (state) => clone(state));
+}
+
+function createProjectionSnapshot(state) {
+  const snapshot = {};
+  Object.keys(SNAPSHOT_COLLECTIONS).forEach((key) => {
+    (state[key] || []).forEach((item) => {
+      if (!item || !item.id) return;
+      const collectionName = SNAPSHOT_COLLECTIONS[key];
+      snapshot[`${collectionName}/${item.id}`] = {
+        collectionName,
+        id: item.id,
+        data: clone(item)
+      };
+    });
+  });
+  (state.relationships || []).forEach((relationship) => {
+    snapshot[`rewardRules/${relationship.id}`] = {
+      collectionName: 'rewardRules',
+      id: relationship.id,
+      data: {
+        id: relationship.id,
+        relationshipId: relationship.id,
+        rule: clone(relationship.rewardRule)
+      }
+    };
+    snapshot[`growthTreeStates/${relationship.id}`] = {
+      collectionName: 'growthTreeStates',
+      id: relationship.id,
+      data: {
+        id: relationship.id,
+        relationshipId: relationship.id,
+        balance: clone(relationship.balance),
+        tree: clone(relationship.tree),
+        adventure: clone(relationship.adventure)
+      }
+    };
+  });
+  return snapshot;
+}
+
+function diffProjectionSnapshots(beforeState, nextState) {
+  const before = beforeState ? createProjectionSnapshot(beforeState) : {};
+  const next = createProjectionSnapshot(nextState);
+  const sets = Object.keys(next)
+    .filter((path) => !before[path] || JSON.stringify(before[path].data) !== JSON.stringify(next[path].data))
+    .map((path) => next[path]);
+  const removes = Object.keys(before)
+    .filter((path) => !next[path])
+    .map((path) => before[path]);
+  return { sets, removes };
+}
+
+async function removeTransactionDocument(document) {
+  if (typeof document.remove === 'function') return document.remove();
+  if (typeof document.delete === 'function') return document.delete();
+  throw new Error('当前数据库事务不支持删除文档');
+}
+
+async function applyProjectionChanges(transaction, changes, syncedAt) {
+  for (const item of changes.sets) {
+    await transaction.collection(item.collectionName).doc(item.id).set({
+      data: {
+        ...item.data,
+        syncedAt
+      }
+    });
+  }
+  for (const item of changes.removes) {
+    await removeTransactionDocument(transaction.collection(item.collectionName).doc(item.id));
+  }
+}
+
+function isDocumentNotFound(error) {
+  const text = [
+    error && error.message,
+    error && error.errMsg,
+    error && error.code,
+    error && error.errCode
+  ].filter(Boolean).join(' ').toLowerCase();
+  return text.includes('not found')
+    || text.includes('document_not_exists')
+    || text.includes('document not exists')
+    || text.includes('找不到')
+    || text.includes('不存在');
+}
+
+function unwrapTransactionResult(response) {
+  if (response && Object.prototype.hasOwnProperty.call(response, 'result')) return response.result;
+  return response;
+}
+
+async function runStateMutationTransaction(db, task) {
+  if (!db || typeof db.runTransaction !== 'function') {
+    throw new Error('当前云数据库不支持事务，请升级并重新部署云函数依赖');
+  }
+  const response = await db.runTransaction(async (transaction) => {
+    const stateDocument = transaction.collection(STATE_COLLECTION).doc(STATE_DOC_ID);
+    let stored = null;
+    try {
+      stored = await stateDocument.get();
+    } catch (error) {
+      if (!isDocumentNotFound(error)) throw error;
+    }
+    const hasStoredState = Boolean(stored && stored.data && stored.data.state);
+    const state = hasStoredState ? stored.data.state : createCloudInitialState();
+    const beforeState = clone(state);
+    const scoped = await storage.runWithScopedStorage({ [STATE_KEY]: state }, async () => task(state));
+    const nextState = scoped.values[STATE_KEY] || state;
+    const changed = !hasStoredState || JSON.stringify(nextState) !== JSON.stringify(beforeState);
+    if (changed) {
+      const updatedAt = nowIso();
+      await stateDocument.set({
+        data: {
+          state: nextState,
+          updatedAt
+        }
+      });
+      await applyProjectionChanges(
+        transaction,
+        diffProjectionSnapshots(hasStoredState ? beforeState : null, nextState),
+        updatedAt
+      );
+    }
+    return scoped.result;
+  });
+  return unwrapTransactionResult(response);
+}
+
+function findCurrentUser(state, openid) {
+  return state.users.find((user) => user.openid === openid);
+}
+
+function bindingRequiredPayload(state) {
+  const relationship = state && state.relationships && state.relationships[0];
+  return {
+    needsBinding: true,
+    currentRole: 'guest',
+    currentUser: {
+      name: '未绑定',
+      avatarText: '?'
+    },
+    relationship: null,
+    bindingStatus: relationship ? {
+      sponsorBound: Boolean(relationship.sponsorOpenid),
+      participantBound: Boolean(relationship.participantOpenid),
+      canCreateSponsor: !relationship.sponsorOpenid
+    } : {
+      sponsorBound: false,
+      participantBound: false,
+      canCreateSponsor: true
+    },
+    message: '请先创建或通过分享邀请加入情侣能量树'
+  };
+}
+
+function assertBound(state, openid) {
+  const user = findCurrentUser(state, openid);
+  if (!user) {
+    const error = new Error('请先创建或通过分享邀请加入情侣能量树');
+    error.code = 'NEEDS_BINDING';
+    throw error;
+  }
+  return user;
+}
+
+function bindRole(state, relationship, role, openid, displayName, auditAction) {
+  const targetId = role === 'sponsor' ? relationship.sponsorId : relationship.participantId;
+  const target = state.users.find((user) => user.id === targetId);
+  const occupiedOpenid = role === 'sponsor' ? relationship.sponsorOpenid : relationship.participantOpenid;
+  if (!target) throw new Error('找不到要绑定的身份');
+  if (occupiedOpenid && occupiedOpenid !== openid) throw new Error('这个身份已经绑定过了');
+
+  const previous = findCurrentUser(state, openid);
+  if (previous && previous.id !== target.id) throw new Error('当前微信已经绑定了另一种身份');
+
+  target.openid = openid;
+  if (displayName) target.name = displayName;
+  if (role === 'sponsor') relationship.sponsorOpenid = openid;
+  if (role === 'participant') relationship.participantOpenid = openid;
+  state.auditLogs.push({
+    id: `audit_${Date.now()}`,
+    relationshipId: relationship.id,
+    actorOpenid: openid,
+    action: auditAction || `identity.bind.${role}`,
+    targetId: target.id,
+    amountCents: 0,
+    note: displayName || target.name,
+    createdAt: nowIso()
+  });
+  appService.saveState(state);
+  return appService.getDashboard({ authContext: { openid } });
+}
+
+function runCloudIdentityMutation(state, payload, openid, action, handler) {
+  return appService.__private.runMutationWithReceipt(action, {
+    ...(payload || {}),
+    authContext: { openid }
+  }, handler, {
+    actorOpenid: openid
+  });
+}
+
+function bindAsSponsor(state, payload, openid) {
+  return runCloudIdentityMutation(state, payload, openid, 'identity.createSponsor', () => {
+    const relationship = state.relationships[0];
+    const displayName = String((payload && payload.displayName) || '').trim();
+    if (relationship.sponsorOpenid && relationship.sponsorOpenid !== openid) {
+      throw new Error('这棵能量树已经有发起者了，请让对方从小程序内分享邀请给你');
+    }
+    ensureInviteTokens(relationship);
+    return bindRole(state, relationship, 'sponsor', openid, displayName || '男朋友', 'identity.createSponsor');
+  });
+}
+
+function bindByInvite(state, payload, openid) {
+  return runCloudIdentityMutation(state, payload, openid, 'identity.bind.participant', () => {
+    const relationship = state.relationships[0];
+    const inviteToken = String((payload && payload.inviteToken) || '').trim();
+    const displayName = String((payload && payload.displayName) || '').trim();
+    const inviteTokens = relationship.inviteTokens || {};
+    let role = '';
+    if (inviteToken && inviteToken === inviteTokens.participant) role = 'participant';
+    if (!role) throw new Error('邀请已失效，请让对方重新从小程序内分享邀请给你');
+
+    const dashboard = bindRole(state, relationship, role, openid, displayName, `identity.bind.${role}`);
+    relationship.inviteTokens = {
+      ...relationship.inviteTokens,
+      participant: randomToken()
+    };
+    appService.saveState(state);
+    return dashboard;
+  });
+}
+
+function generatePartnerInvite(state, payload, openid) {
+  return runCloudIdentityMutation(state, payload, openid, 'identity.generateInvite', () => {
+    const relationship = state.relationships[0];
+    assertBound(state, openid);
+    const actor = appService.getState().users.find((user) => user.openid === openid);
+    if (!actor || actor.openid !== relationship.sponsorOpenid) {
+      throw new Error('只有赞助者可以邀请另一半加入');
+    }
+    const tokens = ensureInviteTokens(relationship);
+    appService.saveState(state);
+    return {
+      id: relationship.id,
+      role: 'participant',
+      inviteToken: tokens.participant,
+      title: '邀请你加入我们的心动能量树',
+      path: `/pages/bind/bind?inviteRole=participant&inviteToken=${encodeURIComponent(tokens.participant)}`
+    };
+  });
+}
+
+async function trySendCompanionViewSubscription(state, notice) {
+  if (!notice || notice.deduped) return notice;
+  const stored = state.companionViewNotices.find((item) => item.id === notice.id);
+  if (!stored) return notice;
+  stored.subscriptionStatus = 'not_configured';
+  delete stored.subscriptionError;
+  return {
+    ...notice,
+    subscriptionStatus: stored.subscriptionStatus
+  };
+}
+
+async function runWithCloudState(event, task, options = {}) {
+  const authContext = getAuthContext(event);
+  const db = options.db || getDb();
+  if (!options.db) await ensureCollections();
+  if (options.mutation) {
+    return runStateMutationTransaction(db, async (state) => task(state, authContext));
+  }
+  const state = await loadCloudState(db);
+  const beforeState = JSON.stringify(state);
+  const scoped = await storage.runWithScopedStorage({ [STATE_KEY]: state }, async () => task(state, authContext));
+  const nextState = scoped.values[STATE_KEY] || state;
+  if (JSON.stringify(nextState) !== beforeState) {
+    throw new Error('只读云函数动作修改了业务状态，请改为事务写动作');
+  }
+  return scoped.result;
+}
+
+async function dispatchAction(action, payload, state, authContext) {
+  assertBound(state, authContext.openid);
+  switch (action) {
+    case 'reviewCheckIn':
+      if (payload.decision === 'approved') {
+        return appService.approveCheckIn({
+          checkInId: payload.checkInId,
+          praise: payload.note,
+          clientRequestId: payload.clientRequestId,
+          authContext
+        });
+      }
+      return appService.rejectCheckIn({
+        checkInId: payload.checkInId,
+        reason: payload.note,
+        clientRequestId: payload.clientRequestId,
+        authContext
+      });
+    case 'processWithdrawal':
+      if (payload.action === 'approve') {
+        return appService.approveWithdrawal({
+          withdrawalId: payload.withdrawalId,
+          clientRequestId: payload.clientRequestId,
+          authContext
+        });
+      }
+      if (payload.action === 'mark_paid') {
+        return appService.markWithdrawalPaid({
+          withdrawalId: payload.withdrawalId,
+          transferNote: payload.note,
+          confirmed: payload.confirmed,
+          clientRequestId: payload.clientRequestId,
+          authContext
+        });
+      }
+      return appService.rejectWithdrawal({
+        withdrawalId: payload.withdrawalId,
+        reason: payload.note,
+        confirmed: payload.confirmed,
+        clientRequestId: payload.clientRequestId,
+        authContext
+      });
+    case 'processCancelRedemption':
+      if (payload.action === 'approve') {
+        return appService.approveCancelRedemption({
+          redemptionId: payload.redemptionId,
+          note: payload.note,
+          confirmed: payload.confirmed,
+          clientRequestId: payload.clientRequestId,
+          authContext
+        });
+      }
+      return appService.rejectCancelRedemption({
+        redemptionId: payload.redemptionId,
+        reason: payload.note,
+        confirmed: payload.confirmed,
+        clientRequestId: payload.clientRequestId,
+        authContext
+      });
+    default:
+      throw new Error(`未知云函数动作：${action}`);
+  }
+}
+
+const READ_ONLY_ACTIONS = new Set([
+  'login',
+  'queryDashboard',
+  'queryAdventure',
+  'queryBadges',
+  'queryCalendarStats',
+  'queryProfileEditState',
+  'querySponsorDashboard',
+  'queryViewNotices',
+  'queryLedgers',
+  'queryHistory',
+  'queryPendingCheckIns',
+  'queryWithdrawals',
+  'queryRewardItems',
+  'queryRewardItem',
+  'queryRedemptions',
+  'queryEncouragements',
+  'queryMilestones',
+  'queryWeeklyRecap'
+]);
+
+function isMutationAction(action, payload = {}) {
+  if (action === 'queryCompanionDetail') return payload.recordView !== false;
+  return !READ_ONLY_ACTIONS.has(action);
+}
+
+async function handleStateAction(event) {
+  const action = event && event.action;
+  const payload = (event && event.payload) || {};
+
+  return runWithCloudState(event, async (state, authContext) => {
+    const input = {
+      ...payload,
+      authContext
+    };
+
+    if (action === 'login' || action === 'queryDashboard') {
+      return findCurrentUser(state, authContext.openid)
+        ? appService.getDashboard(input)
+        : bindingRequiredPayload(state);
+    }
+
+    if (action === 'bindAsSponsor') {
+      return bindAsSponsor(state, payload, authContext.openid);
+    }
+
+    if (action === 'bindByInvite') {
+      return bindByInvite(state, payload, authContext.openid);
+    }
+
+    assertBound(state, authContext.openid);
+
+    switch (action) {
+      case 'queryAdventure':
+        return appService.getAdventure(input);
+      case 'queryBadges':
+        return appService.getBadgeWall(input);
+      case 'queryCalendarStats':
+        return appService.getCalendarStats(input);
+      case 'queryProfileEditState':
+        return appService.getProfileEditState(input);
+      case 'updateProfile':
+        return appService.updateProfile(input);
+      case 'equipBadges':
+        return appService.equipBadges(input);
+      case 'querySponsorDashboard':
+        return appService.querySponsorDashboard(input);
+      case 'queryCompanionDetail': {
+        const result = appService.queryCompanionDetail(input);
+        if (result.notice) {
+          const nextState = appService.getState();
+          result.notice = await trySendCompanionViewSubscription(nextState, result.notice);
+          appService.saveState(nextState);
+        }
+        return result;
+      }
+      case 'recordCompanionView': {
+        const notice = appService.recordCompanionView(input);
+        const nextState = appService.getState();
+        const sentNotice = await trySendCompanionViewSubscription(nextState, notice);
+        appService.saveState(nextState);
+        return sentNotice;
+      }
+      case 'queryViewNotices':
+        return appService.listViewNotices(input);
+      case 'markViewNoticesRead':
+        return appService.markViewNoticesRead(input);
+      case 'saveSubscriptionGrant':
+        return appService.saveSubscriptionGrant(input);
+      case 'queryLedgers':
+        return appService.listLedgers(input);
+      case 'queryHistory':
+        return appService.listHistory(input);
+      case 'queryPendingCheckIns':
+        return appService.listPendingCheckIns(input);
+      case 'queryWithdrawals':
+        return appService.listWithdrawals(input);
+      case 'queryRewardItems':
+        return appService.listRewardItems(input);
+      case 'queryRewardItem':
+        return appService.getRewardItem(input);
+      case 'queryRedemptions':
+        return appService.listRedemptions(input);
+      case 'queryEncouragements':
+        return appService.queryEncouragements(input);
+      case 'queryMilestones':
+        return appService.queryMilestones(input);
+      case 'queryWeeklyRecap':
+        return appService.queryWeeklyRecap(input);
+      case 'generatePartnerInvite':
+        return generatePartnerInvite(state, payload, authContext.openid);
+      case 'sendEncouragement':
+        return appService.sendEncouragement(input);
+      case 'markEncouragementRead':
+        return appService.markEncouragementRead(input);
+      case 'markMilestoneSeen':
+        return appService.markMilestoneSeen(input);
+      case 'submitCheckIn':
+        return appService.submitCheckIn(input);
+      case 'reviewCheckIn':
+        return dispatchAction(action, payload, state, authContext);
+      case 'requestWithdrawal':
+        return appService.requestWithdrawal(input);
+      case 'processWithdrawal':
+        return dispatchAction(action, payload, state, authContext);
+      case 'updateRewardRule':
+        return appService.updateRewardRule(input);
+      case 'updateAdventureLevels':
+        return appService.updateAdventureLevels(input);
+      case 'redeemReward':
+        return appService.redeemReward(input);
+      case 'verifyRedemption':
+        return appService.verifyRedemption(input);
+      case 'requestCancelRedemption':
+        return appService.requestCancelRedemption(input);
+      case 'processCancelRedemption':
+        return dispatchAction(action, payload, state, authContext);
+      case 'saveRewardItem':
+        return appService.saveRewardItem(input);
+      case 'toggleRewardItem':
+        return appService.toggleRewardItem(input);
+      case 'deleteRewardItem':
+        return appService.deleteRewardItem(input);
+      default:
+        throw new Error(`未知云函数动作：${action}`);
+    }
+  }, {
+    mutation: isMutationAction(action, payload)
+  });
+}
+
+
+const COUPLE_MESSAGE_ACTIONS = new Set([
+  'bootstrapCoupleMessages',
+  'queryCoupleMessages',
+  'queryCoupleStickerCatalog',
+  'queryCoupleRequestCatalog',
+  'sendCoupleMessage',
+  'sendCoupleRequest',
+  'respondCoupleRequest',
+  'cancelCoupleRequest',
+  'markCoupleMessagesRead'
+]);
+
+function resolveCoupleMessageContext(state, openid) {
+  const currentUser = assertBound(state, openid);
+  const relationship = (state.relationships || []).find((item) => (
+    item.sponsorId === currentUser.id || item.participantId === currentUser.id
+  ));
+  if (!relationship) throw new Error('找不到当前情侣关系');
+  const currentRole = currentUser.id === relationship.sponsorId ? 'sponsor' : 'participant';
+  const companionId = currentRole === 'sponsor' ? relationship.participantId : relationship.sponsorId;
+  const companionUser = (state.users || []).find((item) => item.id === companionId) || null;
+  const currentOpenid = currentRole === 'sponsor' ? relationship.sponsorOpenid : relationship.participantOpenid;
+  const companionOpenid = currentRole === 'sponsor' ? relationship.participantOpenid : relationship.sponsorOpenid;
+  return {
+    relationship,
+    currentRole,
+    currentUser: { ...currentUser, role: currentRole, openid: currentOpenid || currentUser.openid },
+    companionUser: companionUser ? {
+      ...companionUser,
+      role: currentRole === 'sponsor' ? 'participant' : 'sponsor',
+      openid: companionOpenid || companionUser.openid || ''
+    } : null
+  };
+}
+
+function createCloudMessageService(db) {
+  return createCoupleMessageService({
+    repository: createCloudRepository({ db, command: db.command }),
+    now: nowIso,
+    stickerCatalog: STICKER_CATALOG,
+    requestCatalog: REQUEST_CATALOG
+  });
+}
+
+async function markCoupleMessagesRead({
+  event,
+  context,
+  service,
+  markLegacyViewNoticesRead,
+  reloadContext
+}) {
+  let activeContext = context;
+  if (activeContext.currentRole === 'participant') {
+    await markLegacyViewNoticesRead(event);
+    activeContext = await reloadContext();
+  }
+  return service.markRead({ context: activeContext });
+}
+
+async function handleCoupleMessageAction(event) {
+  const action = event.action;
+  const payload = event.payload || {};
+  const authContext = getAuthContext(event);
+  const db = getDb();
+  await ensureCollections();
+  let state = await loadCloudState(db);
+  let context = resolveCoupleMessageContext(state, authContext.openid);
+  const service = createCloudMessageService(db);
+
+  if (action === 'bootstrapCoupleMessages') {
+    return service.bootstrap({ context, state });
+  }
+  if (action === 'queryCoupleMessages') {
+    return service.query({ context, beforeSortKey: payload.beforeSortKey, limit: payload.limit });
+  }
+  if (action === 'queryCoupleStickerCatalog') {
+    return { stickers: STICKER_CATALOG };
+  }
+  if (action === 'queryCoupleRequestCatalog') {
+    return { requests: REQUEST_CATALOG };
+  }
+  if (action === 'sendCoupleMessage') {
+    return service.send({
+      context,
+      contentType: payload.contentType,
+      content: payload.content,
+      imageFileId: payload.imageFileId,
+      imageWidth: payload.imageWidth,
+      imageHeight: payload.imageHeight,
+      stickerId: payload.stickerId,
+      clientRequestId: payload.clientRequestId
+    });
+  }
+  if (action === 'sendCoupleRequest') {
+    return service.sendRequest({
+      context,
+      requestTemplateId: payload.requestTemplateId,
+      customRequestText: payload.customRequestText,
+      clientRequestId: payload.clientRequestId
+    });
+  }
+  if (action === 'respondCoupleRequest') {
+    return service.respondRequest({
+      context,
+      requestMessageId: payload.requestMessageId,
+      decision: payload.decision,
+      clientRequestId: payload.clientRequestId
+    });
+  }
+  if (action === 'cancelCoupleRequest') {
+    return service.cancelRequest({
+      context,
+      requestMessageId: payload.requestMessageId,
+      clientRequestId: payload.clientRequestId
+    });
+  }
+  if (action === 'markCoupleMessagesRead') {
+    return markCoupleMessagesRead({
+      event,
+      context,
+      service,
+      markLegacyViewNoticesRead: async () => {
+        await runWithCloudState(event, async (_state, trustedAuthContext) => {
+          return appService.markViewNoticesRead({ authContext: trustedAuthContext, noticeIds: [] });
+        }, { mutation: true });
+      },
+      reloadContext: async () => {
+        state = await loadCloudState(db);
+        return resolveCoupleMessageContext(state, authContext.openid);
+      }
+    });
+  }
+  throw new Error(`未知云函数动作：${action}`);
+}
+
+async function projectLegacyMessageBestEffort(event, action, result) {
+  const legacy = action === 'sendEncouragement'
+    ? result
+    : (action === 'recordCompanionView' ? result : result && result.notice);
+  if (!legacy || !legacy.id) return;
+  try {
+    const authContext = getAuthContext(event);
+    const db = getDb();
+    const state = await loadCloudState(db);
+    const context = resolveCoupleMessageContext(state, authContext.openid);
+    const service = createCloudMessageService(db);
+    if (action === 'sendEncouragement') {
+      await service.projectLegacy({
+        context,
+        type: 'encouragement',
+        sourceType: 'encouragement',
+        sourceId: legacy.id,
+        senderUserId: legacy.senderUserId,
+        recipientUserId: legacy.recipientUserId,
+        content: legacy.message,
+        readAt: legacy.readAt,
+        createdAt: legacy.createdAt
+      });
+      return;
+    }
+    await service.projectLegacy({
+      context,
+      type: 'system',
+      sourceType: 'companionView',
+      sourceId: legacy.id,
+      senderUserId: legacy.viewerUserId,
+      recipientUserId: legacy.targetUserId,
+      content: legacy.message,
+      readAt: legacy.readAt,
+      createdAt: legacy.createdAt
+    });
+  } catch (error) {
+    console.warn('[energy-tree] message projection deferred to bootstrap', {
+      action,
+      sourceId: legacy.id,
+      message: error && error.message
+    });
+  }
+}
+
+async function handleAction(event) {
+  if (COUPLE_MESSAGE_ACTIONS.has(event && event.action)) {
+    return handleCoupleMessageAction(event || {});
+  }
+  const result = await handleStateAction(event || {});
+  if (['sendEncouragement', 'recordCompanionView', 'queryCompanionDetail'].includes(event && event.action)) {
+    await projectLegacyMessageBestEffort(event || {}, event.action, result);
+  }
+  return result;
+}
+
+async function handleAuthorizedAction(event, options = {}) {
+  const actionHandler = options.actionHandler || handleAction;
+  const hydrate = options.hydrate || hydrateAuthorizedMedia;
+  const safety = options.contentSafety || contentSafety;
+  const authResolver = options.authResolver || getAuthContext;
+  const safeEvent = event || {};
+  const authContext = authResolver(safeEvent);
+
+  const safetyResult = await safety.assertEventAllowed({
+    action: safeEvent.action,
+    payload: safeEvent.payload || {},
+    openid: authContext.openid
+  });
+
+  const result = await actionHandler(safeEvent);
+  if (safetyResult && Array.isArray(safetyResult.imageChecks) && safetyResult.imageChecks.length) {
+    const recorder = options.recordPendingMediaChecks || recordPendingMediaChecks;
+    await recorder(safeEvent, authContext, safetyResult.imageChecks)
+      .catch((error) => console.error('[energy-tree] record media check tasks failed', error && (error.code || error.message)));
+  }
+  return hydrate(result);
+}
+
+const STATE_BACKED_MEDIA_ACTIONS = new Set(['submitCheckIn', 'updateProfile', 'saveRewardItem']);
+
+function findRelationshipIdForOpenid(state, openid) {
+  const relationship = (state.relationships || []).find((item) => (
+    item.sponsorOpenid === openid
+    || item.participantOpenid === openid
+    || (state.users || []).some((user) => (
+      user.openid === openid && (user.id === item.sponsorId || user.id === item.participantId)
+    ))
+  ));
+  return relationship ? relationship.id : '';
+}
+
+async function recordPendingMediaChecks(event, authContext, imageChecks, options = {}) {
+  if (!Array.isArray(imageChecks) || !imageChecks.length) return [];
+  const action = event && event.action;
+  const backend = action === 'sendCoupleMessage'
+    ? 'coupleMessage'
+    : (STATE_BACKED_MEDIA_ACTIONS.has(action) ? 'state' : '');
+  if (!backend) return [];
+
+  const db = options.db || (cloud && typeof cloud.database === 'function' ? getDb() : null);
+  if (!db) return [];
+  if (!options.db) await ensureCollections();
+  // Task ownership must come from the trusted OPENID mapping, never from a client relationshipId.
+  const state = await loadCloudState(db);
+  const relationshipId = findRelationshipIdForOpenid(state, authContext.openid);
+  if (!relationshipId) throw new Error('找不到图片安全任务所属的情侣关系');
+
+  const records = [];
+  for (const check of imageChecks) {
+    const data = {
+      traceId: check.traceId,
+      action,
+      backend,
+      openid: authContext.openid,
+      relationshipId,
+      fileId: check.fileId,
+      scene: check.scene,
+      status: 'pending',
+      suggest: '',
+      createdAt: nowIso(),
+      resolvedAt: null
+    };
+    const response = await db.collection('mediaCheckTasks').add({ data });
+    records.push({ ...data, _id: response && (response._id || response.id) });
+  }
+  return records;
+}
+
+function deriveMediaCheckSuggest(event) {
+  const value = (event && event.result && event.result.suggest)
+    || (event && Array.isArray(event.detail) && event.detail[0] && event.detail[0].suggest)
+    || (event && Number(event.errcode) === 0 ? 'pass' : 'review');
+  return String(value || 'review').toLowerCase();
+}
+
+function mediaCheckTraceId(event) {
+  return String(
+    (event && (event.trace_id || event.traceId))
+    || (event && Array.isArray(event.detail) && event.detail[0]
+      && (event.detail[0].trace_id || event.detail[0].traceId))
+    || ''
+  ).trim();
+}
+
+async function hideRiskyStateMedia(task, options = {}) {
+  const db = options.db || getDb();
+  return runStateMutationTransaction(db, async (state) => {
+    let hiddenCount = 0;
+    let relationshipId = task.relationshipId || '';
+    (state.checkIns || []).forEach((checkIn) => {
+      if (checkIn.photoFileId !== task.fileId) return;
+      checkIn.photoFileId = '';
+      checkIn.photoPath = '';
+      checkIn.mediaHidden = true;
+      relationshipId = relationshipId || checkIn.relationshipId || '';
+      hiddenCount += 1;
+    });
+    (state.users || []).forEach((user) => {
+      if (user.avatarFileId !== task.fileId) return;
+      user.avatarFileId = '';
+      user.avatarUrl = '';
+      user.mediaHidden = true;
+      const relationship = (state.relationships || []).find((item) => (
+        item.sponsorId === user.id || item.participantId === user.id
+      ));
+      relationshipId = relationshipId || (relationship && relationship.id) || '';
+      hiddenCount += 1;
+    });
+    (state.rewardItems || []).forEach((reward) => {
+      if (reward.imageFileId !== task.fileId) return;
+      reward.imageFileId = '';
+      reward.imageUrl = '';
+      reward.mediaHidden = true;
+      relationshipId = relationshipId || reward.relationshipId || state.activeRelationshipId || '';
+      hiddenCount += 1;
+    });
+    if (hiddenCount) {
+      state.auditLogs = state.auditLogs || [];
+      state.auditLogs.push({
+        id: `audit_mediacheck_${Date.now()}_${randomToken().slice(0, 8)}`,
+        relationshipId,
+        actorOpenid: 'system:mediacheck',
+        action: 'mediacheck.risky.autohide',
+        targetId: task.fileId,
+        amountCents: 0,
+        note: task.action || '',
+        createdAt: nowIso()
+      });
+      // runStateMutationTransaction 的 scoped storage 会克隆状态；显式保存后事务才能取到变更版本。
+      appService.saveState(state);
+    }
+    return { hiddenCount, relationshipId };
+  });
+}
+
+async function handleMediaCheckResult(event, options = {}) {
+  const traceId = mediaCheckTraceId(event);
+  if (!traceId) return { ignored: true, reason: 'missing_trace_id' };
+  const suggest = deriveMediaCheckSuggest(event);
+  const db = options.db || getDb();
+  if (!options.db) await ensureCollections();
+  const found = await db.collection('mediaCheckTasks').where({ traceId }).limit(1).get();
+  const task = found && found.data && found.data[0];
+  if (!task || task.status !== 'pending') return { ignored: true, reason: 'already_resolved_or_unknown' };
+
+  if (suggest === 'pass') {
+    await db.collection('mediaCheckTasks').doc(task._id).update({
+      data: { status: 'pass', suggest, resolvedAt: nowIso() }
+    });
+    return { status: 'pass', traceId };
+  }
+
+  let hiddenCount = 0;
+  if (task.backend === 'coupleMessage') {
+    const service = options.coupleMessageService || createCloudMessageService(db);
+    const result = await service.hideMessageImageByFileId(task.relationshipId, task.fileId);
+    const messageCount = Number(result && result.messageCount) || 0;
+    const projectionCount = Number(result && result.projectionCount) || 0;
+    hiddenCount = messageCount + projectionCount;
+  } else {
+    const result = await hideRiskyStateMedia(task, { db });
+    hiddenCount = Number(result && result.hiddenCount) || 0;
+  }
+
+  const cloudClient = options.cloud || cloud;
+  if (cloudClient && typeof cloudClient.deleteFile === 'function') {
+    await cloudClient.deleteFile({ fileList: [task.fileId] })
+      .catch((error) => console.warn('[energy-tree] delete risky file failed', error && (error.errMsg || error.message)));
+  }
+  const status = hiddenCount ? 'risky' : 'orphan';
+  await db.collection('mediaCheckTasks').doc(task._id).update({
+    data: { status, suggest, resolvedAt: nowIso() }
+  });
+  return { status, traceId, hiddenCount };
+}
+
+exports.main = async (event) => {
+  if (event && event.MsgType === 'event' && event.Event === 'wxa_media_check') {
+    try {
+      await handleMediaCheckResult(event);
+    } catch (error) {
+      console.error('[energy-tree] media check callback failed', error && (error.code || error.message));
+    }
+    return { ErrCode: 0, ErrMsg: 'success' };
+  }
+  try {
+    return {
+      ok: true,
+      buildTag: CLOUD_BUILD_TAG,
+      data: await handleAuthorizedAction(event || {})
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      code: error.code || 'ENERGY_TREE_ERROR',
+      message: error.message || '云端请求失败',
+      buildTag: CLOUD_BUILD_TAG
+    };
+  }
+};
+
+exports.__private = {
+  COUPLE_MESSAGE_ACTIONS,
+  bindAsSponsor,
+  bindByInvite,
+  bindingRequiredPayload,
+  createCloudInitialState,
+  createProjectionSnapshot,
+  diffProjectionSnapshots,
+  dispatchAction,
+  generatePartnerInvite,
+  getAuthContext,
+  handleAuthorizedAction,
+  handleCoupleMessageAction,
+  handleMediaCheckResult,
+  hideRiskyStateMedia,
+  hydrateAuthorizedMedia,
+  isMutationAction,
+  markCoupleMessagesRead,
+  projectLegacyMessageBestEffort,
+  recordPendingMediaChecks,
+  resolveCoupleMessageContext,
+  runWithCloudState,
+  runStateMutationTransaction,
+  trySendCompanionViewSubscription
+};

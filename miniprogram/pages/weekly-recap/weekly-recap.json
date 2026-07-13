@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "我们的运动日记",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "state-panel": "/components/state-panel/state-panel"
+  }
+}

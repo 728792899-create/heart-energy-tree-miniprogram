@@ -1,0 +1,24 @@
+<view wx:if="{{visible}}" class="motion-scene {{compact ? 'is-compact' : ''}}" role="img" aria-label="情侣庆祝动效">
+  <video wx:if="{{resolvedSrc && !videoFailed}}" class="motion-video" src="{{resolvedSrc}}" autoplay="{{autoplay}}" loop="{{loop}}" muted="{{soundMode === 'off'}}" controls="{{false}}" show-center-play-btn="{{false}}" object-fit="cover" binderror="onVideoError" bindended="onEnded"></video>
+  <image wx:elif="{{resolvedPoster && !posterFailed}}" class="motion-poster" src="{{resolvedPoster}}" mode="aspectFill" binderror="onPosterError"></image>
+  <view wx:else class="native-fallback native-{{nativeVariant}} scene-{{sceneKey}}" bindanimationend="onNativeEnded">
+    <block wx:if="{{nativeVariant === 'coins'}}">
+      <view class="native-gift">♥</view>
+      <view class="native-coin coin-a">¥</view>
+      <view class="native-coin coin-b">♥</view>
+      <view class="native-coin coin-c">★</view>
+    </block>
+    <block wx:elif="{{nativeVariant === 'ribbon'}}">
+      <view class="native-tree">♧</view>
+      <view class="native-heart heart-a">♥</view>
+      <view class="native-heart heart-b">♥</view>
+      <view class="native-ribbon">TOGETHER</view>
+    </block>
+    <block wx:else>
+      <view class="native-tree">♧</view>
+      <view class="native-heart heart-a">♥</view>
+      <view class="native-heart heart-b">♥</view>
+      <view class="native-heart heart-c">♥</view>
+    </block>
+  </view>
+</view>

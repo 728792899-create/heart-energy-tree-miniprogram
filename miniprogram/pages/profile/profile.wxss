@@ -1,0 +1,487 @@
+.profile-page {
+  background: #FFF9F5;
+}
+
+.passport-setting {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24rpx;
+  border-style: dashed;
+  border-color: rgba(212, 174, 106, 0.5);
+}
+
+.setting-copy {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-head {
+  padding-top: 44rpx;
+  padding-bottom: 36rpx;
+}
+
+.head-inner {
+  position: relative;
+  z-index: 1;
+}
+
+.profile-title {
+  margin: 16rpx 0 8rpx;
+  color: #45343A;
+  font-size: 44rpx;
+  font-weight: 900;
+}
+
+.avatar,
+.companion-avatar {
+  flex: 0 0 100rpx;
+  width: 100rpx;
+  height: 100rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 50%;
+  color: #B74465;
+  background: #ffffff;
+  font-size: 36rpx;
+  font-weight: 900;
+  box-shadow: 0 16rpx 36rpx rgba(184, 82, 112, 0.16);
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+}
+
+.edit-btn {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  margin-top: 24rpx;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40rpx;
+  padding: 0 16rpx;
+  border-radius: 999rpx;
+  color: #B74465;
+  background: #ffffff;
+  font-size: 22rpx;
+  font-weight: 800;
+}
+
+.role-switch {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 10rpx;
+  margin-top: 24rpx;
+  padding: 8rpx;
+  border-radius: 8rpx;
+  background: rgba(255, 255, 255, 0.62);
+}
+
+.role-btn {
+  min-height: 68rpx;
+  color: #8b777d;
+  background: transparent;
+  font-size: 26rpx;
+}
+
+.role-btn.active {
+  color: #B74465;
+  background: #ffffff;
+}
+
+.equipped-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14rpx;
+  margin-bottom: 24rpx;
+}
+
+.equipped-badge {
+  min-height: 150rpx;
+  padding: 18rpx 12rpx;
+  text-align: center;
+  box-sizing: border-box;
+  border-radius: 8rpx;
+  background: #fffafd;
+  border: 1rpx solid #f2c8d2;
+  box-shadow: 0 14rpx 28rpx rgba(240, 140, 167, 0.1);
+  animation: float-card 3s ease-in-out infinite;
+}
+
+.equipped-icon {
+  width: 72rpx;
+  height: 72rpx;
+  margin: 0 auto 10rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: #ffffff;
+  background: linear-gradient(135deg, #E77C99, #ffd166);
+  font-size: 22rpx;
+  font-weight: 900;
+}
+
+.equipped-name {
+  color: #45343A;
+  font-size: 23rpx;
+  font-weight: 900;
+}
+
+.stat-grid {
+  margin-bottom: 24rpx;
+}
+
+.stat-card {
+  text-align: center;
+}
+
+.stat-number {
+  color: #B74465;
+  font-size: 42rpx;
+  font-weight: 900;
+}
+
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 10rpx;
+  padding: 18rpx;
+  background: #fffafd;
+  border: 1rpx solid #f2d9e1;
+  border-radius: 8rpx;
+}
+
+.day {
+  height: 58rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8rpx;
+  color: #8b777d;
+  background: #F8E6EC;
+  font-size: 23rpx;
+}
+
+.day.approved {
+  color: #ffffff;
+  background: #E77C99;
+}
+
+.day.submitted {
+  color: #765117;
+  background: #fff2bf;
+}
+
+.day.rejected {
+  color: #7a3a35;
+  background: #faefec;
+}
+
+.badge-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14rpx;
+}
+
+.badge {
+  position: relative;
+  min-height: 238rpx;
+  padding: 18rpx;
+  box-sizing: border-box;
+  text-align: center;
+  background: #fffafd;
+  border: 1rpx solid #f2d9e1;
+  border-radius: 8rpx;
+}
+
+.badge.locked {
+  opacity: 0.5;
+}
+
+.badge.equipped {
+  border-color: #E77C99;
+  box-shadow: 0 14rpx 30rpx rgba(240, 140, 167, 0.14);
+}
+
+.badge-icon {
+  width: 76rpx;
+  height: 76rpx;
+  margin: 0 auto 12rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: #ffffff;
+  background: linear-gradient(135deg, #E77C99, #ffd166);
+  font-size: 22rpx;
+  font-weight: 900;
+}
+
+.badge-image {
+  width: 76rpx;
+  height: 76rpx;
+}
+
+.badge-name {
+  margin-bottom: 8rpx;
+  color: #45343A;
+  font-size: 26rpx;
+  font-weight: 900;
+}
+
+.equip-pill {
+  position: absolute;
+  right: 12rpx;
+  top: 12rpx;
+  padding: 6rpx 12rpx;
+  border-radius: 999rpx;
+  color: #B74465;
+  background: #F8E6EC;
+  font-size: 20rpx;
+  font-weight: 800;
+}
+
+.companion-card {
+  margin-bottom: 24rpx;
+}
+
+.companion-title {
+  color: #45343A;
+  font-size: 32rpx;
+  font-weight: 900;
+}
+
+.full-btn {
+  width: 100%;
+  margin-top: 24rpx;
+}
+
+.invite-card {
+  display: flex;
+  flex-direction: column;
+  gap: 18rpx;
+  border-color: #f2c8d2;
+  background: #fffafd;
+}
+
+.invite-title {
+  margin-bottom: 8rpx;
+  color: #B74465;
+  font-size: 30rpx;
+  font-weight: 900;
+}
+
+.invite-btn {
+  width: 100%;
+}
+
+/* “我们”资料页：恋爱花园封面、动态头像和双列 Bento 统计 */
+.profile-page {
+  padding-top: 18rpx;
+}
+
+.profile-head {
+  overflow: visible;
+  padding-top: 0;
+  border: 1rpx solid rgba(217, 192, 197, 0.54);
+  background: #FFFFFF;
+}
+
+.profile-cover {
+  position: relative;
+  height: 250rpx;
+  margin: -28rpx -28rpx 74rpx;
+  overflow: visible;
+  border-radius: 24rpx 24rpx 0 0;
+  background:
+    radial-gradient(circle at 16% 24%, rgba(255, 255, 255, 0.82) 0 18rpx, transparent 19rpx),
+    linear-gradient(135deg, #FFF0F2 0%, #F9DDE5 48%, #F3C7D5 100%);
+}
+
+.profile-cover::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 52rpx;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.38));
+}
+
+.profile-cover-copy {
+  position: absolute;
+  z-index: 1;
+  left: 30rpx;
+  top: 42rpx;
+  width: 285rpx;
+}
+
+.profile-cover-kicker {
+  color: #A24A69;
+  font-size: 18rpx;
+  font-weight: 900;
+  letter-spacing: 3rpx;
+}
+
+.profile-cover-title {
+  margin-top: 12rpx;
+  color: #711E3C;
+  font-size: 29rpx;
+  font-weight: 900;
+  line-height: 1.45;
+}
+
+.profile-cover-image {
+  position: absolute;
+  z-index: 1;
+  right: 2rpx;
+  bottom: 0;
+  width: 290rpx;
+  height: 238rpx;
+}
+
+.profile-cover-heart {
+  position: absolute;
+  z-index: 1;
+  color: rgba(143, 54, 83, 0.42);
+  font-weight: 900;
+}
+
+.profile-cover-heart-one {
+  right: 300rpx;
+  top: 28rpx;
+  font-size: 28rpx;
+  transform: rotate(-14deg);
+}
+
+.profile-cover-heart-two {
+  left: 265rpx;
+  bottom: 44rpx;
+  font-size: 22rpx;
+  transform: rotate(12deg);
+}
+
+.profile-couple-avatar {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  bottom: -60rpx;
+  width: 132rpx;
+  height: 132rpx;
+  padding: 7rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  overflow: visible;
+  border-radius: 50%;
+  background: #FFFFFF;
+  box-shadow: 0 12rpx 30rpx rgba(113, 30, 60, 0.14);
+  transform: translateX(-50%);
+}
+
+.profile-couple-avatar image {
+  width: 118rpx;
+  height: 118rpx;
+  border-radius: 50%;
+}
+
+.profile-couple-avatar-text {
+  width: 118rpx;
+  height: 118rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 50%;
+  color: #8F3653;
+  background: #FFF0F2;
+  font-size: 38rpx;
+  font-weight: 900;
+}
+
+.profile-heart {
+  position: absolute;
+  right: -2rpx;
+  bottom: 4rpx;
+  width: 42rpx;
+  height: 42rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 4rpx solid #FFFFFF;
+  border-radius: 50%;
+  color: #FFFFFF;
+  background: #8F3653;
+  font-size: 24rpx;
+}
+
+.profile-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 14rpx;
+  color: #711E3C;
+}
+
+.profile-title-name {
+  min-width: 0;
+}
+
+.profile-title-heart {
+  color: #C34F75;
+  font-size: 34rpx;
+  line-height: 1;
+}
+
+.profile-bento-stats {
+  gap: 16rpx;
+}
+
+.profile-bento-stats .stat-card {
+  border-radius: 22rpx;
+  background: #FFFFFF;
+}
+
+.profile-bento-stats .stat-card:nth-child(2) {
+  background: #CCEBC5;
+}
+
+.passport-setting,
+.companion-card,
+.invite-card {
+  border-color: rgba(217, 192, 197, 0.56);
+  background: #FFFFFF;
+}
+
+.section-title {
+  color: #22191B;
+}
+
+@media (max-width: 340px) {
+  .profile-cover {
+    height: 220rpx;
+  }
+
+  .profile-cover-image {
+    height: 220rpx;
+  }
+}
+
+.head-inner {
+  justify-content: center;
+  text-align: center;
+}
+
+.head-inner > view:first-child {
+  width: 100%;
+}

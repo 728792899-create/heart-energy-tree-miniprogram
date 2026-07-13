@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "我们的信笺",
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "state-panel": "/components/state-panel/state-panel"
+  }
+}

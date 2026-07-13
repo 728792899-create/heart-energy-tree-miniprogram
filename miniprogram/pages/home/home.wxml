@@ -1,0 +1,259 @@
+<view class="page">
+  <couple-hero
+    compact="{{true}}"
+    eyebrow="暖棕小熊 × 奶白小兔的私人花园"
+    title="心动能量树"
+    subtitle="你负责好好照顾自己，我负责一直为你加油"
+    role="{{currentRole}}"
+  >
+    <view wx:if="{{!isCloudMode}}" class="role-switch" aria-label="切换视角">
+      <button class="role-btn {{currentRole === 'participant' ? 'active' : ''}}" data-role="participant" aria-label="切换到女友端视角" bindtap="onSwitchRole">参与者</button>
+      <button class="role-btn {{currentRole === 'sponsor' ? 'active' : ''}}" data-role="sponsor" aria-label="切换到男友端视角" bindtap="onSwitchRole">陪伴者</button>
+    </view>
+  </couple-hero>
+
+  <view class="partner-note">
+    <image class="partner-note-avatar" src="{{currentRole === 'sponsor' ? '/assets/stitch-original/companion-avatar.jpg' : '/assets/stitch-original/participant-note-avatar.jpg'}}" mode="aspectFill"></image>
+    <view class="partner-note-copy">
+      <view class="partner-note-name">来自 {{companionName}}</view>
+      <view class="partner-note-message">{{currentRole === 'sponsor' ? '看见她的每一点努力，也认真兑现每一次承诺。' : '加油呀，晚上一起去吃好吃的！'}}</view>
+    </view>
+    <view class="partner-note-time">刚刚</view>
+  </view>
+
+  <state-panel
+    wx:if="{{loadingHome}}"
+    state="loading"
+    title="正在把今天的心意装进来…"
+    description="暖棕小熊正在整理你们今天的故事。"
+  ></state-panel>
+
+  <state-panel
+    wx:elif="{{homeError}}"
+    state="error"
+    title="首页暂时迷路了"
+    description="{{homeError}}"
+    bindretry="retryLoad"
+  ></state-panel>
+
+  <block wx:elif="{{currentRole === 'participant'}}">
+    <view wx:if="{{viewNotice}}" class="view-notice-banner" role="button" aria-label="打开信笺查看关心提示" bindtap="openMessages">
+      <view class="view-notice-icon">♡</view>
+      <view class="view-notice-content">
+        <view class="view-notice-title">有人悄悄关心你</view>
+        <view class="view-notice-message">{{viewNotice.message}}</view>
+        <view wx:if="{{viewNoticeExtraCount}}" class="view-notice-extra">还有 {{viewNoticeExtraCount}} 条关心已收进信笺</view>
+      </view>
+      <button class="view-notice-close" disabled="{{dismissingViewNotice}}" aria-label="关闭关心提示" catchtap="dismissViewNotice">×</button>
+    </view>
+
+    <view class="garden-hero tap-pop" role="button" aria-label="查看心动能量地图" bindtap="goMap">
+      <image class="garden-hero-image" src="/assets/stitch-original/participant-garden.jpg" mode="aspectFill"></image>
+      <view class="garden-hero-shade"></view>
+      <view class="garden-level">{{relationship.tree.levelTitle}} · Lv.{{relationship.tree.level}}</view>
+    </view>
+
+    <view class="home-stats">
+      <view class="home-stat-card home-stat-motion">
+        <view class="home-stat-icon">♧</view>
+        <view class="home-stat-value">{{todaysCheckIn ? (todaysCheckIn.durationMinutes || 0) : 0}}<text>分钟</text></view>
+        <view class="home-stat-label">今日已运动</view>
+      </view>
+      <view class="home-stat-card home-stat-streak">
+        <view class="home-stat-icon">♨</view>
+        <view class="home-stat-value">{{relationship.tree.streak || 0}}<text>天</text></view>
+        <view class="home-stat-label">本周连续打卡</view>
+      </view>
+    </view>
+
+    <button class="stitch-primary-action" aria-label="进入今日运动打卡" bindtap="goCheckIn">◉ {{todaysCheckIn ? '查看今日打卡' : '完成今日打卡'}}</button>
+
+    <view class="home-quick-links">
+      <button class="home-link" aria-label="进入情侣奖励商店" bindtap="goShop">礼物兑换</button>
+      <button class="home-link" aria-label="查看心动能量地图" bindtap="goMap">成长足迹</button>
+      <button class="home-link" aria-label="查看我的成就与资料" bindtap="goProfile">我们的资料</button>
+    </view>
+
+    <view wx:if="{{relationship.wishFund.targetCents > 0}}" class="wish-fund home-wish-fund">
+      <view class="row-between">
+        <text>本月心愿基金</text>
+        <text>¥{{relationship.wishFund.earnedText}} / ¥{{relationship.wishFund.targetText}}</text>
+      </view>
+      <view class="wish-progress">
+        <view class="wish-progress-bar" style="width: {{relationship.wishFund.progressPercent}}%;"></view>
+      </view>
+    </view>
+
+    <view wx:if="{{unreadEncouragements.length}}" class="section-title">他送来的抱抱</view>
+    <view wx:if="{{unreadEncouragements.length}}" class="love-letter-list">
+      <view wx:for="{{unreadEncouragements}}" wx:key="id" class="card love-letter-card">
+        <view class="letter-seal">♥</view>
+        <view class="card-title">{{item.title}}</view>
+        <view class="card-message">{{item.message}}</view>
+        <button
+          class="secondary-btn receive-hug-button"
+          data-id="{{item.id}}"
+          disabled="{{acceptingEncouragementId}}"
+          aria-label="收下这份鼓励"
+          bindtap="acceptEncouragement"
+        >{{acceptingEncouragementId === item.id ? '正在收好…' : '收下抱抱'}}</button>
+      </view>
+    </view>
+
+    <view class="section-title">今日状态</view>
+    <view wx:if="{{todaysCheckIn}}" class="card tap-pop" role="button" aria-label="查看今日打卡详情" bindtap="goCheckIn">
+      <view class="row-between">
+        <view>
+          <view class="check-date">{{todaysCheckIn.displayDate}}</view>
+          <view class="muted small">{{todaysCheckIn.status === 'submitted' ? '待确认奖励 +' + todaysCheckIn.pendingRewardText + ' 能量币' : (todaysCheckIn.note || '今天也有认真运动。')}}</view>
+        </view>
+        <text class="pill status-{{todaysCheckIn.status}}">{{todaysCheckIn.status === 'submitted' ? '待审核' : todaysCheckIn.status === 'approved' ? '已通过' : '已退回'}}</text>
+      </view>
+    </view>
+    <view wx:else class="empty">今天还没有打卡，完成一点点也算数。</view>
+
+    <view class="section-title">每周恋爱运动回顾</view>
+    <weekly-recap-card recap="{{weeklyRecap}}" role="participant" bindopen="goWeeklyRecap"></weekly-recap-card>
+
+    <view wx:if="{{milestones.length}}" class="section-title">我们的里程碑</view>
+    <view wx:if="{{milestones.length}}" class="milestone-list">
+      <milestone-card
+        wx:for="{{milestones}}"
+        wx:key="id"
+        item="{{item}}"
+        processing="{{acceptingMilestoneId === item.id}}"
+        action-text="收进我们的故事"
+        bindaccept="acceptMilestone"
+      ></milestone-card>
+    </view>
+
+    <view class="section-title">能量大冒险</view>
+    <view class="card adventure-preview tap-pop" role="button" aria-label="打开能量大冒险地图" bindtap="goMap">
+      <view class="row-between">
+        <view>
+          <view class="card-title">{{relationship.adventure.currentLevel.name}}</view>
+          <view class="muted small">还差 {{relationship.adventure.stepsRemaining}} 步通关 · 累计 {{relationship.adventure.totalSteps}} 步</view>
+        </view>
+        <view class="map-chip">地图</view>
+      </view>
+      <view class="progress">
+        <view class="progress-bar blue" style="width: {{relationship.adventure.progressPercent}}%;"></view>
+      </view>
+    </view>
+
+    <view class="section-title">最近的温柔奖励</view>
+    <view wx:if="{{relationship.tree.lastCard}}" class="card">
+      <view class="card-title">{{relationship.tree.lastCard.title}}</view>
+      <view class="card-message">{{relationship.tree.lastCard.message}}</view>
+      <view wx:if="{{relationship.tree.lastCard.surpriseTitle}}" class="surprise">{{relationship.tree.lastCard.surpriseTitle}}</view>
+    </view>
+    <view wx:else class="empty">第一张夸夸卡会在审核通过后长出来。</view>
+  </block>
+
+  <block wx:else>
+    <view class="companion-stage">
+      <image class="companion-stage-image" src="/assets/stitch-original/companion-encouragement.jpg" mode="aspectFill"></image>
+      <view class="companion-stage-copy">
+        <view class="companion-stage-title">{{sendingEncouragementKey ? '正在把鼓励送给她…' : '鼓励已送达，她一定会感受到的'}}</view>
+        <view class="companion-stage-subtitle">你的心意化作了一片能量叶，正轻轻落在你们的树上。</view>
+      </view>
+    </view>
+
+    <view class="card sponsor-home-card">
+      <view class="row-between">
+        <view>
+          <view class="card-title">{{companionName}}的守护总览</view>
+          <view class="muted small">{{todaysCheckIn ? todaysCheckIn.status === 'submitted' ? '有一条打卡等你确认' : todaysCheckIn.status === 'approved' ? '今天已经通过打卡' : '今天有退回记录' : '今天还没有打卡'}}</view>
+        </view>
+        <view class="sponsor-count">{{pendingCount}}</view>
+      </view>
+      <view class="sponsor-tree-line">
+        <view>
+          <view class="tree-name">{{relationship.tree.levelTitle}} Lv.{{relationship.tree.level}}</view>
+          <view class="muted small">阳光 {{relationship.tree.sunshine}} · 心愿果 {{relationship.tree.fruits}} · 累计 {{relationship.adventure.totalSteps}} 步</view>
+        </view>
+        <view class="money small-money">{{relationship.balanceText.availableCoins}}币</view>
+      </view>
+      <view class="progress">
+        <view class="progress-bar" style="width: {{relationship.tree.progressPercent}}%;"></view>
+      </view>
+    </view>
+
+    <view class="grid-2 stat-grid">
+      <view class="card stat-card">
+        <view class="stat-number">{{relationship.stats.totalCheckIns}}</view>
+        <view class="muted small">通过打卡</view>
+      </view>
+      <view class="card stat-card">
+        <view class="stat-number">{{relationship.stats.currentStreak}}</view>
+        <view class="muted small">当前连续</view>
+      </view>
+      <view class="card stat-card">
+        <view class="stat-number">{{relationship.stats.badgeCount}}</view>
+        <view class="muted small">她的成就</view>
+      </view>
+      <view class="card stat-card">
+        <view class="stat-number">{{relationship.balanceText.availableCoins}}</view>
+        <view class="muted small">可用能量币</view>
+      </view>
+    </view>
+
+    <view class="section-title">现在就给她一点动力</view>
+    <view class="card quick-encouragement-card">
+      <view class="muted small">不用催她完成什么，只告诉她：你一直站在她这边。</view>
+      <view class="quick-encouragement-grid">
+        <button
+          wx:for="{{quickEncouragements}}"
+          wx:key="key"
+          class="quick-encouragement-button"
+          data-key="{{item.key}}"
+          disabled="{{sendingEncouragementKey}}"
+          aria-label="发送{{item.label}}鼓励"
+          bindtap="sendQuickEncouragement"
+        ><text class="quick-icon">{{item.icon}}</text>{{sendingEncouragementKey === item.key ? '发送中…' : item.label}}</button>
+      </view>
+      <button class="ghost-btn custom-note-button" aria-label="进入陪伴页再写一句真心话" bindtap="goSponsorCompanion">再写一句真心话</button>
+    </view>
+
+    <view class="section-title">每周恋爱运动回顾</view>
+    <weekly-recap-card recap="{{weeklyRecap}}" role="sponsor" bindopen="goWeeklyRecap"></weekly-recap-card>
+
+    <view wx:if="{{milestones.length}}" class="section-title">我们的里程碑</view>
+    <view wx:if="{{milestones.length}}" class="milestone-list">
+      <milestone-card
+        wx:for="{{milestones}}"
+        wx:key="id"
+        item="{{item}}"
+        processing="{{acceptingMilestoneId === item.id}}"
+        action-text="收藏这一刻"
+        bindaccept="acceptMilestone"
+      ></milestone-card>
+    </view>
+
+    <view class="section-title">查看她的信息</view>
+    <view class="grid-2 actions">
+      <button class="secondary-btn" aria-label="查看女友打卡历史" bindtap="goCompanionHistory">打卡历史</button>
+      <button class="secondary-btn" aria-label="查看女友成就" bindtap="goCompanionBadges">她的成就</button>
+      <button class="ghost-btn" aria-label="查看女友能量币记录" bindtap="goCompanionLedgers">能量币记录</button>
+      <button class="ghost-btn" aria-label="查看女友兑换记录" bindtap="goCompanionRedemptions">兑换记录</button>
+    </view>
+
+    <view class="section-title">需要你处理</view>
+    <view class="grid-2 actions">
+      <button class="primary-btn" aria-label="进入打卡审核台，待处理{{pendingCount}}条" bindtap="goReview">审核台 {{pendingCount}}</button>
+      <button class="secondary-btn" aria-label="进入心愿金处理，待处理{{waitingPayoutCount}}条" bindtap="goPayouts">心愿金处理 {{waitingPayoutCount}}</button>
+      <button class="ghost-btn" aria-label="进入情侣奖励商店管理" bindtap="goAdminRewards">商店管理</button>
+      <button class="ghost-btn" aria-label="进入奖励规则和地图设置" bindtap="goRules">规则和地图</button>
+    </view>
+  </block>
+
+  <celebration-layer
+    wx:if="{{activeCelebration}}"
+    visible="{{true}}"
+    title="{{activeCelebration.title}}"
+    message="{{activeCelebration.message}}"
+    scene-key="{{activeCelebration.sceneKey}}"
+    sound-mode="{{soundMode}}"
+    bindclose="closeCelebration"
+  ></celebration-layer>
+</view>

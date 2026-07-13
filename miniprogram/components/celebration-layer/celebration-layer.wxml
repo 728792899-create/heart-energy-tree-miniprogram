@@ -1,0 +1,8 @@
+<view wx:if="{{visible}}" class="celebration-backdrop" catchtouchmove="stopTouch" role="dialog" aria-label="共同里程碑庆祝">
+  <view class="celebration-sheet">
+    <motion-scene scene-key="{{sceneKey}}" src="{{motionSrc}}" poster="{{poster}}" sound-mode="{{soundMode}}" compact></motion-scene>
+    <view class="celebration-title">{{title}}</view>
+    <view class="celebration-message">{{message}}</view>
+    <button class="celebration-button" aria-label="收下这次庆祝" bindtap="close">收下这份心动</button>
+  </view>
+</view>

@@ -1,0 +1,67 @@
+<view class="page map-page">
+  <state-panel wx:if="{{loading}}" state="loading" title="正在铺好两个人的足迹…" description="小熊正在把今天的步数放进花园路线。"></state-panel>
+  <state-panel wx:elif="{{errorMessage}}" state="error" title="成长地图暂时迷路了" description="{{errorMessage}}" bindretry="retryLoad"></state-panel>
+  <block wx:else>
+    <view class="map-topbar">
+      <view class="map-couple-mark">
+        <image class="map-avatar" src="/assets/stitch-original/map-avatar.jpg" mode="aspectFill"></image>
+        <view>
+          <view class="map-eyebrow">成长探险地图</view>
+          <view class="map-page-title">我们的足迹</view>
+        </view>
+      </view>
+      <view class="map-bell">♡</view>
+    </view>
+
+    <view class="map-summary">
+      <view class="map-summary-copy">
+        <view class="map-summary-label">当前旅程</view>
+        <view class="map-title">{{adventure.currentLevel.name}}</view>
+        <view class="map-description">{{adventure.currentLevel.description}}</view>
+      </view>
+      <view class="map-progress-ring">{{adventure.progressPercent}}%</view>
+      <view class="map-progress">
+        <view class="map-progress-bar" style="width: {{adventure.progressPercent}}%;"></view>
+      </view>
+      <view class="row-between small muted">
+        <text>已走 {{adventure.levelProgress}} / {{adventure.currentLevel.requiredSteps}} 步</text>
+        <text>还差 {{adventure.stepsRemaining}} 步</text>
+      </view>
+    </view>
+
+    <view class="map-scene stitch-map-route">
+      <view class="map-road vertical-route">
+        <image class="map-bg" src="/assets/stitch-original/map-hill.jpg" mode="aspectFill"></image>
+        <view class="route-line"></view>
+        <view wx:for="{{levels}}" wx:key="id" class="level-node {{index % 2 === 0 ? 'side-left' : 'side-right'}} {{item.completed ? 'done' : item.current ? 'current' : 'locked'}}">
+          <view class="node-dot" style="background: {{item.mapTone}};">
+            <text>{{item.completed ? '✓' : item.levelId}}</text>
+          </view>
+          <view class="node-card">
+            <view class="level-kicker">第 {{item.levelId}} 站</view>
+            <view class="node-title">{{item.name}}</view>
+            <view class="muted small">{{item.statusText}}</view>
+            <view class="small reward">通关 +{{item.rewardText}} 币</view>
+            <button wx:if="{{item.current}}" class="map-checkin-btn" aria-label="前往完成今日打卡" bindtap="goCheckin">打卡今日</button>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="next-milestone-card">
+      <image class="next-milestone-image" src="/assets/stitch-original/map-couple.jpg" mode="aspectFill"></image>
+      <view class="next-milestone-copy">
+        <view class="next-milestone-kicker">下一里程碑奖励</view>
+        <view class="next-milestone-title">继续一起往前走</view>
+        <view class="muted small">每一次审核通过，都会让共同的花园向前一步。</view>
+      </view>
+    </view>
+
+    <view class="section-title">通关规则</view>
+    <view class="card map-rules">
+      <view class="rule-line">每次审核通过，角色前进一步。</view>
+      <view class="rule-line">到达关卡终点，会发放确定的通关奖励，并解锁对应徽章。</view>
+      <view class="rule-line">被退回不会扣进度，也不会惩罚连续记录。</view>
+    </view>
+  </block>
+</view>

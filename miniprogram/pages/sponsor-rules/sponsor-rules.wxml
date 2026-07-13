@@ -1,0 +1,198 @@
+<view class="page sponsor-rules-page">
+  <state-panel
+    wx:if="{{loading}}"
+    state="loading"
+    title="正在核对奖励约定"
+    description="让鼓励清楚、温柔，也始终说到做到。"
+  ></state-panel>
+
+  <state-panel
+    wx:elif="{{errorMessage}}"
+    state="error"
+    title="奖励规则暂时打不开"
+    description="{{errorMessage}}"
+    bindretry="retryLoad"
+  ></state-panel>
+
+  <block wx:else>
+    <view class="rules-settings-header band">
+      <view class="eyebrow">花园设置</view>
+      <view class="rules-page-title">奖励约定</view>
+      <view class="muted rules-page-subtitle">管理打卡、连续成长和地图关卡的固定奖励</view>
+    </view>
+
+    <view class="rules-hero-card">
+      <view class="rules-hero-icon" aria-hidden="true">♡</view>
+      <view class="rules-hero-copy">
+        <view class="rules-hero-kicker">透明、固定、可预期</view>
+        <view class="rules-hero-title">每一份鼓励，都提前说清楚</view>
+        <view class="muted small">不使用随机现金抽奖。保存前会再次确认，新的规则只影响后续审核与通关。</view>
+      </view>
+    </view>
+
+    <view class="rules-summary-grid">
+      <view class="rules-summary-card">
+        <view class="rules-summary-icon coral" aria-hidden="true">¥</view>
+        <view class="rules-summary-value">{{perCheckInYuan}}</view>
+        <view class="muted tiny">单次通过</view>
+      </view>
+      <view class="rules-summary-card">
+        <view class="rules-summary-icon berry" aria-hidden="true">⌁</view>
+        <view class="rules-summary-value">{{totalFixedRewardYuan}}</view>
+        <view class="muted tiny">连续奖励合计</view>
+      </view>
+      <view class="rules-summary-card">
+        <view class="rules-summary-icon sage" aria-hidden="true">{{totalLevelSteps}}</view>
+        <view class="rules-summary-value">{{levels.length}}</view>
+        <view class="muted tiny">地图关卡</view>
+      </view>
+    </view>
+
+    <view class="rules-section-list">
+      <view class="rules-section-heading">
+        <view>
+          <view class="section-title first-title">基础奖励</view>
+          <view class="muted small">金额单位均为元，审核通过后按约定结算。</view>
+        </view>
+        <view class="rules-section-badge">每日固定</view>
+      </view>
+
+      <view class="rules-section-card">
+        <view class="rules-field-row">
+          <view class="rules-field-icon coral" aria-hidden="true">✓</view>
+          <view class="rules-field-copy">
+            <view class="rules-field-title">每次审核通过</view>
+            <view class="muted tiny">单次打卡确认后发放</view>
+          </view>
+          <view class="rules-input-wrap">
+            <text class="rules-input-unit">¥</text>
+            <input class="rules-money-input" type="digit" disabled="{{saving}}" value="{{perCheckInYuan}}" data-field="perCheckInYuan" aria-label="每次审核通过奖励金额" bindinput="onInput" />
+          </view>
+        </view>
+
+        <view class="rules-field-row">
+          <view class="rules-field-icon berry" aria-hidden="true">⌁</view>
+          <view class="rules-field-copy">
+            <view class="rules-field-title">每日现金上限</view>
+            <view class="muted tiny">控制单日可入账总额</view>
+          </view>
+          <view class="rules-input-wrap">
+            <text class="rules-input-unit">¥</text>
+            <input class="rules-money-input" type="digit" disabled="{{saving}}" value="{{dailyMaxYuan}}" data-field="dailyMaxYuan" aria-label="每日现金奖励上限" bindinput="onInput" />
+          </view>
+        </view>
+
+        <view class="rules-field-row last">
+          <view class="rules-field-icon gold" aria-hidden="true">♡</view>
+          <view class="rules-field-copy">
+            <view class="rules-field-title">月度心愿基金</view>
+            <view class="muted tiny">每月共同积累的固定额度</view>
+          </view>
+          <view class="rules-input-wrap">
+            <text class="rules-input-unit">¥</text>
+            <input class="rules-money-input" type="digit" disabled="{{saving}}" value="{{monthlyWishFundYuan}}" data-field="monthlyWishFundYuan" aria-label="月度心愿基金金额" bindinput="onInput" />
+          </view>
+        </view>
+      </view>
+
+      <view class="rules-section-heading">
+        <view>
+          <view class="section-title">连续打卡奖励</view>
+          <view class="muted small">达到固定天数后追加发放，不随机变化。</view>
+        </view>
+        <view class="rules-section-badge">3 个节点</view>
+      </view>
+
+      <view class="streak-rule-list rules-section-card">
+        <view class="rules-field-row">
+          <view class="streak-day-mark">3<text>天</text></view>
+          <view class="rules-field-copy">
+            <view class="rules-field-title">周末散步券</view>
+            <view class="muted tiny">第一份连续成长鼓励</view>
+          </view>
+          <view class="rules-input-wrap compact">
+            <text class="rules-input-unit">¥</text>
+            <input class="rules-money-input" type="digit" disabled="{{saving}}" value="{{streak3Yuan}}" data-field="streak3Yuan" aria-label="连续三天奖励金额" bindinput="onInput" />
+          </view>
+        </view>
+        <view class="rules-field-row">
+          <view class="streak-day-mark active">7<text>天</text></view>
+          <view class="rules-field-copy">
+            <view class="rules-field-title">约会基金加码</view>
+            <view class="muted tiny">稳定一周后的固定奖励</view>
+          </view>
+          <view class="rules-input-wrap compact">
+            <text class="rules-input-unit">¥</text>
+            <input class="rules-money-input" type="digit" disabled="{{saving}}" value="{{streak7Yuan}}" data-field="streak7Yuan" aria-label="连续七天奖励金额" bindinput="onInput" />
+          </view>
+        </view>
+        <view class="rules-field-row last">
+          <view class="streak-day-mark mature">14<text>天</text></view>
+          <view class="rules-field-copy">
+            <view class="rules-field-title">小礼物心愿果</view>
+            <view class="muted tiny">两周坚持后的成长礼物</view>
+          </view>
+          <view class="rules-input-wrap compact">
+            <text class="rules-input-unit">¥</text>
+            <input class="rules-money-input" type="digit" disabled="{{saving}}" value="{{streak14Yuan}}" data-field="streak14Yuan" aria-label="连续十四天奖励金额" bindinput="onInput" />
+          </view>
+        </view>
+      </view>
+
+      <view class="rules-section-heading">
+        <view>
+          <view class="section-title">地图关卡奖励</view>
+          <view class="muted small">每关 1–45 天，总路线最多 45 天。</view>
+        </view>
+        <view class="rules-section-badge {{totalLevelSteps > 45 ? 'danger' : ''}}">{{levelStepStatusText}}</view>
+      </view>
+
+      <view class="level-progress-summary {{totalLevelSteps > 45 ? 'over-limit' : ''}}">
+        <view class="level-progress-topline">
+          <view>
+            <view class="level-progress-title">成长路线长度</view>
+            <view class="muted tiny">通关奖励在审核触发关卡完成时发放</view>
+          </view>
+          <view class="level-progress-number">{{totalLevelSteps}} / 45</view>
+        </view>
+        <view class="level-progress-track">
+          <view class="level-progress-fill" style="width: {{levelProgressPercent}}%;"></view>
+        </view>
+        <view wx:if="{{totalLevelSteps > 45}}" class="limit-warning">当前地图太长啦，请把总天数调到 45 天以内。</view>
+      </view>
+
+      <view class="level-rule-list">
+        <view wx:for="{{levels}}" wx:key="id" class="rules-section-card level-rule-card">
+          <view class="level-card-head">
+            <view class="level-order">{{index + 1}}</view>
+            <view class="level-meta">
+              <view class="rules-field-title">{{item.name}}</view>
+              <view class="muted tiny">{{item.description}}</view>
+            </view>
+          </view>
+          <view class="level-inputs">
+            <view class="level-input-field">
+              <view class="level-input-label">关卡天数</view>
+              <view class="level-input-shell">
+                <input class="level-number-input" type="number" disabled="{{saving}}" value="{{item.requiredStepsText}}" data-index="{{index}}" data-field="requiredStepsText" aria-label="{{item.name}}关卡天数" bindinput="onLevelInput" />
+                <text>天</text>
+              </view>
+            </view>
+            <view class="level-input-field">
+              <view class="level-input-label">通关奖励</view>
+              <view class="level-input-shell">
+                <text>¥</text>
+                <input class="level-number-input reward" type="digit" disabled="{{saving}}" value="{{item.rewardYuan}}" data-index="{{index}}" data-field="rewardYuan" aria-label="{{item.name}}通关奖励金额" bindinput="onLevelInput" />
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="rules-save-dock">
+      <view class="rules-save-note">保存后立即用于后续打卡与关卡结算</view>
+      <button class="primary-btn rules-save-button" loading="{{saving}}" disabled="{{saving}}" aria-label="保存奖励规则和地图关卡" bindtap="save">{{saving ? '正在保存规则…' : '确认并保存规则'}}</button>
+    </view>
+  </block>
+</view>

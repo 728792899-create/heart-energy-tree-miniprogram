@@ -1,0 +1,13 @@
+<view class="couple-hero {{compact ? 'is-compact' : ''}} role-{{role}}">
+  <view class="hero-copy">
+    <view class="hero-eyebrow">{{eyebrow}}</view>
+    <view class="hero-title">{{title}}</view>
+    <view class="hero-subtitle">{{subtitle}}</view>
+    <slot></slot>
+  </view>
+  <view class="mascot-wrap" aria-label="暖棕小熊男友和奶白小兔女友一起陪伴运动">
+    <view class="mascot-halo"></view>
+    <image class="mascot-image" src="{{mascotSrc}}" mode="aspectFit"></image>
+    <view class="mascot-caption">暖棕小熊 × 奶白小兔</view>
+  </view>
+</view>

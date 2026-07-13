@@ -1,0 +1,76 @@
+<view class="page companion-ledger-page">
+  <state-panel wx:if="{{loading}}" state="loading" title="正在核对她的能量账本" description="每一份奖励与兑现都清清楚楚。"></state-panel>
+  <state-panel wx:elif="{{errorMessage}}" state="error" title="能量账本暂时打不开" description="{{errorMessage}}" bindretry="retryLoad"></state-panel>
+
+  <block wx:else>
+    <view class="companion-ledger-header">
+      <view>
+        <view class="companion-ledger-kicker">ENERGY LEDGER</view>
+        <view class="companion-ledger-title">{{companionUser.name || '她'}}的能量账本</view>
+        <view class="companion-ledger-copy">奖励、兑换、领取与资料修改都会留下不可编辑的原生记录。</view>
+      </view>
+      <image wx:if="{{companionUser.avatarSrc}}" class="companion-ledger-avatar" src="{{companionUser.avatarSrc}}" mode="aspectFill"></image>
+      <view wx:else class="companion-ledger-avatar">{{companionUser.avatarText || '她'}}</view>
+    </view>
+
+    <view class="companion-ledger-balance-card">
+      <view class="companion-ledger-balance-seal" aria-hidden="true">♡</view>
+      <view class="companion-ledger-balance-label">当前可用心愿金</view>
+      <view class="companion-ledger-balance-value"><text>¥</text>{{availableBalanceText}}</view>
+      <view class="companion-ledger-balance-caption">这是服务端可信账本的只读结果，页面不会自行改写余额。</view>
+    </view>
+
+    <view class="companion-ledger-summary-grid">
+      <view class="companion-ledger-summary-card is-income">
+        <view class="companion-ledger-summary-label">累计进入</view>
+        <view class="companion-ledger-summary-value">+¥{{incomeTotalText}}</view>
+        <view class="companion-ledger-summary-count">{{incomeCount}} 笔记录</view>
+      </view>
+      <view class="companion-ledger-summary-card is-expense">
+        <view class="companion-ledger-summary-label">累计支出</view>
+        <view class="companion-ledger-summary-value">-¥{{expenseTotalText}}</view>
+        <view class="companion-ledger-summary-count">{{expenseCount}} 笔记录</view>
+      </view>
+      <view class="companion-ledger-summary-card is-net">
+        <view class="companion-ledger-summary-label">账面净变化</view>
+        <view class="companion-ledger-summary-value">¥{{netTotalText}}</view>
+        <view class="companion-ledger-summary-count">仅统计当前列表</view>
+      </view>
+    </view>
+
+    <view class="companion-ledger-section-heading">
+      <view>
+        <view class="companion-ledger-kicker">TIMELINE</view>
+        <view class="companion-ledger-section-title">账本时间线</view>
+      </view>
+      <view class="companion-ledger-section-count">{{ledgers.length}} 笔</view>
+    </view>
+
+    <view wx:if="{{ledgers.length}}" class="companion-ledger-timeline">
+      <view wx:for="{{ledgers}}" wx:key="id" class="companion-ledger-entry is-{{item.direction}}">
+        <view class="companion-ledger-line" aria-hidden="true"></view>
+        <view class="companion-ledger-dot" aria-hidden="true"></view>
+        <view class="companion-ledger-entry-card">
+          <view class="companion-ledger-entry-head">
+            <view>
+              <view class="companion-ledger-entry-type">{{item.typeText}}</view>
+              <view class="companion-ledger-entry-date">{{item.dateKey || item.createdAt}}</view>
+            </view>
+            <view class="companion-ledger-entry-amount">{{item.signedAmountText}}币</view>
+          </view>
+          <view class="companion-ledger-entry-note">{{item.note || item.status || '服务端账本记录'}}</view>
+          <view class="companion-ledger-entry-meta">
+            <text>{{item.direction === 'income' ? '能量进入' : '能量支出'}}</text>
+            <text>记录 {{item.entryNumber}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view wx:else class="companion-ledger-empty-state">
+      <view class="companion-ledger-empty-icon" aria-hidden="true">¥</view>
+      <view class="companion-ledger-empty-title">账本还是空白的</view>
+      <view class="companion-ledger-empty-copy">第一份审核通过的奖励、兑换或心愿金领取完成后，会在这里留下可信记录。</view>
+    </view>
+  </block>
+</view>

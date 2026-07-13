@@ -1,0 +1,24 @@
+.DS_Store
+**/.DS_Store
+
+# Local WeChat Developer Tools settings
+project.private.config.json
+miniprogram_npm/
+
+# Local agent/workspace metadata and generated delivery evidence
+.superpowers/
+outputs/
+work/
+
+# Dependencies and generated render output
+**/node_modules/
+motion-studio/out/
+motion-studio/.cache/
+
+# Local secrets, logs and temporary packages
+.env
+.env.*
+!.env.example
+*.log
+*.zip
+*.tgz
