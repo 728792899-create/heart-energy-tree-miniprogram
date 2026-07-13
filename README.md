@@ -10,6 +10,36 @@
 - 图片内容安全已实现 `traceId 登记 -> wxa_media_check 回调 -> 风险图隐藏/删除 -> 审计记录` 的代码闭环；微信平台消息推送路由和真机风险图验证仍需按 [`docs/content-safety-closed-loop.md`](docs/content-safety-closed-loop.md) 人工完成。
 - 私有交付仓库不收录开发者工具私有配置、云端验证日志、账号素材、本地依赖和渲染缓存。
 
+## 界面展示
+
+以下画面使用虚构情侣资料，是当前界面设计与实现基线，不包含真实 OPENID、邀请 token、二维码或私人照片。
+
+| 打卡者首页 | 运动打卡 | 探险地图 | 奖励商店 |
+| --- | --- | --- | --- |
+| ![打卡者首页](outputs/stitch/original/participant-home.png) | ![运动打卡](outputs/stitch/original/checkin.png) | ![探险地图](outputs/stitch/original/map.png) | ![奖励商店](outputs/stitch/original/shop.png) |
+
+### 赞助者陪伴首页
+
+![赞助者陪伴首页](outputs/stitch/original/companion-home.png)
+
+## 架构概览
+
+```mermaid
+flowchart LR
+  USER["两个微信账号"] --> CLIENT["原生小程序 WXML / WXSS / JavaScript"]
+  CLIENT --> API["services/api.js"]
+  API -->|"wx.cloud.callFunction"| FUNCTION["energyTree 云函数"]
+  FUNCTION --> AUTH["可信 OPENID + 关系/角色鉴权"]
+  AUTH --> SAFETY["文字与图片内容安全"]
+  SAFETY --> DOMAIN["共享业务规则 / 事务 / 幂等"]
+  DOMAIN --> STATE["appStates/main + 业务快照集合"]
+  DOMAIN --> MESSAGE["情侣信笺独立集合"]
+  CLIENT --> STORAGE["微信云存储"]
+  FUNCTION -->|"关系鉴权后签发临时 URL"| STORAGE
+```
+
+完整的可信身份边界、打卡入账事务、情侣信笺、图片异步安全闭环和共享代码防漂移机制见 [架构说明](docs/architecture.md)。
+
 ## 运行
 
 1. 用微信开发者工具导入仓库根目录
