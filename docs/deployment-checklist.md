@@ -1,5 +1,16 @@
 # 云端部署清单
 
+```mermaid
+flowchart LR
+  SOURCE["公开源码与依赖锁"] --> LOCAL["npm run ci + Remotion smoke"]
+  LOCAL --> BACKUP["备份与索引/权限核对"]
+  BACKUP --> DEPLOY["获授权后部署 energyTree"]
+  DEPLOY --> TAG{"queryDashboard buildTag 一致？"}
+  TAG -->|"否"| ROLLBACK["停止验收并回滚/重部署"]
+  TAG -->|"是"| DEVICE["双账号真机与内容安全回调"]
+  DEVICE --> RELEASE["Release Checklist"]
+```
+
 ## 部署前
 
 - [ ] 工作区没有 `project.private.config.json`、OPENID、邀请 token、二维码、私人照片、导出数据或云端日志待提交。

@@ -33,6 +33,17 @@
 
 备份是人工、受权操作；仓库脚本不会读取或导出现有云数据。
 
+```mermaid
+flowchart LR
+  FREEZE["暂停高风险写操作"] --> EXPORT["导出主源、信笺、任务和投影"]
+  EXPORT --> VERIFY["核对数量、校验值和 appStates/main"]
+  VERIFY --> ISOLATED["导入隔离测试环境"]
+  ISOLATED --> MIGRATE["部署兼容代码并幂等迁移"]
+  MIGRATE --> COMPARE{"关系、余额和计数一致？"}
+  COMPARE -->|"是"| RELEASE["授权维护窗口发布"]
+  COMPARE -->|"否"| STOP["停止并使用发布前备份恢复"]
+```
+
 1. 记录待发布 commit、客户端 buildTag、云端 `queryDashboard.buildTag` 和 `appStates/main.state.version`，记录中不得包含 OPENID、邀请 token 或照片 URL。
 2. 暂停两端业务操作，等待正在进行的审核、退款、核销和心愿金操作结束。
 3. 使用云开发控制台的数据库导出功能，先导出 `appStates`，再导出四个信笺集合和 `mediaCheckTasks`，最后导出全部业务投影。

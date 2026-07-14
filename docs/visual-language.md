@@ -71,6 +71,26 @@ Stitch 原始页面层级被保留为实现基线，并转换为原生 WXML/WXSS
 | --- | --- | --- | --- |
 | ![打卡场景](../miniprogram/assets/stitch-original/checkin-yoga.jpg) | ![花园场景](../miniprogram/assets/stitch-original/participant-garden.jpg) | ![地图场景](../miniprogram/assets/stitch-original/map-hill.jpg) | ![兑换场景](../miniprogram/assets/stitch-original/redemption-gift.jpg) |
 
+## 文档叙事插画
+
+文档插画负责表达产品气质和抽象边界，不替代真实页面截图或工程流程图。
+
+| 两人共同旅程 | 受保护的私人花园 |
+| --- | --- |
+| ![熊兔情侣从行动走向共同成长](illustrations/couple-journey.jpg) | ![用花园温室表达隐私、安全和恢复](illustrations/trust-safety-garden.jpg) |
+
+- 共同旅程使用左到右的连续叙事，表达行动、回应、线下承诺和树木成长。
+- 受保护花园使用温室、检查灯和档案亭隐喻可信身份、内容审核、备份与恢复。
+- 两张图都不包含真实人物、文字、二维码、支付标识、金融收益符号或水印。
+
+## 页面截图规范
+
+- 只从微信开发者工具原生模拟器或真机获取，不使用 Browser/Web 页面冒充小程序。
+- 文档演示截图使用虚构 fixture，并明确标注“非双账号真机验收证据”。
+- 固定 iPhone 12/13 视口，裁掉开发者工具外框、鼠标指针和编辑器区域。
+- 不出现 OPENID、邀请 token、二维码、真实头像、私人照片、临时文件 URL 或聊天内容。
+- PNG 单图控制在 180 KB 以内；文字必须在 GitHub 常用宽度下仍可辨认。
+
 ## 素材生产链
 
 ```mermaid
@@ -121,9 +141,15 @@ flowchart LR
 
 因此 Figma 是待继续完善的设计协作源，不应被描述为已经完成的最终验收。对应可复现脚本位于 `design/figma/scripts/`。
 
-## 本次 README 封面
+## 文档插画来源
 
 `docs/illustrations/heart-tree-readme-hero.jpg` 由内置 ImageGen 生成，提示目标为：宽幅私人花园、心形五阶段树、成年化熊兔情侣、象牙/鼠尾草/酒红/古金配色；明确排除文字、二维码、支付标识、真人和水印。PNG 原始结果经过本地 JPEG 压缩后进入仓库，不进入小程序主包。
+
+`docs/illustrations/couple-journey.jpg` 同样使用内置 ImageGen，并以上述封面作为风格参考。提示目标为：成年熊兔沿连续花园路径经历健康行动、认真回应、非现金承诺和共同树木成长；明确排除 UI、支付和投资意象。
+
+`docs/illustrations/trust-safety-garden.jpg` 使用内置 ImageGen 生成。提示目标为：玻璃温室保护私人心形花园，检查灯处理信笺，独立档案亭表达备份恢复；明确排除黑客、监控、金融和监狱式视觉隐喻。
+
+三张最终 JPEG 均保存在 `docs/illustrations/`，压缩后单图不超过 800 KB；ImageGen 默认目录中的生成结果不是仓库运行依赖。
 
 ## 验收入口
 

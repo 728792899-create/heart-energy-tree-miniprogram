@@ -6,6 +6,8 @@
 
 > 所有截图使用虚构资料。仓库不保存真实 OPENID、邀请 token、二维码、聊天内容或私人照片。
 
+![两个人从行动、回应到共同成长的旅程](illustrations/couple-journey.jpg)
+
 ## 一分钟理解产品
 
 心动能量树把一段两人关系拆成三个简单动作：
@@ -73,6 +75,17 @@ flowchart TD
 
 ![赞助者陪伴首页](screenshots/05-sponsor-home.png)
 
+赞助者的高风险入口拆成四个页面，每个页面只承担一种主要责任：
+
+| 打卡审核 | 奖励与地图规则 | 心愿金处理 | 奖品管理 |
+| --- | --- | --- | --- |
+| ![虚构打卡审核页面](screenshots/10-sponsor-review.png) | ![虚构奖励规则页面](screenshots/11-sponsor-rules.png) | ![虚构心愿金处理页面](screenshots/12-sponsor-payouts.png) | ![虚构奖品管理页面](screenshots/13-admin-rewards.png) |
+
+- 审核台只处理待审核打卡，空状态不会伪造待办。
+- 规则页显示固定奖励、每日上限和地图关卡，不提供随机现金抽奖。
+- 心愿金页只记录审批和手动兑现，不调用平台付款。
+- 奖品页允许上下架；存在历史引用的奖品不能被破坏性删除。
+
 赞助者可以：
 
 - 审核或退回打卡，并填写清晰备注。
@@ -96,6 +109,10 @@ flowchart TD
 | --- | --- | --- | --- |
 | ![约会奖励](../miniprogram/assets/generated/shop-date.jpg) | ![照顾奖励](../miniprogram/assets/generated/shop-care.jpg) | ![礼物奖励](../miniprogram/assets/generated/shop-gift.jpg) | ![情绪奖励](../miniprogram/assets/generated/shop-emotion.jpg) |
 
+| 心愿金领取 | 兑换记录 |
+| --- | --- |
+| ![虚构心愿金领取页面](screenshots/08-wallet.png) | ![虚构兑换记录页面](screenshots/09-redemptions.png) |
+
 ```mermaid
 sequenceDiagram
   participant P as 打卡者
@@ -108,9 +125,23 @@ sequenceDiagram
   C-->>P: 返回最终状态
 ```
 
+```mermaid
+stateDiagram-v2
+  [*] --> 可兑换
+  可兑换 --> 待履行: 打卡者兑换
+  待履行 --> 已核销: 赞助者线下履行并确认
+  待履行 --> 取消申请中: 打卡者申请取消
+  取消申请中 --> 已退款: 赞助者确认退款
+  取消申请中 --> 待履行: 赞助者拒绝取消
+  已核销 --> [*]
+  已退款 --> [*]
+```
+
 ## 情侣信笺与请求卡
 
 信笺页支持文字、授权图片、贴纸和双向请求卡。请求卡表达的是一次邀请，不代表同意；接收方可以同意、稍后、婉拒，发送方也可以在未处理前撤回。
+
+![使用虚构内容展示的情侣信笺页面](screenshots/06-messages.png)
 
 安全边界包括：
 
@@ -121,6 +152,8 @@ sequenceDiagram
 - 临时图片 URL 只在关系鉴权后签发，不持久化为公共 URL。
 
 ## 每周回顾
+
+![不包含私人照片的每周回顾页面](screenshots/07-weekly-recap.png)
 
 每周回顾按中国时区的周一到周日统计：
 

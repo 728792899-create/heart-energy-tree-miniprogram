@@ -15,6 +15,31 @@
 
 风险图片下架不会自动冲正已经入账的能量币、余额、心愿金或兑换记录，避免异步内容结果造成财务状态不一致。系统只隐藏图片并留下审计记录，由赞助者根据实际情况人工决定后续业务处理。
 
+```mermaid
+sequenceDiagram
+  participant U as 小程序客户端
+  participant C as energyTree 云函数
+  participant W as 微信内容安全
+  participant D as 云数据库
+  participant S as 云存储
+  U->>C: 提交业务数据与关系目录内 fileID
+  C->>C: 可信 OPENID、角色和路径校验
+  C->>W: mediaCheckAsync
+  W-->>C: traceId
+  C->>D: 写业务记录与 pending 任务
+  W->>C: wxa_media_check 回调
+  C->>D: traceId 幂等定位
+  alt pass
+    C->>D: 任务标记 pass，保留引用
+  else risky / review
+    C->>D: 隐藏所有业务引用并写审计
+    C->>S: 尽力删除风险文件
+  else orphan
+    C->>D: 任务标记 orphan
+    C->>S: 尽力删除孤儿文件
+  end
+```
+
 ## 微信平台必须人工配置
 
 代码提交本身不会启用异步结果推送。发布人员必须在微信公众平台完成以下操作：

@@ -23,7 +23,10 @@ test('README presents the product, evidence, visual tour, and private-release bo
 
   assert.match(readme, /docs\/illustrations\/heart-tree-readme-hero\.jpg/);
   assert.match(readme, /actions\/workflows\/ci\.yml\/badge\.svg/);
-  assert.match(readme, /222%20passing/);
+  assert.match(readme, /225%20passing/);
+  assert.match(readme, /docs\/README\.md/);
+  assert.match(readme, /docs\/page-catalog\.md/);
+  assert.match(readme, /docs\/faq\.md/);
   assert.match(readme, /docs\/product-tour\.md/);
   assert.match(readme, /docs\/visual-language\.md/);
   assert.match(readme, /```mermaid/);
@@ -50,7 +53,15 @@ test('product tour references every committed screen and motion poster', () => {
     '02-checkin.png',
     '03-adventure-map.png',
     '04-reward-shop.png',
-    '05-sponsor-home.png'
+    '05-sponsor-home.png',
+    '06-messages.png',
+    '07-weekly-recap.png',
+    '08-wallet.png',
+    '09-redemptions.png',
+    '10-sponsor-review.png',
+    '11-sponsor-rules.png',
+    '12-sponsor-payouts.png',
+    '13-admin-rewards.png'
   ];
   const posters = [
     'binding.jpg',
@@ -76,9 +87,72 @@ test('product tour references every committed screen and motion poster', () => {
     assert.match(tour, new RegExp(name.replace('.', '\\.')));
     assert.ok(fs.existsSync(path.join(projectRoot, 'miniprogram/assets/motion', name)));
   });
-  ['README.md', 'docs/product-tour.md', 'docs/visual-language.md'].forEach((relativePath) => {
+  [
+    'README.md',
+    'docs/README.md',
+    'docs/product-tour.md',
+    'docs/page-catalog.md',
+    'docs/visual-language.md'
+  ].forEach((relativePath) => {
     localImageTargets(relativePath).forEach((target) => {
       assert.ok(fs.existsSync(target), `${relativePath} references missing image ${path.relative(projectRoot, target)}`);
     });
+  });
+});
+
+test('documentation portal and FAQ route readers without weakening private-product boundaries', () => {
+  const portal = read('docs/README.md');
+  const faq = read('docs/faq.md');
+
+  ['第一次了解产品', '准备部署', '安全与隐私', '发布验收'].forEach((term) => {
+    assert.match(portal, new RegExp(term));
+  });
+  ['固定两人', '手动兑现', 'project.private.config.json', 'buildTag', '可信 OPENID',
+    'check:shared', '内容安全', '三级降级', '数据删除', 'check:docs']
+    .forEach((term) => assert.match(faq, new RegExp(term)));
+  assert.match(faq, /不接真实支付/);
+  assert.match(faq, /不会.*多租户|不.*公共多租户/);
+});
+
+test('page catalog documents every app route and the eight expanded simulator views', () => {
+  const catalog = read('docs/page-catalog.md');
+  const appConfig = JSON.parse(read('miniprogram/app.json'));
+
+  assert.equal(appConfig.pages.length, 22);
+  appConfig.pages.forEach((route) => {
+    assert.match(catalog, new RegExp(route.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')), route);
+  });
+  [
+    '06-messages.png',
+    '07-weekly-recap.png',
+    '08-wallet.png',
+    '09-redemptions.png',
+    '10-sponsor-review.png',
+    '11-sponsor-rules.png',
+    '12-sponsor-payouts.png',
+    '13-admin-rewards.png'
+  ].forEach((name) => assert.match(catalog, new RegExp(name.replace('.', '\\.'))));
+  assert.match(catalog, /虚构演示数据/);
+  assert.match(catalog, /非双账号真机验收证据/);
+});
+
+test('documentation gallery keeps thirteen screens and three bounded original illustrations', () => {
+  const screenshots = fs.readdirSync(path.join(projectRoot, 'docs/screenshots'))
+    .filter((name) => /^\d{2}-.+\.png$/.test(name));
+  const illustrations = [
+    'heart-tree-readme-hero.jpg',
+    'couple-journey.jpg',
+    'trust-safety-garden.jpg'
+  ];
+
+  assert.equal(screenshots.length, 13);
+  illustrations.forEach((name) => {
+    const file = fs.readFileSync(path.join(projectRoot, 'docs/illustrations', name));
+    assert.deepEqual(Array.from(file.subarray(0, 3)), [0xff, 0xd8, 0xff], `${name} must be a JPEG`);
+    assert.ok(file.length > 100 * 1024, `${name} should contain a real high-detail illustration`);
+    assert.ok(file.length <= 800 * 1024, `${name} exceeds the documentation per-image budget`);
+    if (name !== 'heart-tree-readme-hero.jpg') {
+      assert.ok(file.length <= 600 * 1024, `${name} exceeds the generated illustration budget`);
+    }
   });
 });

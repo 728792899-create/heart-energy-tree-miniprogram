@@ -10,7 +10,7 @@
 
 <p align="center">
   <a href="https://github.com/728792899-create/heart-energy-tree-miniprogram/actions/workflows/ci.yml"><img src="https://github.com/728792899-create/heart-energy-tree-miniprogram/actions/workflows/ci.yml/badge.svg" alt="Public repository CI"></a>
-  <img src="https://img.shields.io/badge/tests-222%20passing-55745E" alt="222 tests passing">
+  <img src="https://img.shields.io/badge/tests-225%20passing-55745E" alt="225 tests passing">
   <img src="https://img.shields.io/badge/mini%20program-native-294139" alt="Native WeChat Mini Program">
   <img src="https://img.shields.io/badge/payment-manual%20only-6D2942" alt="Manual fulfillment only">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-ISC-C9A866" alt="ISC License"></a>
@@ -24,7 +24,8 @@
 
 | 想了解什么 | 从这里开始 |
 | --- | --- |
-| 先看产品长什么样 | [完整产品导览](docs/product-tour.md) · [界面截图](#界面展示) |
+| 浏览全部公开文档 | [文档中心](docs/README.md) · [常见问题](docs/faq.md) |
+| 先看产品长什么样 | [完整产品导览](docs/product-tour.md) · [22 个页面目录](docs/page-catalog.md) · [界面截图](#界面展示) |
 | 了解视觉语言和素材来源 | [视觉与动效设计说明](docs/visual-language.md) |
 | 了解可信身份、事务和数据流 | [架构说明](docs/architecture.md) · [API 契约](docs/api-contract.md) |
 | 本地运行、测试和构建 | [运行](#运行) · [测试](#测试) · [Remotion 动效工厂](#remotion-动效素材工厂) |
@@ -40,6 +41,19 @@
 | 查看能量树、地图、徽章和余额 | 配置规则、奖品和关卡奖励 | 所有高风险操作有角色鉴权与审计 |
 | 兑换奖励、申请取消、申请心愿金 | 核销奖励、确认退款、线下兑现后标记 | 不接真实支付，资金状态保持可解释 |
 | 发送信笺、图片、贴纸和请求卡 | 发送鼓励、回应请求、查看陪伴数据 | 双方各自维护已读状态和共同里程碑 |
+
+![两个人从行动、回应到共同成长的旅程](docs/illustrations/couple-journey.jpg)
+
+## 关键能力矩阵
+
+| 能力 | 打卡者 | 赞助者 | 可信边界 |
+| --- | --- | --- | --- |
+| 运动打卡 | 上传照片、时长和备注 | 审核或退回 | 云端文字/图片安全检查，审核通过才事务入账 |
+| 能量树与地图 | 查看成长和关卡 | 配置固定关卡奖励 | 只消费已审核记录，不接受客户端直接改进度 |
+| 奖励商店 | 兑换、申请取消 | 核销、确认退款、维护奖品 | 幂等请求、事务扣减、审计记录 |
+| 心愿金 | 提交领取申请 | 审批并在线下兑现 | 不接真实支付，不自动转账 |
+| 情侣信笺 | 发送文字、授权图片、贴纸和请求 | 同等发送与回应 | 可信 OPENID、关系目录、独立未读投影 |
+| 每周回顾 | 查看双方一周成果 | 查看陪伴摘要 | 中国时区统计，不复制打卡照片 |
 
 ```mermaid
 flowchart LR
@@ -57,7 +71,7 @@ flowchart LR
 ## 当前交付状态
 
 - 客户端与云函数 buildTag 统一为 `heart-tree-private-v2-20260713-release-safety-v2`。
-- `npm test` 当前覆盖 222 项业务、权限、并发、内容安全、UI、运维文档、设计工具和动效契约测试；公开仓库全新克隆不需要私有配置或渲染缓存。
+- `npm test` 当前覆盖 225 项业务、权限、并发、内容安全、UI、运维文档、设计工具和动效契约测试；公开仓库全新克隆不需要私有配置或渲染缓存。
 - `npm run check:shared` 用于确保客户端主版与云函数部署副本无漂移。
 - [GitHub Actions](.github/workflows/ci.yml) 在无微信账号环境运行普通质量检查、云函数干净安装，以及独立的 Remotion compositions/still smoke。
 - 图片内容安全已实现 `traceId 登记 -> wxa_media_check 回调 -> 风险图隐藏/删除 -> 审计记录` 的代码闭环；微信平台消息推送路由和真机风险图验证仍需按 [`docs/content-safety-closed-loop.md`](docs/content-safety-closed-loop.md) 人工完成。
@@ -75,7 +89,7 @@ flowchart LR
 
 ![赞助者陪伴首页](docs/screenshots/05-sponsor-home.png)
 
-更多角色路径、五阶段能量树、奖励插画和 13 个动效场景见 [完整产品导览](docs/product-tour.md)。
+更多角色路径、13 张页面截图、五阶段能量树、奖励插画和 13 个动效场景见 [完整产品导览](docs/product-tour.md) 与 [页面目录](docs/page-catalog.md)。
 
 ### 五阶段能量树
 
@@ -247,6 +261,7 @@ npm run ci
 npm run check:syntax
 npm run check:cloud-deps
 npm run check:budgets
+npm run check:docs
 ```
 
 JavaScript 语法（排除依赖目录）：

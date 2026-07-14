@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   quality:
-    name: Tests, shared source, syntax and budgets
+    name: Tests, shared source, syntax, docs and budgets
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -27,6 +27,7 @@ jobs:
       - run: npm run check:syntax
       - run: npm run check:cloud-deps
       - run: npm run check:budgets
+      - run: npm run check:docs
 
   cloud-dependencies:
     name: Clean cloud function dependency install
