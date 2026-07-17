@@ -23,7 +23,7 @@ test('README presents the product, evidence, visual tour, and private-release bo
 
   assert.match(readme, /docs\/illustrations\/heart-tree-readme-hero\.jpg/);
   assert.match(readme, /actions\/workflows\/ci\.yml\/badge\.svg/);
-  assert.match(readme, /225%20passing/);
+  assert.match(readme, /226%20passing/);
   assert.match(readme, /docs\/README\.md/);
   assert.match(readme, /docs\/page-catalog\.md/);
   assert.match(readme, /docs\/faq\.md/);

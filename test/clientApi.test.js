@@ -1,5 +1,6 @@
 const assert = require('node:assert/strict');
 const test = require('node:test');
+const config = require('../miniprogram/config/env');
 
 function loadCloudApi() {
   const calls = [];
@@ -10,6 +11,7 @@ function loadCloudApi() {
         return {
           result: {
             ok: true,
+            buildTag: config.buildTag,
             data: {
               action: options.data.action,
               payload: options.data.payload

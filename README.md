@@ -10,7 +10,7 @@
 
 <p align="center">
   <a href="https://github.com/728792899-create/heart-energy-tree-miniprogram/actions/workflows/ci.yml"><img src="https://github.com/728792899-create/heart-energy-tree-miniprogram/actions/workflows/ci.yml/badge.svg" alt="Public repository CI"></a>
-  <img src="https://img.shields.io/badge/tests-225%20passing-55745E" alt="225 tests passing">
+  <img src="https://img.shields.io/badge/tests-226%20passing-55745E" alt="226 tests passing">
   <img src="https://img.shields.io/badge/mini%20program-native-294139" alt="Native WeChat Mini Program">
   <img src="https://img.shields.io/badge/payment-manual%20only-6D2942" alt="Manual fulfillment only">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-ISC-C9A866" alt="ISC License"></a>
@@ -70,8 +70,8 @@ flowchart LR
 
 ## 当前交付状态
 
-- 客户端与云函数 buildTag 统一为 `heart-tree-private-v2-20260713-release-safety-v2`。
-- `npm test` 当前覆盖 225 项业务、权限、并发、内容安全、UI、运维文档、设计工具和动效契约测试；公开仓库全新克隆不需要私有配置或渲染缓存。
+- 客户端与云函数 buildTag 统一为 `heart-tree-private-v2-20260717-release-final-v1`。
+- `npm test` 当前覆盖 226 项业务、权限、并发、内容安全、UI、运维文档、设计工具和动效契约测试；公开仓库全新克隆不需要私有配置或渲染缓存。
 - `npm run check:shared` 用于确保客户端主版与云函数部署副本无漂移。
 - [GitHub Actions](.github/workflows/ci.yml) 在无微信账号环境运行普通质量检查、云函数干净安装，以及独立的 Remotion compositions/still smoke。
 - 图片内容安全已实现 `traceId 登记 -> wxa_media_check 回调 -> 风险图隐藏/删除 -> 审计记录` 的代码闭环；微信平台消息推送路由和真机风险图验证仍需按 [`docs/content-safety-closed-loop.md`](docs/content-safety-closed-loop.md) 人工完成。
@@ -129,7 +129,7 @@ flowchart LR
 4. `miniprogram/config/env.js` 已配置云环境：`cloud1-d4g55gq4eabcd1b77`，云函数名：`energyTree`
 5. 当前 `apiMode` 为 `cloud`，小程序端会强制调用云函数；需要本地 demo 时再临时改为 `local`
 6. 每次修改 `cloudfunctions/energyTree` 后，在微信开发者工具右键该云函数，选择“上传并部署：云端安装依赖（不上传 node_modules）”
-7. 部署后重新编译并真实调用 `queryDashboard`，云端响应的 `buildTag` 应为 `heart-tree-private-v2-20260713-release-safety-v2`；如果仍是旧版本，说明云函数还没更新成功
+7. 部署后重新编译并真实调用 `queryDashboard`，云端响应的 `buildTag` 应为 `heart-tree-private-v2-20260717-release-final-v1`；如果仍是旧版本，说明云函数还没更新成功
 
 ## 私人版 V2 体验
 

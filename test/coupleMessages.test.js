@@ -268,6 +268,7 @@ test('request catalog keeps affectionate presets but excludes explicit adult tem
   assert.equal(REQUEST_CATALOG.some((item) => item.requestCategory === 'adult-intimacy'), false);
   assert.equal(REQUEST_CATALOG.some((item) => item.requestTemplateId.startsWith('adult-intimacy')), false);
   assert.doesNotMatch(labels, /做爱请求|今晚亲密升级请求/);
+  assert.doesNotMatch(labels, /充值|提现|收益|利息/);
   assert.equal(abstract.requestCategory, 'abstract');
 });
 

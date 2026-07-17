@@ -81,6 +81,20 @@ function deploymentHint(result, action) {
   return `云函数版本过旧，动作 ${action} 需要重新部署 energyTree 后再试${suffix}`;
 }
 
+function assertCloudBuildTag(result, action) {
+  const cloudBuildTag = result && result.buildTag;
+  if (cloudBuildTag === config.buildTag) return;
+  const error = new Error(deploymentHint(result, action));
+  error.code = 'CLOUD_BUILD_MISMATCH';
+  error.cloudBuildTag = cloudBuildTag || '';
+  console.error('[energy-tree] cloud build tag mismatch', {
+    action,
+    expectedBuildTag: config.buildTag,
+    cloudBuildTag: error.cloudBuildTag
+  });
+  throw error;
+}
+
 async function callCloud(action, payload) {
   if (!canUseCloud()) {
     console.error('[energy-tree] wx.cloud is unavailable', {
@@ -111,6 +125,7 @@ async function callCloud(action, payload) {
     throw error;
   }
   const result = response && response.result;
+  assertCloudBuildTag(result, action);
   if (result && result.ok === false) {
     const error = new Error(result.message || '云端请求失败');
     error.code = result.code || 'CLOUD_ERROR';

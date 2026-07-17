@@ -29,7 +29,7 @@ const REQUEST_CATALOG = Object.freeze([
   template('weekend-date', '周末约会', 'companionship'),
   template('comfort-me', '主动哄我', 'companionship'),
   template('end-cold-war', '冷战终止请求', 'companionship'),
-  template('emotional-value', '情绪价值充值', 'abstract'),
+  template('emotional-value', '情绪价值补给', 'abstract'),
   template('cyber-hug', '赛博抱抱', 'abstract'),
   template('love-brain-protection', '恋爱脑保护程序', 'abstract'),
   template('attention-seeker-partner', '今日显眼包搭子', 'abstract'),

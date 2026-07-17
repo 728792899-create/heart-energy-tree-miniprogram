@@ -41,7 +41,7 @@ const contentSafety = createContentSafetyService({
 const STATE_COLLECTION = 'appStates';
 const STATE_DOC_ID = 'main';
 const STATE_KEY = appService.__private.DB_KEY;
-const CLOUD_BUILD_TAG = 'heart-tree-private-v2-20260713-release-safety-v2';
+const CLOUD_BUILD_TAG = 'heart-tree-private-v2-20260717-release-final-v1';
 
 const SNAPSHOT_COLLECTIONS = {
   users: 'users',

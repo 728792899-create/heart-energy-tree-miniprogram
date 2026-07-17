@@ -2,6 +2,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
+const config = require('../miniprogram/config/env');
 
 const projectRoot = path.resolve(__dirname, '..');
 
@@ -14,7 +15,7 @@ function loadCloudApi(overrides = {}) {
   global.wx = {
     cloud: {
       async callFunction(options) {
-        return { result: { ok: true, data: options.data } };
+        return { result: { ok: true, buildTag: config.buildTag, data: options.data } };
       },
       async deleteFile(options) {
         deleted.push(options);
