@@ -1,8 +1,8 @@
 {
   "name": "energy-tree-miniprogram",
-  "version": "0.1.0",
+  "version": "3.0.0",
   "private": true,
-  "description": "A WeChat Mini Program prototype for warm fitness check-ins, reward ledger, and manual withdrawals.",
+  "description": "A private two-person WeChat Mini Program for caring check-ins, trusted rewards, and manual fulfillment.",
   "scripts": {
     "assets:sounds": "node scripts/generate-sounds.js",
     "check:budgets": "node scripts/check-budgets.js",

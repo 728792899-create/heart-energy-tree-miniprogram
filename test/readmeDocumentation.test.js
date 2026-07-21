@@ -23,6 +23,7 @@ test('README presents the product, evidence, visual tour, and private-release bo
 
   assert.match(readme, /design\/prototype-v3\/assets\/scene-protected-garden\.jpg/);
   assert.match(readme, /actions\/workflows\/ci\.yml\/badge\.svg/);
+  assert.match(readme, /version-3\.0\.0/);
   assert.match(readme, /228%20passing/);
   assert.match(readme, /design\/prototype-v3\/README\.md/);
   assert.match(readme, /8jtVG6uk2Z45OhUXbqLHHX/);
@@ -34,6 +35,13 @@ test('README presents the product, evidence, visual tour, and private-release bo
   assert.match(readme, /```mermaid/);
   assert.match(readme, /不接真实支付/);
   assert.match(readme, /固定两人关系|固定两人私人版/);
+  assert.match(readme, /2026-07-22 提交微信审核/);
+  assert.match(readme, /审核中，尚未点击发布/);
+  assert.match(readme, /兼容协议标识/);
+  assert.doesNotMatch(readme, /私人版 V2 体验|为 V2 新增动效素材/);
+
+  const packageJson = JSON.parse(read('package.json'));
+  assert.equal(packageJson.version, '3.0.0');
 });
 
 test('generated README hero is a bounded non-empty JPEG outside the mini-program package', () => {
