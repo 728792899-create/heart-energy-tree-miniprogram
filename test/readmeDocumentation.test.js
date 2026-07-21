@@ -39,64 +39,38 @@ test('README presents the product, evidence, visual tour, and private-release bo
   assert.match(readme, /审核中，尚未点击发布/);
   assert.match(readme, /兼容协议标识/);
   assert.doesNotMatch(readme, /私人版 V2 体验|为 V2 新增动效素材/);
+  assert.doesNotMatch(readme, /docs\/screenshots|assets\/motion\/.*\.jpg|assets\/generated\/tree-level/);
+  assert.match(readme, /旧版粉色模拟器截图和熊兔营销插画已经从当前文档移除/);
 
   const packageJson = JSON.parse(read('package.json'));
   assert.equal(packageJson.version, '3.0.0');
 });
 
-test('generated README hero is a bounded non-empty JPEG outside the mini-program package', () => {
-  const heroPath = path.join(projectRoot, 'docs/illustrations/heart-tree-readme-hero.jpg');
+test('V3 README hero is a bounded non-empty JPEG outside the mini-program package', () => {
+  const heroPath = path.join(projectRoot, 'design/prototype-v3/assets/scene-protected-garden.jpg');
   const hero = fs.readFileSync(heroPath);
 
   assert.equal(hero[0], 0xff);
   assert.equal(hero[1], 0xd8);
   assert.equal(hero[2], 0xff);
   assert.ok(hero.length > 100 * 1024, 'hero should contain a real high-detail illustration');
-  assert.ok(hero.length < 800 * 1024, 'README artwork should stay reasonably small for GitHub visitors');
+  assert.ok(hero.length <= 600 * 1024, 'README artwork should stay inside the V3 image budget');
   assert.equal(heroPath.startsWith(path.join(projectRoot, 'miniprogram')), false);
 });
 
-test('product tour references every committed screen and motion poster', () => {
+test('current documentation uses every V3 visual asset and no retired screenshot or poster gallery', () => {
   const tour = read('docs/product-tour.md');
-  const screenshots = [
-    '01-participant-home.png',
-    '02-checkin.png',
-    '03-adventure-map.png',
-    '04-reward-shop.png',
-    '05-sponsor-home.png',
-    '06-messages.png',
-    '07-weekly-recap.png',
-    '08-wallet.png',
-    '09-redemptions.png',
-    '10-sponsor-review.png',
-    '11-sponsor-rules.png',
-    '12-sponsor-payouts.png',
-    '13-admin-rewards.png'
-  ];
-  const posters = [
-    'binding.jpg',
-    'check-in.jpg',
-    'approval.jpg',
-    'encouragement.jpg',
-    'streak-3.jpg',
-    'streak-7.jpg',
-    'streak-14.jpg',
-    'map-complete.jpg',
-    'badge-unlock.jpg',
-    'redemption.jpg',
-    'wish-fund-complete.jpg',
-    'weekly-recap.jpg',
-    'companion-empty.jpg'
+  const v3Assets = [
+    'duo-binding.jpg', 'duo-celebration.jpg', 'duo-growth.jpg',
+    'scene-checkin.jpg', 'scene-map.jpg', 'scene-protected-garden.jpg', 'scene-reward.jpg',
+    'tree-stage-1.jpg', 'tree-stage-2.jpg', 'tree-stage-3.jpg', 'tree-stage-4.jpg', 'tree-stage-5.jpg'
   ];
 
-  screenshots.forEach((name) => {
+  v3Assets.forEach((name) => {
     assert.match(tour, new RegExp(name.replace('.', '\\.')));
-    assert.ok(fs.existsSync(path.join(projectRoot, 'docs/screenshots', name)));
+    assert.ok(fs.existsSync(path.join(projectRoot, 'design/prototype-v3/assets', name)));
   });
-  posters.forEach((name) => {
-    assert.match(tour, new RegExp(name.replace('.', '\\.')));
-    assert.ok(fs.existsSync(path.join(projectRoot, 'miniprogram/assets/motion', name)));
-  });
+  assert.doesNotMatch(tour, /screenshots\/|miniprogram\/assets\/(?:motion|generated)\/[^)\s]+\.(?:jpe?g|png)/);
   [
     'README.md',
     'docs/README.md',
@@ -104,6 +78,8 @@ test('product tour references every committed screen and motion poster', () => {
     'docs/page-catalog.md',
     'docs/visual-language.md'
   ].forEach((relativePath) => {
+    const source = read(relativePath);
+    assert.doesNotMatch(source, /!\[[^\]]*\]\([^)]*(?:docs\/screenshots|docs\/illustrations|miniprogram\/assets\/(?:generated|motion|stitch-original))/);
     localImageTargets(relativePath).forEach((target) => {
       assert.ok(fs.existsSync(target), `${relativePath} references missing image ${path.relative(projectRoot, target)}`);
     });
@@ -124,7 +100,7 @@ test('documentation portal and FAQ route readers without weakening private-produ
   assert.match(faq, /不会.*多租户|不.*公共多租户/);
 });
 
-test('page catalog documents every app route and the eight expanded simulator views', () => {
+test('page catalog documents every app route and links the V3 visual baseline', () => {
   const catalog = read('docs/page-catalog.md');
   const appConfig = JSON.parse(read('miniprogram/app.json'));
 
@@ -132,38 +108,24 @@ test('page catalog documents every app route and the eight expanded simulator vi
   appConfig.pages.forEach((route) => {
     assert.match(catalog, new RegExp(route.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')), route);
   });
-  [
-    '06-messages.png',
-    '07-weekly-recap.png',
-    '08-wallet.png',
-    '09-redemptions.png',
-    '10-sponsor-review.png',
-    '11-sponsor-rules.png',
-    '12-sponsor-payouts.png',
-    '13-admin-rewards.png'
-  ].forEach((name) => assert.match(catalog, new RegExp(name.replace('.', '\\.'))));
-  assert.match(catalog, /虚构演示数据/);
-  assert.match(catalog, /非双账号真机验收证据/);
+  ['scene-checkin.jpg', 'scene-map.jpg', 'scene-reward.jpg', 'scene-protected-garden.jpg']
+    .forEach((name) => assert.match(catalog, new RegExp(name.replace('.', '\\.'))));
+  assert.doesNotMatch(catalog, /screenshots\//);
+  assert.match(catalog, /不是微信开发者工具或双账号真机验收证据/);
 });
 
-test('documentation gallery keeps thirteen screens and three bounded original illustrations', () => {
-  const screenshots = fs.readdirSync(path.join(projectRoot, 'docs/screenshots'))
-    .filter((name) => /^\d{2}-.+\.png$/.test(name));
-  const illustrations = [
-    'heart-tree-readme-hero.jpg',
-    'couple-journey.jpg',
-    'trust-safety-garden.jpg'
-  ];
+test('documentation gallery removes retired V2 images and keeps twelve bounded V3 assets', () => {
+  assert.equal(fs.existsSync(path.join(projectRoot, 'docs/screenshots')), false);
+  assert.equal(fs.existsSync(path.join(projectRoot, 'docs/illustrations')), false);
+  const v3Assets = fs.readdirSync(path.join(projectRoot, 'design/prototype-v3/assets'))
+    .filter((name) => name.endsWith('.jpg'));
 
-  assert.equal(screenshots.length, 13);
-  illustrations.forEach((name) => {
-    const file = fs.readFileSync(path.join(projectRoot, 'docs/illustrations', name));
+  assert.equal(v3Assets.length, 12);
+  v3Assets.forEach((name) => {
+    const file = fs.readFileSync(path.join(projectRoot, 'design/prototype-v3/assets', name));
     assert.deepEqual(Array.from(file.subarray(0, 3)), [0xff, 0xd8, 0xff], `${name} must be a JPEG`);
     assert.ok(file.length > 100 * 1024, `${name} should contain a real high-detail illustration`);
-    assert.ok(file.length <= 800 * 1024, `${name} exceeds the documentation per-image budget`);
-    if (name !== 'heart-tree-readme-hero.jpg') {
-      assert.ok(file.length <= 600 * 1024, `${name} exceeds the generated illustration budget`);
-    }
+    assert.ok(file.length <= 600 * 1024, `${name} exceeds the V3 illustration budget`);
   });
 });
 

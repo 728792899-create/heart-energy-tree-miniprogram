@@ -26,7 +26,7 @@
 | 想了解什么 | 从这里开始 |
 | --- | --- |
 | 浏览全部公开文档 | [文档中心](docs/README.md) · [常见问题](docs/faq.md) |
-| 先看产品长什么样 | [完整产品导览](docs/product-tour.md) · [22 个页面目录](docs/page-catalog.md) · [界面截图](#界面展示) |
+| 先看产品长什么样 | [完整产品导览](docs/product-tour.md) · [22 个页面目录](docs/page-catalog.md) · [V3 视觉展示](#v3-视觉展示) |
 | 查看 V3 高保真原型 | [Figma 全量原型](https://www.figma.com/design/8jtVG6uk2Z45OhUXbqLHHX) · [47 张画板与原创素材说明](design/prototype-v3/README.md) |
 | 了解视觉语言和素材来源 | [视觉与动效设计说明](docs/visual-language.md) |
 | 了解可信身份、事务和数据流 | [架构说明](docs/architecture.md) · [API 契约](docs/api-contract.md) |
@@ -44,7 +44,7 @@
 | 兑换奖励、申请取消、申请心愿金 | 核销奖励、确认退款、线下兑现后标记 | 不接真实支付，资金状态保持可解释 |
 | 发送信笺、图片、贴纸和请求卡 | 发送鼓励、回应请求、查看陪伴数据 | 双方各自维护已读状态和共同里程碑 |
 
-![两个人从行动、回应到共同成长的旅程](docs/illustrations/couple-journey.jpg)
+![两条路径从双生种子开始建立固定关系](design/prototype-v3/assets/duo-binding.jpg)
 
 ## 关键能力矩阵
 
@@ -87,31 +87,27 @@ flowchart LR
 - 图片内容安全已实现 `traceId 登记 -> wxa_media_check 回调 -> 风险图隐藏/删除 -> 审计记录` 的代码闭环；微信平台消息推送路由和真机风险图验证仍需按 [`docs/content-safety-closed-loop.md`](docs/content-safety-closed-loop.md) 人工完成。
 - 公开仓库只保留可复现源码、虚构演示数据和经过筛选的界面素材；不收录开发者工具私有配置、云端验证日志、账号素材、本地依赖、二维码和渲染缓存。
 
-## 界面展示
+## V3 视觉展示
 
-以下画面使用虚构情侣资料，是当前界面设计与实现基线，不包含真实 OPENID、邀请 token、二维码或私人照片。
+以下内容来自已验收的 V3「晨雾植物志」原创设计源，不含文字、真人、OPENID、邀请 token、二维码或私人照片。它们用于说明最新视觉方向，不冒充微信开发者工具截图或双账号真机证据；47 张高保真业务画板见 [Figma 全量原型](https://www.figma.com/design/8jtVG6uk2Z45OhUXbqLHHX)。
 
-| 打卡者首页 | 运动打卡 | 探险地图 | 奖励商店 |
+旧版粉色模拟器截图和熊兔营销插画已经从当前文档移除。新的 V3 脱敏开发者工具截图只有在使用虚构 fixture 重新采集后才会加入。
+
+| 私人花园 | 健康行动 | 地图旅程 | 礼物兑现 |
 | --- | --- | --- | --- |
-| ![打卡者首页](docs/screenshots/01-participant-home.png) | ![运动打卡](docs/screenshots/02-checkin.png) | ![探险地图](docs/screenshots/03-adventure-map.png) | ![奖励商店](docs/screenshots/04-reward-shop.png) |
+| ![树篱围合并保留双入口的固定两人私人花园](design/prototype-v3/assets/scene-protected-garden.jpg) | ![运动鞋与水壶构成的健康打卡场景](design/prototype-v3/assets/scene-checkin.jpg) | ![两条路线在共同目标处汇合的地图旅程](design/prototype-v3/assets/scene-map.jpg) | ![不含支付符号的线下礼物兑现场景](design/prototype-v3/assets/scene-reward.jpg) |
 
-### 赞助者陪伴首页
+### 抽象双人关系
 
-![赞助者陪伴首页](docs/screenshots/05-sponsor-home.png)
-
-更多角色路径、13 张页面截图、五阶段能量树、奖励插画和 13 个动效场景见 [完整产品导览](docs/product-tour.md) 与 [页面目录](docs/page-catalog.md)。
+| 建立关系 | 共同成长 | 完成庆祝 |
+| --- | --- | --- |
+| ![双生种子与两条路径表达建立固定关系](design/prototype-v3/assets/duo-binding.jpg) | ![两条路径围绕双生树共同成长](design/prototype-v3/assets/duo-growth.jpg) | ![交织树木与汇合路径表达共同完成](design/prototype-v3/assets/duo-celebration.jpg) |
 
 ### 五阶段能量树
 
 | 破土 | 发芽 | 成长 | 盛放 | 心愿花园 |
 | --- | --- | --- | --- | --- |
-| ![能量树第 1 阶](miniprogram/assets/generated/tree-level-1.png) | ![能量树第 2 阶](miniprogram/assets/generated/tree-level-2.png) | ![能量树第 3 阶](miniprogram/assets/generated/tree-level-3.png) | ![能量树第 4 阶](miniprogram/assets/generated/tree-level-4.png) | ![能量树第 5 阶](miniprogram/assets/generated/tree-level-5.png) |
-
-### 关键庆祝场景
-
-| 绑定成功 | 审核通过 | 连续 7 天 | 地图通关 | 心愿完成 |
-| --- | --- | --- | --- | --- |
-| ![绑定成功](miniprogram/assets/motion/binding.jpg) | ![审核通过](miniprogram/assets/motion/approval.jpg) | ![连续七天](miniprogram/assets/motion/streak-7.jpg) | ![地图通关](miniprogram/assets/motion/map-complete.jpg) | ![心愿完成](miniprogram/assets/motion/wish-fund-complete.jpg) |
+| ![双生种子开始破土](design/prototype-v3/assets/tree-stage-1.jpg) | ![两株幼苗同步发芽](design/prototype-v3/assets/tree-stage-2.jpg) | ![交织树干进入成长阶段](design/prototype-v3/assets/tree-stage-3.jpg) | ![双生树冠逐渐盛放](design/prototype-v3/assets/tree-stage-4.jpg) | ![成熟双生树形成心愿花园](design/prototype-v3/assets/tree-stage-5.jpg) |
 
 ## 架构概览
 
@@ -152,10 +148,9 @@ flowchart LR
 
 ## ImageGen 图片资产
 
-- ImageGen 原始输出保存在 `design/imagegen-source/`，用于保留生成成果和后续重新处理；README 封面的生成说明见 [`docs/visual-language.md`](docs/visual-language.md)。
-- 小程序实际使用的透明装饰图位于 `miniprogram/assets/generated/`。原始输出如果带有棋盘格预览背景，在 macOS（需系统 Swift + Vision，以及 Python Pillow）运行 `python3 scripts/clean-generated-cutouts.py`，可通过本地前景分割重新生成真实 RGBA 透明图，并同步情侣角色图到 `motion-studio/public/characters/`；处理过程不上传图片。
-- 清理角色图后运行 `npm run motion:posters`，重新导出 13 张不含棋盘格的本地动效 poster。
-- 地图和商店横幅是完整矩形 JPG，不参与透明背景清理。
+- V3 当前设计源位于 `design/prototype-v3/assets/`：5 张连续成长树、3 张抽象双人关系场景和 4 张业务场景，统一使用象牙白、鼠尾草绿与陶土色，不再使用熊兔作为主视觉。
+- `design/imagegen-source/`、`miniprogram/assets/generated/` 与 `miniprogram/assets/motion/` 中仍包含 `3.0.0` 审核包正在使用的运行时兼容素材；它们不再作为 README 的 V3 展示图。
+- 替换运行时树木或 poster 会改变已提审小程序包，必须作为后续版本单独实现、重新跑包体和三级降级测试并重新提审，不能在审核中直接删除。
 
 ## Remotion 动效素材工厂
 
@@ -181,7 +176,7 @@ npm run motion:posters
 - `npm run motion:preview`：渲染 `motion-studio/out/previews/approval.mp4`。
 - `npm run motion:posters`：把 13 张压缩 poster 写入 `miniprogram/assets/motion/`。
 - `motion-studio/out/` 和 `.cache/` 始终忽略；普通测试只校验可提交入口与 poster，不依赖这些生成物。
-- 当前 13 张 poster 合计 `108,503` 字节，低于 V3 动效素材设置的 `409,600` 字节预算。
+- 当前审核包的 13 张兼容 poster 合计 `108,503` 字节，低于 `409,600` 字节预算；公开 V3 图文展示不再引用这些旧 poster。
 
 小程序动效采用三级降级：
 

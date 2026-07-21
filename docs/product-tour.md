@@ -1,12 +1,12 @@
 # 心动能量树产品导览
 
-![心动能量树私人花园](illustrations/heart-tree-readme-hero.jpg)
+![心动能量树 V3 受保护的固定两人私人花园](../design/prototype-v3/assets/scene-protected-garden.jpg)
 
 这份导览面向第一次接触项目的人。它解释产品解决什么问题、两个角色怎样协作、每个主要页面为什么存在，以及自动化测试能够证明什么、不能证明什么。
 
-> 所有截图使用虚构资料。仓库不保存真实 OPENID、邀请 token、二维码、聊天内容或私人照片。
+> 当前图像来自 V3 原创设计源，不是开发者工具或真机截图。旧版模拟器截图已移除；仓库不保存真实 OPENID、邀请 token、二维码、聊天内容或私人照片。
 
-![两个人从行动、回应到共同成长的旅程](illustrations/couple-journey.jpg)
+![双生种子与两条路径表达固定两人关系的开始](../design/prototype-v3/assets/duo-binding.jpg)
 
 ## 一分钟理解产品
 
@@ -30,9 +30,9 @@ flowchart TD
 
 打卡者看到的是“今天要做什么、完成后发生了什么”。提交并不会直接产生余额；只有赞助者审核通过后，奖励、地图进度和徽章才会在同一事务里生效。
 
-| 首页总览 | 提交打卡 |
+| 私人花园总览 | 健康打卡场景 |
 | --- | --- |
-| ![打卡者首页](screenshots/01-participant-home.png) | ![运动打卡](screenshots/02-checkin.png) |
+| ![受保护的固定两人私人花园](../design/prototype-v3/assets/scene-protected-garden.jpg) | ![运动鞋和水壶构成的健康打卡场景](../design/prototype-v3/assets/scene-checkin.jpg) |
 
 ### 首页承担的职责
 
@@ -55,17 +55,17 @@ flowchart TD
 
 | 探险地图 | 奖励商店 |
 | --- | --- |
-| ![探险地图](screenshots/03-adventure-map.png) | ![奖励商店](screenshots/04-reward-shop.png) |
+| ![两条路线共同前进的地图旅程](../design/prototype-v3/assets/scene-map.jpg) | ![不含支付符号的线下礼物兑现场景](../design/prototype-v3/assets/scene-reward.jpg) |
 
 ### 五个成长阶段
 
 | 阶段 | 视觉 | 含义 |
 | --- | --- | --- |
-| 1 · 破土 | ![树木阶段 1](../miniprogram/assets/generated/tree-level-1.png) | 关系刚建立，先完成第一件小事 |
-| 2 · 发芽 | ![树木阶段 2](../miniprogram/assets/generated/tree-level-2.png) | 形成最初的连续记录 |
-| 3 · 成长 | ![树木阶段 3](../miniprogram/assets/generated/tree-level-3.png) | 多个行动开始积累成稳定节奏 |
-| 4 · 盛放 | ![树木阶段 4](../miniprogram/assets/generated/tree-level-4.png) | 共同目标和奖励体系逐渐完整 |
-| 5 · 心愿花园 | ![树木阶段 5](../miniprogram/assets/generated/tree-level-5.png) | 长期陪伴留下可回顾的共同成果 |
+| 1 · 破土 | ![双生种子开始破土](../design/prototype-v3/assets/tree-stage-1.jpg) | 关系刚建立，先完成第一件小事 |
+| 2 · 发芽 | ![两株幼苗同步发芽](../design/prototype-v3/assets/tree-stage-2.jpg) | 形成最初的连续记录 |
+| 3 · 成长 | ![交织树干进入成长阶段](../design/prototype-v3/assets/tree-stage-3.jpg) | 多个行动开始积累成稳定节奏 |
+| 4 · 盛放 | ![双生树冠逐渐盛放](../design/prototype-v3/assets/tree-stage-4.jpg) | 共同目标和奖励体系逐渐完整 |
+| 5 · 心愿花园 | ![成熟双生树形成心愿花园](../design/prototype-v3/assets/tree-stage-5.jpg) | 长期陪伴留下可回顾的共同成果 |
 
 树的等级是展示模型，不是金融等级，也不代表收益、利息或资产价值。
 
@@ -73,13 +73,9 @@ flowchart TD
 
 赞助者首页强调“待处理事项”，而不是展示一个复杂后台。审核、规则、奖品、退款和心愿金处理都受可信 OPENID 与角色鉴权保护。
 
-![赞助者陪伴首页](screenshots/05-sponsor-home.png)
+![两条路径围绕双生树共同成长](../design/prototype-v3/assets/duo-growth.jpg)
 
-赞助者的高风险入口拆成四个页面，每个页面只承担一种主要责任：
-
-| 打卡审核 | 奖励与地图规则 | 心愿金处理 | 奖品管理 |
-| --- | --- | --- | --- |
-| ![虚构打卡审核页面](screenshots/10-sponsor-review.png) | ![虚构奖励规则页面](screenshots/11-sponsor-rules.png) | ![虚构心愿金处理页面](screenshots/12-sponsor-payouts.png) | ![虚构奖品管理页面](screenshots/13-admin-rewards.png) |
+赞助者的高风险入口拆成打卡审核、奖励与地图规则、心愿金处理和奖品管理四个页面，每个页面只承担一种主要责任。47 张高保真画板中的对应页面见 [V3 Figma 原型说明](../design/prototype-v3/README.md)。
 
 - 审核台只处理待审核打卡，空状态不会伪造待办。
 - 规则页显示固定奖励、每日上限和地图关卡，不提供随机现金抽奖。
@@ -105,13 +101,7 @@ flowchart TD
 
 商店中的内容更接近“两个人约定好的兑换清单”。默认示例刻意使用陪伴和生活场景，而不是现金产品。
 
-| 约会体验 | 日常照顾 | 小礼物 | 情绪支持 |
-| --- | --- | --- | --- |
-| ![约会奖励](../miniprogram/assets/generated/shop-date.jpg) | ![照顾奖励](../miniprogram/assets/generated/shop-care.jpg) | ![礼物奖励](../miniprogram/assets/generated/shop-gift.jpg) | ![情绪奖励](../miniprogram/assets/generated/shop-emotion.jpg) |
-
-| 心愿金领取 | 兑换记录 |
-| --- | --- |
-| ![虚构心愿金领取页面](screenshots/08-wallet.png) | ![虚构兑换记录页面](screenshots/09-redemptions.png) |
+![不含支付或金融符号的礼物兑现视觉](../design/prototype-v3/assets/scene-reward.jpg)
 
 ```mermaid
 sequenceDiagram
@@ -141,7 +131,7 @@ stateDiagram-v2
 
 信笺页支持文字、授权图片、贴纸和双向请求卡。请求卡表达的是一次邀请，不代表同意；接收方可以同意、稍后、婉拒，发送方也可以在未处理前撤回。
 
-![使用虚构内容展示的情侣信笺页面](screenshots/06-messages.png)
+![两条路径从双生种子开始建立关系](../design/prototype-v3/assets/duo-binding.jpg)
 
 安全边界包括：
 
@@ -153,7 +143,7 @@ stateDiagram-v2
 
 ## 每周回顾
 
-![不包含私人照片的每周回顾页面](screenshots/07-weekly-recap.png)
+![交织树木和汇合路径表达一周共同完成](../design/prototype-v3/assets/duo-celebration.jpg)
 
 每周回顾按中国时区的周一到周日统计：
 
@@ -164,21 +154,15 @@ stateDiagram-v2
 
 周报不会嵌入打卡照片，避免在摘要页面扩大私人图片的暴露面。
 
-## 13 个动效场景
+## 动效与关系场景
 
-Remotion 工厂为关键反馈生成本地 poster；远程 MP4 只是可选增强层。
+Remotion 工厂保留 13 个关键反馈场景与远程 MP4 → 本地 poster → 原生静态三级降级。V3 当前文档只展示抽象双人视觉，不再把审核包中的旧兼容 poster 当作最新品牌图片。
 
-| 绑定 | 打卡 | 审核 | 鼓励 |
-| --- | --- | --- | --- |
-| ![绑定](../miniprogram/assets/motion/binding.jpg) | ![打卡](../miniprogram/assets/motion/check-in.jpg) | ![审核](../miniprogram/assets/motion/approval.jpg) | ![鼓励](../miniprogram/assets/motion/encouragement.jpg) |
+| 建立关系 | 共同成长 | 完成庆祝 |
+| --- | --- | --- |
+| ![双生种子建立固定关系](../design/prototype-v3/assets/duo-binding.jpg) | ![两条路径围绕双生树共同成长](../design/prototype-v3/assets/duo-growth.jpg) | ![交织树木与汇合路径表达完成庆祝](../design/prototype-v3/assets/duo-celebration.jpg) |
 
-| 连续 3 天 | 连续 7 天 | 连续 14 天 | 地图通关 |
-| --- | --- | --- | --- |
-| ![连续 3 天](../miniprogram/assets/motion/streak-3.jpg) | ![连续 7 天](../miniprogram/assets/motion/streak-7.jpg) | ![连续 14 天](../miniprogram/assets/motion/streak-14.jpg) | ![地图通关](../miniprogram/assets/motion/map-complete.jpg) |
-
-| 徽章 | 兑换 | 心愿完成 | 周报 | 空陪伴状态 |
-| --- | --- | --- | --- | --- |
-| ![徽章解锁](../miniprogram/assets/motion/badge-unlock.jpg) | ![奖励兑换](../miniprogram/assets/motion/redemption.jpg) | ![心愿完成](../miniprogram/assets/motion/wish-fund-complete.jpg) | ![每周回顾](../miniprogram/assets/motion/weekly-recap.jpg) | ![空陪伴状态](../miniprogram/assets/motion/companion-empty.jpg) |
+运行时兼容 poster 暂时保留在 `miniprogram/assets/motion/`，因为删除或替换会改变已提交审核的 `3.0.0` 包和失败降级行为。它们需要在后续版本完成重新生成、包体检查、每级失败测试和重新提审后才能安全替换。
 
 ```mermaid
 flowchart LR

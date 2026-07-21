@@ -85,7 +85,7 @@ Figma 文件：[心动能量树 V3｜全量产品原型](https://www.figma.com/d
 
 ## 原创素材
 
-`assets/` 下共 12 张 JPEG，均为 1254×1254，单张小于 600 KB，未进入小程序主包：
+`assets/` 下共 12 张 JPEG，均为 1254×1254，单张小于 600 KB，合计 3,641,984 字节、低于 4 MB 文档预算，未进入小程序主包：
 
 - `tree-stage-1.jpg` 至 `tree-stage-5.jpg`：双生种子到成熟心动树的五个连续生长阶段。
 - `duo-binding.jpg`、`duo-growth.jpg`、`duo-celebration.jpg`：建立关系、共同成长与完成庆祝。
