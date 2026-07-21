@@ -1,6 +1,6 @@
 # 视觉与动效设计说明
 
-![心动能量树视觉封面](illustrations/heart-tree-readme-hero.jpg)
+![心动能量树 V3 受保护私人花园](../design/prototype-v3/assets/scene-protected-garden.jpg)
 
 心动能量树的视觉目标不是“把所有东西都做成粉色”，而是让一套涉及审核、账本和隐私的功能仍然显得温柔、可信、适合长期使用。
 
@@ -39,49 +39,37 @@
 
 实际小程序样式以 WXSS 为准；Figma 文件用于视觉协作，不能覆盖已经上线的可信业务规则。
 
-## 角色插画
+## 抽象双人关系
 
-熊和兔子是成年化、非真人的关系角色，避免把任何真实用户外貌固化进产品资产。
+V3 不再使用熊兔作为主角色。固定两人关系由双生种子、两条路径、交织树干和汇合花园表达，避免固化任何真实用户外貌。
 
-| 相守 | 出发 | 庆祝 |
+| 建立关系 | 共同成长 | 完成庆祝 |
 | --- | --- | --- |
-| ![情侣相守](../miniprogram/assets/generated/couple-hold.png) | ![情侣站立](../miniprogram/assets/generated/couple-stand.png) | ![情侣跳跃](../miniprogram/assets/generated/couple-jump.png) |
+| ![双生种子与两条路径建立关系](../design/prototype-v3/assets/duo-binding.jpg) | ![两条路径围绕双生树共同成长](../design/prototype-v3/assets/duo-growth.jpg) | ![交织树木与汇合路径表达完成庆祝](../design/prototype-v3/assets/duo-celebration.jpg) |
 
 ## 成长资产
 
-五阶段树木使用一致的盆器、树冠轮廓和光照方向，使成长看起来是同一棵树持续变化，而不是五张无关插画。
+五阶段树木保持双生种子、交织树干、纸张纹理与光照方向一致，使成长看起来是同一段关系持续变化，而不是五张无关插画。
 
 | L1 | L2 | L3 | L4 | L5 |
 | --- | --- | --- | --- | --- |
-| ![L1](../miniprogram/assets/generated/tree-level-1.png) | ![L2](../miniprogram/assets/generated/tree-level-2.png) | ![L3](../miniprogram/assets/generated/tree-level-3.png) | ![L4](../miniprogram/assets/generated/tree-level-4.png) | ![L5](../miniprogram/assets/generated/tree-level-5.png) |
+| ![V3 L1 双生种子破土](../design/prototype-v3/assets/tree-stage-1.jpg) | ![V3 L2 两株幼苗发芽](../design/prototype-v3/assets/tree-stage-2.jpg) | ![V3 L3 交织树干成长](../design/prototype-v3/assets/tree-stage-3.jpg) | ![V3 L4 双生树冠盛放](../design/prototype-v3/assets/tree-stage-4.jpg) | ![V3 L5 成熟心愿树](../design/prototype-v3/assets/tree-stage-5.jpg) |
 
 ## 粒子与庆祝符号
 
-| 爱心 | 花瓣 | 星光 | 奖励币 |
-| --- | --- | --- | --- |
-| ![爱心粒子](../miniprogram/assets/generated/particle-heart.png) | ![花瓣粒子](../miniprogram/assets/generated/particle-petal.png) | ![星光粒子](../miniprogram/assets/generated/particle-star.png) | ![奖励币粒子](../miniprogram/assets/generated/particle-coin.png) |
+爱心、花瓣、星光和非金融化计数反馈只作为短暂状态提示。文档不再展示审核包中的旧运行时位图；后续 V3 运行时替换应优先复用抽象植物语言，并继续提供静态与 reduced-motion 兜底。
 
 粒子只负责短暂反馈，不传达真实货币、收益或投资含义。
 
-## 页面场景素材
+## V3 业务场景素材
 
-Stitch 原始页面层级被保留为实现基线，并转换为原生 WXML/WXSS，而不是在小程序运行时嵌入网页。
+V3 业务场景使用同一套晨雾植物志语言；它们是高保真原型与文档视觉，不冒充原生小程序截图。
 
 | 打卡场景 | 花园场景 | 地图场景 | 兑换场景 |
 | --- | --- | --- | --- |
-| ![打卡场景](../miniprogram/assets/stitch-original/checkin-yoga.jpg) | ![花园场景](../miniprogram/assets/stitch-original/participant-garden.jpg) | ![地图场景](../miniprogram/assets/stitch-original/map-hill.jpg) | ![兑换场景](../miniprogram/assets/stitch-original/redemption-gift.jpg) |
+| ![健康打卡场景](../design/prototype-v3/assets/scene-checkin.jpg) | ![受保护私人花园](../design/prototype-v3/assets/scene-protected-garden.jpg) | ![地图成长场景](../design/prototype-v3/assets/scene-map.jpg) | ![线下礼物兑现场景](../design/prototype-v3/assets/scene-reward.jpg) |
 
-## 文档叙事插画
-
-文档插画负责表达产品气质和抽象边界，不替代真实页面截图或工程流程图。
-
-| 两人共同旅程 | 受保护的私人花园 |
-| --- | --- |
-| ![熊兔情侣从行动走向共同成长](illustrations/couple-journey.jpg) | ![用花园温室表达隐私、安全和恢复](illustrations/trust-safety-garden.jpg) |
-
-- 共同旅程使用左到右的连续叙事，表达行动、回应、线下承诺和树木成长。
-- 受保护花园使用温室、检查灯和档案亭隐喻可信身份、内容审核、备份与恢复。
-- 两张图都不包含真实人物、文字、二维码、支付标识、金融收益符号或水印。
+这些素材不包含真实人物、文字、二维码、支付标识、金融收益符号或水印。
 
 ## 页面截图规范
 
@@ -141,15 +129,11 @@ flowchart LR
 
 因此 Figma 是待继续完善的设计协作源，不应被描述为已经完成的最终验收。对应可复现脚本位于 `design/figma/scripts/`。
 
-## 文档插画来源
+## V3 原创素材来源
 
-`docs/illustrations/heart-tree-readme-hero.jpg` 由内置 ImageGen 生成，提示目标为：宽幅私人花园、心形五阶段树、成年化熊兔情侣、象牙/鼠尾草/酒红/古金配色；明确排除文字、二维码、支付标识、真人和水印。PNG 原始结果经过本地 JPEG 压缩后进入仓库，不进入小程序主包。
+当前文档统一引用 `design/prototype-v3/assets/` 的 12 张原创 JPEG。提示方向为晨雾植物志、象牙白纸张、鼠尾草绿与陶土色，以双生种子、交织树干和两条路径表达固定两人关系；明确排除熊兔主角色、真人、文字、二维码、支付标识、金融符号与水印。
 
-`docs/illustrations/couple-journey.jpg` 同样使用内置 ImageGen，并以上述封面作为风格参考。提示目标为：成年熊兔沿连续花园路径经历健康行动、认真回应、非现金承诺和共同树木成长；明确排除 UI、支付和投资意象。
-
-`docs/illustrations/trust-safety-garden.jpg` 使用内置 ImageGen 生成。提示目标为：玻璃温室保护私人心形花园，检查灯处理信笺，独立档案亭表达备份恢复；明确排除黑客、监控、金融和监狱式视觉隐喻。
-
-三张最终 JPEG 均保存在 `docs/illustrations/`，压缩后单图不超过 800 KB；ImageGen 默认目录中的生成结果不是仓库运行依赖。
+旧版熊兔文档插画和旧模拟器截图已从当前仓库移除。`miniprogram/assets/` 中审核包仍依赖的运行时兼容素材不作为 V3 文档展示；替换它们需要后续版本重新完成包体、动效降级、编译和微信审核。
 
 ## 验收入口
 

@@ -5,14 +5,18 @@ const ROOT = path.resolve(__dirname, '..');
 const DOCS_ROOT = path.join(ROOT, 'docs');
 const SCREENSHOT_ROOT = path.join(DOCS_ROOT, 'screenshots');
 const ILLUSTRATION_ROOT = path.join(DOCS_ROOT, 'illustrations');
+const V3_ASSET_ROOT = path.join(ROOT, 'design', 'prototype-v3', 'assets');
 const TOTAL_DOC_IMAGE_BUDGET = 4 * 1024 * 1024;
 const PER_IMAGE_BUDGET = 800 * 1024;
 const PER_SCREENSHOT_BUDGET = 180 * 1024;
 const GENERATED_ILLUSTRATION_BUDGET = 600 * 1024;
-const GENERATED_ILLUSTRATIONS = new Set([
-  'couple-journey.jpg',
-  'trust-safety-garden.jpg'
-]);
+const RETIRED_DOCUMENTATION_IMAGE_ROOTS = [
+  'docs/screenshots/',
+  'docs/illustrations/',
+  'miniprogram/assets/generated/',
+  'miniprogram/assets/motion/',
+  'miniprogram/assets/stitch-original/'
+];
 
 function walk(directory, predicate) {
   if (!fs.existsSync(directory)) return [];
@@ -97,6 +101,11 @@ function validateMarkdown(markdownFiles, errors) {
       if (isImage) assert(Boolean(label), `${relative(filePath)} has an image without alt text`, errors);
       if (isExternalTarget(rawTarget)) return;
       const resolved = path.resolve(path.dirname(filePath), decodeURIComponent(target));
+      const repositoryTarget = relative(resolved);
+      if (isImage) {
+        const retiredRoot = RETIRED_DOCUMENTATION_IMAGE_ROOTS.find((root) => repositoryTarget.startsWith(root));
+        assert(!retiredRoot, `${relative(filePath)} displays retired image ${repositoryTarget}`, errors);
+      }
       assert(fs.existsSync(resolved), `${relative(filePath)} links to missing ${target}`, errors);
       if (isImage && fs.existsSync(resolved)) referencedImages.add(resolved);
     });
@@ -109,6 +118,9 @@ function validateMarkdown(markdownFiles, errors) {
       if (!sourceMatch || isExternalTarget(sourceMatch[1])) return;
       const target = normalizeTarget(sourceMatch[1]);
       const resolved = path.resolve(path.dirname(filePath), decodeURIComponent(target));
+      const repositoryTarget = relative(resolved);
+      const retiredRoot = RETIRED_DOCUMENTATION_IMAGE_ROOTS.find((root) => repositoryTarget.startsWith(root));
+      assert(!retiredRoot, `${relative(filePath)} displays retired image ${repositoryTarget}`, errors);
       assert(fs.existsSync(resolved), `${relative(filePath)} links to missing ${target}`, errors);
       if (fs.existsSync(resolved)) referencedImages.add(resolved);
     });
@@ -126,11 +138,13 @@ function validateMarkdown(markdownFiles, errors) {
 function validateImageFiles(errors) {
   const screenshotFiles = walk(SCREENSHOT_ROOT, (file) => /\.(?:png|jpe?g)$/i.test(file));
   const illustrationFiles = walk(ILLUSTRATION_ROOT, (file) => /\.(?:png|jpe?g)$/i.test(file));
-  const allFiles = [...screenshotFiles, ...illustrationFiles];
+  const v3AssetFiles = walk(V3_ASSET_ROOT, (file) => /\.jpg$/i.test(file));
+  const allFiles = [...screenshotFiles, ...illustrationFiles, ...v3AssetFiles];
   const totalBytes = allFiles.reduce((total, file) => total + fs.statSync(file).size, 0);
 
-  assert(screenshotFiles.length === 13, `expected 13 documentation screenshots, found ${screenshotFiles.length}`, errors);
-  assert(illustrationFiles.length === 3, `expected 3 documentation illustrations, found ${illustrationFiles.length}`, errors);
+  assert(screenshotFiles.length === 0, `retired documentation screenshots remain: ${screenshotFiles.length}`, errors);
+  assert(illustrationFiles.length === 0, `retired documentation illustrations remain: ${illustrationFiles.length}`, errors);
+  assert(v3AssetFiles.length === 12, `expected 12 V3 visual assets, found ${v3AssetFiles.length}`, errors);
   assert(totalBytes <= TOTAL_DOC_IMAGE_BUDGET, `documentation images use ${totalBytes} bytes, budget is ${TOTAL_DOC_IMAGE_BUDGET}`, errors);
 
   allFiles.forEach((filePath) => {
@@ -146,13 +160,20 @@ function validateImageFiles(errors) {
     } else {
       assert(metadata.format === 'jpeg', `${relative(filePath)} should be a compressed JPEG`, errors);
       assert(metadata.width >= 1000, `${relative(filePath)} is too narrow for a documentation illustration`, errors);
-      if (GENERATED_ILLUSTRATIONS.has(path.basename(filePath))) {
-        assert(size <= GENERATED_ILLUSTRATION_BUDGET, `${relative(filePath)} uses ${size} bytes, generated illustration budget is ${GENERATED_ILLUSTRATION_BUDGET}`, errors);
-      }
     }
   });
 
-  return { screenshotFiles, illustrationFiles, totalBytes };
+  v3AssetFiles.forEach((filePath) => {
+    const size = fs.statSync(filePath).size;
+    const metadata = imageMetadata(filePath);
+    assert(Boolean(metadata && metadata.format === 'jpeg'), `${relative(filePath)} is not a valid JPEG`, errors);
+    assert(size <= GENERATED_ILLUSTRATION_BUDGET, `${relative(filePath)} uses ${size} bytes, V3 asset budget is ${GENERATED_ILLUSTRATION_BUDGET}`, errors);
+    if (metadata) {
+      assert(metadata.width >= 1000 && metadata.height >= 1000, `${relative(filePath)} is too small for V3 documentation`, errors);
+    }
+  });
+
+  return { screenshotFiles, illustrationFiles, v3AssetFiles, totalBytes };
 }
 
 function validatePageCatalog(errors) {
@@ -177,7 +198,7 @@ function main() {
     return;
   }
 
-  console.log(`Documentation check passed: ${markdownFiles.length} Markdown files, ${referencedImages.size} referenced local images, ${imageSummary.screenshotFiles.length} screenshots, ${imageSummary.illustrationFiles.length} illustrations, ${imageSummary.totalBytes} bytes.`);
+  console.log(`Documentation check passed: ${markdownFiles.length} Markdown files, ${referencedImages.size} referenced local images, ${imageSummary.v3AssetFiles.length} V3 assets using ${imageSummary.totalBytes} bytes, no retired screenshots or illustrations.`);
 }
 
 main();

@@ -2,7 +2,7 @@
 
 本目录以 `miniprogram/app.json` 为可信来源，覆盖当前全部 22 个页面。它帮助产品、设计、测试和部署人员快速确认“谁能看、从哪里进入、页面负责什么、失败时应保留什么边界”。
 
-> 下方截图来自微信开发者工具 iPhone 12/13 模拟器，只使用虚构演示数据，是界面说明而非双账号真机验收证据。截图不包含真实 OPENID、邀请 token、二维码、头像、信笺或私人照片。
+> 旧版模拟器截图已移除，避免继续把 V2 画面当作 V3 当前界面。下方展示的是 V3 原创视觉场景，不是微信开发者工具或双账号真机验收证据。
 
 ## 主要角色路径
 
@@ -16,15 +16,13 @@ flowchart TD
   SPONSOR --> COMPANION["陪伴总览与明细"]
 ```
 
-## 新增页面画廊
+## V3 视觉场景
 
-| 情侣信笺 | 每周回顾 | 心愿金领取 | 兑换记录 |
+| 健康打卡 | 地图成长 | 手动兑现 | 私人花园 |
 | --- | --- | --- | --- |
-| ![虚构信笺页面](screenshots/06-messages.png) | ![虚构每周回顾页面](screenshots/07-weekly-recap.png) | ![虚构心愿金领取页面](screenshots/08-wallet.png) | ![虚构兑换记录页面](screenshots/09-redemptions.png) |
+| ![运动鞋、水壶与植物构成的健康行动场景](../design/prototype-v3/assets/scene-checkin.jpg) | ![两条路线共同前进的地图场景](../design/prototype-v3/assets/scene-map.jpg) | ![不含支付标识的线下礼物兑现场景](../design/prototype-v3/assets/scene-reward.jpg) | ![受树篱保护并保留双入口的私人花园](../design/prototype-v3/assets/scene-protected-garden.jpg) |
 
-| 打卡审核 | 奖励与地图规则 | 心愿金处理 | 奖品管理 |
-| --- | --- | --- | --- |
-| ![虚构打卡审核页面](screenshots/10-sponsor-review.png) | ![虚构奖励规则页面](screenshots/11-sponsor-rules.png) | ![虚构心愿金处理页面](screenshots/12-sponsor-payouts.png) | ![虚构奖品管理页面](screenshots/13-admin-rewards.png) |
+全部 22 条路由对应的 47 张高保真画板与五条交互旅程见 [V3 Figma 原型说明](../design/prototype-v3/README.md)。新的原生小程序截图必须等脱敏虚构 fixture 重新采集后再加入。
 
 ## 页面清单
 
