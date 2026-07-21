@@ -140,7 +140,7 @@ Page({
       title: '确认已手动兑现',
       content: `确认已线下兑现 ¥${item ? item.amountText : ''}？备注：${note}`,
       confirmText: '确认兑现',
-      confirmColor: '#8F3653',
+      confirmColor: '#2E452C',
       success: async (res) => {
         if (!res.confirm) {
           this.setData({ processingWithdrawalId: '', processingAction: '' });
@@ -182,7 +182,7 @@ Page({
       title: '确认退回心愿金',
       content: `确认退回 ¥${item ? item.amountText : ''}？金额会回到她的可用能量币。`,
       confirmText: '确认退回',
-      confirmColor: '#8F3653',
+      confirmColor: '#2E452C',
       success: async (res) => {
         if (!res.confirm) {
           this.setData({ processingWithdrawalId: '', processingAction: '' });

@@ -6,10 +6,10 @@
   position: relative;
   overflow: hidden;
   padding: 38rpx 32rpx 0;
-  border: 1rpx solid rgba(143, 54, 83, 0.12);
+  border: 1rpx solid rgba(63, 101, 72, 0.12);
   border-radius: 34rpx;
-  background: linear-gradient(145deg, #fffdfb 0%, #fff0f3 60%, #f9e5ea 100%);
-  box-shadow: 0 18rpx 44rpx rgba(113, 30, 60, 0.1);
+  background: linear-gradient(145deg, #FFFDF7 0%, #EEF3EA 60%, #f9e5ea 100%);
+  box-shadow: 0 18rpx 44rpx rgba(46, 69, 44, 0.1);
 }
 
 .redemption-header-copy {
@@ -20,7 +20,7 @@
 
 .redemption-eyebrow {
   display: block;
-  color: #7d2f49;
+  color: #3F6548;
   font-size: 20rpx;
   font-weight: 800;
   letter-spacing: 5rpx;
@@ -28,7 +28,7 @@
 
 .redemption-header-title {
   margin-top: 10rpx;
-  color: #5d1731;
+  color: #704A39;
   font-size: 46rpx;
   font-weight: 900;
   letter-spacing: 1rpx;
@@ -55,9 +55,9 @@
   position: absolute;
   left: 17rpx;
   width: 96rpx;
-  border: 2rpx solid rgba(113, 30, 60, 0.18);
+  border: 2rpx solid rgba(46, 69, 44, 0.18);
   background: linear-gradient(135deg, #f8c9c6 0%, #e99cac 100%);
-  box-shadow: 0 12rpx 22rpx rgba(113, 30, 60, 0.14);
+  box-shadow: 0 12rpx 22rpx rgba(46, 69, 44, 0.14);
 }
 
 .redemption-gift-lid {
@@ -112,7 +112,7 @@
   justify-content: space-around;
   margin: 30rpx -32rpx 0;
   padding: 22rpx 18rpx 24rpx;
-  border-top: 1rpx solid rgba(143, 54, 83, 0.1);
+  border-top: 1rpx solid rgba(63, 101, 72, 0.1);
   background: rgba(255, 255, 255, 0.58);
 }
 
@@ -125,7 +125,7 @@
 }
 
 .redemption-summary-number {
-  color: #711e3c;
+  color: #2E452C;
   font-size: 34rpx;
   font-weight: 900;
 }
@@ -138,7 +138,7 @@
 .redemption-summary-divider {
   width: 1rpx;
   height: 48rpx;
-  background: rgba(113, 30, 60, 0.12);
+  background: rgba(46, 69, 44, 0.12);
 }
 
 .redemption-list {
@@ -151,7 +151,7 @@
 .redemption-voucher-card {
   overflow: hidden;
   padding: 22rpx;
-  border: 1rpx solid rgba(113, 30, 60, 0.1);
+  border: 1rpx solid rgba(46, 69, 44, 0.1);
   border-radius: 28rpx;
   background: rgba(255, 253, 250, 0.96);
   box-shadow: 0 12rpx 30rpx rgba(89, 45, 59, 0.08);
@@ -169,7 +169,7 @@
   height: 158rpx;
   flex: 0 0 176rpx;
   border-radius: 20rpx;
-  background: #f8e6ec;
+  background: #E7EFE4;
 }
 
 .redemption-voucher-copy {
@@ -206,22 +206,22 @@
 
 .status-active {
   color: #7a2443;
-  background: #f8dce5;
+  background: #F4ECD1;
 }
 
 .status-warning {
   color: #8d5712;
-  background: #fff0c9;
+  background: #F4ECD1;
 }
 
 .status-success {
   color: #3e674e;
-  background: #dfeee2;
+  background: #E7EFE4;
 }
 
 .status-muted {
   color: #766d70;
-  background: #eee8e9;
+  background: #E8E1D3;
 }
 
 .redemption-title {
@@ -275,9 +275,9 @@
 .redemption-action-panel {
   margin-top: 20rpx;
   padding: 22rpx;
-  border: 1rpx dashed rgba(143, 54, 83, 0.24);
+  border: 1rpx dashed rgba(63, 101, 72, 0.24);
   border-radius: 22rpx;
-  background: linear-gradient(145deg, #fff9f8 0%, #fff1f4 100%);
+  background: linear-gradient(145deg, #FFFDF7 0%, #EEF3EA 100%);
 }
 
 .redemption-action-heading {
@@ -296,7 +296,7 @@
 .redemption-note {
   min-height: 112rpx;
   margin-top: 16rpx;
-  border-color: rgba(143, 54, 83, 0.14);
+  border-color: rgba(63, 101, 72, 0.14);
   background: #fffefd;
 }
 
@@ -329,7 +329,7 @@
   border-left: 6rpx solid #dba4b3;
   border-radius: 10rpx 16rpx 16rpx 10rpx;
   color: #785d66;
-  background: #f9e9ed;
+  background: #F6F1E7;
   font-size: 22rpx;
   line-height: 1.55;
 }
@@ -340,7 +340,7 @@
   align-items: center;
   margin-top: 26rpx;
   padding: 72rpx 40rpx 58rpx;
-  border: 1rpx solid rgba(143, 54, 83, 0.1);
+  border: 1rpx solid rgba(63, 101, 72, 0.1);
   border-radius: 30rpx;
   text-align: center;
   background: rgba(255, 253, 250, 0.94);
@@ -358,7 +358,7 @@
   position: absolute;
   left: 18rpx;
   width: 140rpx;
-  border: 2rpx solid rgba(113, 30, 60, 0.12);
+  border: 2rpx solid rgba(46, 69, 44, 0.12);
   background: linear-gradient(135deg, #f4c1c5 0%, #e695a8 100%);
 }
 
@@ -391,14 +391,14 @@
   top: -4rpx;
   left: 61rpx;
   z-index: 3;
-  color: #9c415f;
+  color: #704A39;
   font-size: 72rpx;
   font-weight: 900;
 }
 
 .redemption-empty-title {
   margin-top: 18rpx;
-  color: #5d1731;
+  color: #704A39;
   font-size: 34rpx;
   font-weight: 900;
 }

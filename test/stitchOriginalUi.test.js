@@ -31,11 +31,11 @@ test('core pages implement the approved Stitch original screens with native mini
   assert.match(shop, /class="reward-action/);
 
   assert.match(profile, /class="profile-cover/);
-  assert.match(profile, /\/assets\/generated\/couple-hold\.png/);
+  assert.match(profile, /\/assets\/stitch-original\/profile-cover\.jpg/);
   assert.match(profile, /src="\{\{dashboard\.currentUser\.avatarSrc\}\}"/);
   assert.match(profile, /class="profile-couple-avatar-text"/);
-  assert.match(profile, /class="profile-title-heart">♡<\/text>/);
-  assert.doesNotMatch(profile, /&amp;|profile-cover\.jpg|profile-couple\.jpg/);
+  assert.match(profile, /class="profile-title-heart">与<\/text>/);
+  assert.doesNotMatch(profile, /&amp;|profile-couple\.jpg/);
   assert.match(profile, /class="profile-bento-stats/);
 
   assert.doesNotMatch(combined, /视觉优化版/);
@@ -193,7 +193,7 @@ test('sponsor review uses the original pending-response hierarchy with native lo
 
   assert.match(review, /class="review-inbox-header/);
   assert.match(review, /class="review-hero-card/);
-  assert.match(review, /\/assets\/stitch-original\/companion-encouragement\.jpg/);
+  assert.match(review, /\/assets\/stitch-original\/checkin-yoga\.jpg/);
   assert.match(review, /class="review-queue-list/);
   assert.match(review, /class="review-queue-card/);
   assert.match(review, /class="review-evidence-panel/);

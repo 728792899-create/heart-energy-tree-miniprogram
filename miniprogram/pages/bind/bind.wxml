@@ -1,7 +1,7 @@
 <view class="page bind-page">
   <couple-hero
     compact
-    eyebrow="暖棕小熊与奶白小兔 · {{inviteMode ? '收到邀请' : '第一次见面'}}"
+    eyebrow="双生种子 · {{inviteMode ? '收到邀请' : '第一次见面'}}"
     title="晨曦陪伴花园"
     subtitle="你负责好好照顾自己，我负责一直为你加油"
     role="couple"
@@ -20,7 +20,7 @@
     scene-key="binding"
     reduced-motion="{{reducedMotion}}"
     compact
-    aria-label="暖棕小熊与奶白小兔一起种下心动能量树"
+    aria-label="两个人一起种下心动能量树"
   ></motion-scene>
 
   <view class="binding-form-card">

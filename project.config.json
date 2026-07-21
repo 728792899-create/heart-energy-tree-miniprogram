@@ -8,6 +8,10 @@
       },
       {
         "type": "file",
+        "value": "assets/generated/couple-hold.png"
+      },
+      {
+        "type": "file",
         "value": "assets/generated/couple-jump.png"
       },
       {
@@ -20,27 +24,11 @@
       },
       {
         "type": "file",
-        "value": "assets/generated/particle-heart.png"
-      },
-      {
-        "type": "file",
-        "value": "assets/generated/particle-petal.png"
-      },
-      {
-        "type": "file",
-        "value": "assets/generated/particle-star.png"
-      },
-      {
-        "type": "file",
         "value": "assets/stitch-original/participant-avatar.jpg"
       },
       {
         "type": "file",
         "value": "assets/stitch-original/profile-couple.jpg"
-      },
-      {
-        "type": "file",
-        "value": "assets/stitch-original/profile-cover.jpg"
       }
     ],
     "include": []

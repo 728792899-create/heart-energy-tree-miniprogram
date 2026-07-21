@@ -3,22 +3,21 @@
   <image wx:elif="{{resolvedPoster && !posterFailed}}" class="motion-poster" src="{{resolvedPoster}}" mode="aspectFill" binderror="onPosterError"></image>
   <view wx:else class="native-fallback native-{{nativeVariant}} scene-{{sceneKey}}" bindanimationend="onNativeEnded">
     <block wx:if="{{nativeVariant === 'coins'}}">
-      <view class="native-gift">♥</view>
-      <view class="native-coin coin-a">¥</view>
-      <view class="native-coin coin-b">♥</view>
-      <view class="native-coin coin-c">★</view>
+      <image class="native-gift-image" src="/assets/stitch-original/redemption-gift.jpg" mode="aspectFill"></image>
+      <image class="native-particle coin-a" src="/assets/generated/particle-petal.png" mode="aspectFit"></image>
+      <image class="native-particle coin-b" src="/assets/generated/particle-heart.png" mode="aspectFit"></image>
+      <image class="native-particle coin-c" src="/assets/generated/particle-star.png" mode="aspectFit"></image>
     </block>
     <block wx:elif="{{nativeVariant === 'ribbon'}}">
-      <view class="native-tree">♧</view>
-      <view class="native-heart heart-a">♥</view>
-      <view class="native-heart heart-b">♥</view>
-      <view class="native-ribbon">TOGETHER</view>
+      <image class="native-tree-image" src="/assets/generated/tree-level-5.png" mode="aspectFit"></image>
+      <image class="native-particle heart-a" src="/assets/generated/particle-petal.png" mode="aspectFit"></image>
+      <image class="native-particle heart-b" src="/assets/generated/particle-heart.png" mode="aspectFit"></image>
     </block>
     <block wx:else>
-      <view class="native-tree">♧</view>
-      <view class="native-heart heart-a">♥</view>
-      <view class="native-heart heart-b">♥</view>
-      <view class="native-heart heart-c">♥</view>
+      <image class="native-tree-image" src="/assets/generated/tree-level-5.png" mode="aspectFit"></image>
+      <image class="native-particle heart-a" src="/assets/generated/particle-heart.png" mode="aspectFit"></image>
+      <image class="native-particle heart-b" src="/assets/generated/particle-petal.png" mode="aspectFit"></image>
+      <image class="native-particle heart-c" src="/assets/generated/particle-heart.png" mode="aspectFit"></image>
     </block>
   </view>
 </view>

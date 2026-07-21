@@ -15,17 +15,17 @@
   width: 100%;
   max-width: 650rpx;
   padding: 24rpx;
-  border: 1rpx solid rgba(212, 174, 106, 0.42);
+  border: 1rpx solid rgba(135, 97, 77, 0.42);
   border-radius: 36rpx;
   text-align: center;
-  background: #fff9f5;
+  background: #FFFDF7;
   box-shadow: 0 32rpx 80rpx rgba(69, 52, 58, 0.24);
   animation: celebration-in 420ms cubic-bezier(.18,.8,.2,1) both;
 }
 
 .celebration-title {
   margin-top: 20rpx;
-  color: #7d2f49;
+  color: #3F6548;
   font-size: 35rpx;
   font-weight: 900;
 }
@@ -45,7 +45,7 @@
   margin-top: 24rpx;
   color: #fff;
   border-radius: 28rpx;
-  background: linear-gradient(135deg, #b74465, #d45f7e);
+  background: linear-gradient(135deg, #3F6548, #9A715B);
   font-size: 26rpx;
   font-weight: 850;
 }

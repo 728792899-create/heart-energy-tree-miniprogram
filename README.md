@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="docs/illustrations/heart-tree-readme-hero.jpg" alt="心动能量树：熊与兔子守护共同成长的心形能量树" width="100%">
+  <img src="design/prototype-v3/assets/scene-protected-garden.jpg" alt="心动能量树 V3：受保护的固定两人私人花园" width="100%">
 </p>
 
-<h1 align="center">心动能量树微信小程序 · 私人版 V2</h1>
+<h1 align="center">心动能量树微信小程序 · 私人版 V3 UI</h1>
 
 <p align="center">
   把运动打卡、陪伴反馈和线下承诺，做成只属于两个人的一座共同花园。
@@ -10,13 +10,13 @@
 
 <p align="center">
   <a href="https://github.com/728792899-create/heart-energy-tree-miniprogram/actions/workflows/ci.yml"><img src="https://github.com/728792899-create/heart-energy-tree-miniprogram/actions/workflows/ci.yml/badge.svg" alt="Public repository CI"></a>
-  <img src="https://img.shields.io/badge/tests-226%20passing-55745E" alt="226 tests passing">
+  <img src="https://img.shields.io/badge/tests-228%20passing-55745E" alt="228 tests passing">
   <img src="https://img.shields.io/badge/mini%20program-native-294139" alt="Native WeChat Mini Program">
   <img src="https://img.shields.io/badge/payment-manual%20only-6D2942" alt="Manual fulfillment only">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-ISC-C9A866" alt="ISC License"></a>
 </p>
 
-这是一个原生微信小程序，用来实现“情侣运动陪伴 + 运动打卡 + 赞助者审核 + 能量币记账 + 心愿金申请/手动兑现 + 能量树 + 探险地图 + 奖励商店 + 徽章统计”。私人版 V2 还包含情侣信笺、鼓励卡、共同里程碑、每周回顾、恋爱主题 UI，以及可以逐级降级的庆祝动效。
+这是一个原生微信小程序，用来实现“情侣运动陪伴 + 运动打卡 + 赞助者审核 + 能量币记账 + 心愿金申请/手动兑现 + 能量树 + 探险地图 + 奖励商店 + 徽章统计”。私人版 V3 UI 采用晨雾植物志设计系统，并保留情侣信笺、鼓励卡、共同里程碑、每周回顾及可以逐级降级的庆祝动效。
 
 它不是健身平台、社交产品、支付工具或金融产品。它只服务于一段固定的两人关系：一方完成行动，另一方给予反馈，共同维护一份可解释、可恢复、有边界的私人记录。
 
@@ -26,6 +26,7 @@
 | --- | --- |
 | 浏览全部公开文档 | [文档中心](docs/README.md) · [常见问题](docs/faq.md) |
 | 先看产品长什么样 | [完整产品导览](docs/product-tour.md) · [22 个页面目录](docs/page-catalog.md) · [界面截图](#界面展示) |
+| 查看 V3 高保真原型 | [Figma 全量原型](https://www.figma.com/design/8jtVG6uk2Z45OhUXbqLHHX) · [47 张画板与原创素材说明](design/prototype-v3/README.md) |
 | 了解视觉语言和素材来源 | [视觉与动效设计说明](docs/visual-language.md) |
 | 了解可信身份、事务和数据流 | [架构说明](docs/architecture.md) · [API 契约](docs/api-contract.md) |
 | 本地运行、测试和构建 | [运行](#运行) · [测试](#测试) · [Remotion 动效工厂](#remotion-动效素材工厂) |
@@ -71,7 +72,7 @@ flowchart LR
 ## 当前交付状态
 
 - 客户端与云函数 buildTag 统一为 `heart-tree-private-v2-20260717-release-final-v1`。
-- `npm test` 当前覆盖 226 项业务、权限、并发、内容安全、UI、运维文档、设计工具和动效契约测试；公开仓库全新克隆不需要私有配置或渲染缓存。
+- `npm test` 当前覆盖 228 项业务、权限、并发、内容安全、UI、运维文档、设计工具和动效契约测试；公开仓库全新克隆不需要私有配置或渲染缓存。
 - `npm run check:shared` 用于确保客户端主版与云函数部署副本无漂移。
 - [GitHub Actions](.github/workflows/ci.yml) 在无微信账号环境运行普通质量检查、云函数干净安装，以及独立的 Remotion compositions/still smoke。
 - 图片内容安全已实现 `traceId 登记 -> wxa_media_check 回调 -> 风险图隐藏/删除 -> 审计记录` 的代码闭环；微信平台消息推送路由和真机风险图验证仍需按 [`docs/content-safety-closed-loop.md`](docs/content-safety-closed-loop.md) 人工完成。

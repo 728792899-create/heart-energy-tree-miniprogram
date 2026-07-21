@@ -178,8 +178,10 @@ test('motion scene markup and styles preserve video, poster, and 300-600ms nativ
   assert.match(markup, /!reducedMotion\s*&&\s*resolvedSrc/);
   assert.match(markup, /<image[^>]*src="\{\{resolvedPoster\}\}"[^>]*binderror="onPosterError"/s);
   assert.match(markup, /native-\{\{nativeVariant\}\}/);
-  assert.match(markup, /native-coin/);
-  assert.match(markup, /native-ribbon/);
+  assert.match(markup, /native-gift-image/);
+  assert.match(markup, /native-tree-image/);
+  assert.match(markup, /native-particle/);
+  assert.doesNotMatch(markup, /¥|TOGETHER|<view[^>]*>\s*[♥★♧]/);
   assert.match(styles, /(?:300|3\d\d|4\d\d|5\d\d|600)ms/);
   assert.match(styles, /\.is-reduced-motion[\s\S]*?animation:\s*none/);
   assert.match(celebration, /<motion-scene[^>]*scene-key="\{\{sceneKey\}\}"/s);

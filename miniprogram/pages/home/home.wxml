@@ -1,7 +1,7 @@
 <view class="page">
   <couple-hero
     compact="{{true}}"
-    eyebrow="暖棕小熊 × 奶白小兔的私人花园"
+    eyebrow="固定两人的私人花园"
     title="心动能量树"
     subtitle="你负责好好照顾自己，我负责一直为你加油"
     role="{{currentRole}}"
@@ -25,7 +25,7 @@
     wx:if="{{loadingHome}}"
     state="loading"
     title="正在把今天的心意装进来…"
-    description="暖棕小熊正在整理你们今天的故事。"
+    description="正在整理你们今天的故事。"
   ></state-panel>
 
   <state-panel
@@ -38,7 +38,7 @@
 
   <block wx:elif="{{currentRole === 'participant'}}">
     <view wx:if="{{viewNotice}}" class="view-notice-banner" role="button" aria-label="打开信笺查看关心提示" bindtap="openMessages">
-      <view class="view-notice-icon">♡</view>
+      <view class="view-notice-icon">新</view>
       <view class="view-notice-content">
         <view class="view-notice-title">有人悄悄关心你</view>
         <view class="view-notice-message">{{viewNotice.message}}</view>
@@ -55,18 +55,18 @@
 
     <view class="home-stats">
       <view class="home-stat-card home-stat-motion">
-        <view class="home-stat-icon">♧</view>
+        <view class="home-stat-icon">行动</view>
         <view class="home-stat-value">{{todaysCheckIn ? (todaysCheckIn.durationMinutes || 0) : 0}}<text>分钟</text></view>
         <view class="home-stat-label">今日已运动</view>
       </view>
       <view class="home-stat-card home-stat-streak">
-        <view class="home-stat-icon">♨</view>
+        <view class="home-stat-icon">连续</view>
         <view class="home-stat-value">{{relationship.tree.streak || 0}}<text>天</text></view>
         <view class="home-stat-label">本周连续打卡</view>
       </view>
     </view>
 
-    <button class="stitch-primary-action" aria-label="进入今日运动打卡" bindtap="goCheckIn">◉ {{todaysCheckIn ? '查看今日打卡' : '完成今日打卡'}}</button>
+    <button class="stitch-primary-action" aria-label="进入今日运动打卡" bindtap="goCheckIn">{{todaysCheckIn ? '查看今日打卡' : '完成今日打卡'}}</button>
 
     <view class="home-quick-links">
       <button class="home-link" aria-label="进入情侣奖励商店" bindtap="goShop">礼物兑换</button>
@@ -87,7 +87,7 @@
     <view wx:if="{{unreadEncouragements.length}}" class="section-title">他送来的抱抱</view>
     <view wx:if="{{unreadEncouragements.length}}" class="love-letter-list">
       <view wx:for="{{unreadEncouragements}}" wx:key="id" class="card love-letter-card">
-        <view class="letter-seal">♥</view>
+        <view class="letter-seal">信</view>
         <view class="card-title">{{item.title}}</view>
         <view class="card-message">{{item.message}}</view>
         <button
