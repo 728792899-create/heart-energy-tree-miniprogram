@@ -10,6 +10,7 @@
 
 <p align="center">
   <a href="https://github.com/728792899-create/heart-energy-tree-miniprogram/actions/workflows/ci.yml"><img src="https://github.com/728792899-create/heart-energy-tree-miniprogram/actions/workflows/ci.yml/badge.svg" alt="Public repository CI"></a>
+  <img src="https://img.shields.io/badge/version-3.0.0-294139" alt="Current mini program version 3.0.0">
   <img src="https://img.shields.io/badge/tests-228%20passing-55745E" alt="228 tests passing">
   <img src="https://img.shields.io/badge/mini%20program-native-294139" alt="Native WeChat Mini Program">
   <img src="https://img.shields.io/badge/payment-manual%20only-6D2942" alt="Manual fulfillment only">
@@ -71,7 +72,15 @@ flowchart LR
 
 ## 当前交付状态
 
-- 客户端与云函数 buildTag 统一为 `heart-tree-private-v2-20260717-release-final-v1`。
+| 项目 | 当前状态 |
+| --- | --- |
+| 产品与界面 | 私人版 V3「晨雾植物志」；小程序版本 `3.0.0` |
+| GitHub 基线 | `main` 已包含 V3 实现，公开 CI 全部通过 |
+| 云函数 | `energyTree` 已部署，真实 `queryDashboard` 调用通过 |
+| 微信版本 | `3.0.0` 已上传，并于 2026-07-22 提交微信审核 |
+| 正式发布 | **审核中，尚未点击发布；不得把“已上传/已提审”描述成“已上线”** |
+
+- 客户端与云函数 buildTag 统一为 `heart-tree-private-v2-20260717-release-final-v1`。其中 `v2` 是为已部署客户端和云数据保留的兼容协议标识，不代表当前产品仍是 V2；未经兼容迁移不得仅为改名而修改它。
 - `npm test` 当前覆盖 228 项业务、权限、并发、内容安全、UI、运维文档、设计工具和动效契约测试；公开仓库全新克隆不需要私有配置或渲染缓存。
 - `npm run check:shared` 用于确保客户端主版与云函数部署副本无漂移。
 - [GitHub Actions](.github/workflows/ci.yml) 在无微信账号环境运行普通质量检查、云函数干净安装，以及独立的 Remotion compositions/still smoke。
@@ -132,7 +141,7 @@ flowchart LR
 6. 每次修改 `cloudfunctions/energyTree` 后，在微信开发者工具右键该云函数，选择“上传并部署：云端安装依赖（不上传 node_modules）”
 7. 部署后重新编译并真实调用 `queryDashboard`，云端响应的 `buildTag` 应为 `heart-tree-private-v2-20260717-release-final-v1`；如果仍是旧版本，说明云函数还没更新成功
 
-## 私人版 V2 体验
+## 私人版 V3 体验
 
 - 首页按角色展示情侣陪伴总览、能量树、今日行动和待办事项。
 - 赞助者可以发送鼓励卡；接收方可查看并标记已读。
@@ -172,7 +181,7 @@ npm run motion:posters
 - `npm run motion:preview`：渲染 `motion-studio/out/previews/approval.mp4`。
 - `npm run motion:posters`：把 13 张压缩 poster 写入 `miniprogram/assets/motion/`。
 - `motion-studio/out/` 和 `.cache/` 始终忽略；普通测试只校验可提交入口与 poster，不依赖这些生成物。
-- 当前 13 张 poster 合计 `108,503` 字节，低于本项目为 V2 新增动效素材设置的 `409,600` 字节预算。
+- 当前 13 张 poster 合计 `108,503` 字节，低于 V3 动效素材设置的 `409,600` 字节预算。
 
 小程序动效采用三级降级：
 
@@ -184,12 +193,12 @@ npm run motion:posters
 
 “我的”页提供持久化的声音和“简化动效”开关。简化动效开启时跳过远程视频并保留静态 poster；poster 失败仍有静止可读的原生兜底。
 
-## 第一版心愿金流
+## 心愿金手动兑现流程
 
 - 小程序只做余额记账、心愿金领取申请和状态流转
 - 赞助者需要在线下手动兑现
 - 兑现后回到“心愿金处理”页点击“我已手动兑现”
-- 第一版不接入平台付款接口，也不提供金融服务
+- 当前 `3.0.0` 不接入平台付款接口，也不提供金融服务
 
 ## 主要页面
 
@@ -202,7 +211,7 @@ npm run motion:posters
 
 ## 后端替换边界
 
-页面调用统一经过 `miniprogram/services/api.js`。接入云函数、自建服务或微信商家转账时，优先替换这一层；详细契约见 `docs/api-contract.md`。
+页面调用统一经过 `miniprogram/services/api.js`。当前生产实现只接入可信云函数；如未来替换为自建服务，应优先替换这一层并重新完成安全审查。详细契约见 `docs/api-contract.md`。
 
 当前 `cloudfunctions/energyTree` 已作为可信云端 API 层：云函数从微信环境获取 `OPENID`，加载云数据库状态，执行业务规则后写回云数据库，并同步集合快照。部署前必须由你在云开发控制台创建环境、部署云函数，并确认数据库权限规则禁止小程序端直接写入。
 

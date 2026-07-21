@@ -1,5 +1,18 @@
 # 云端部署清单
 
+## `3.0.0` 候选版本记录
+
+| 项目 | 状态 |
+| --- | --- |
+| V3 代码合入 `main` | 已完成（2026-07-22） |
+| `energyTree` 云函数部署 | 已完成；云端安装依赖，未上传 `node_modules` |
+| 真实 buildTag 核对 | 已完成；与客户端 `heart-tree-private-v2-20260717-release-final-v1` 一致 |
+| 小程序代码上传 | `3.0.0` 已上传，包体约 1.8 MB |
+| 微信审核 | 已提交，等待平台结果 |
+| 正式发布 | 未完成；审核通过后由管理员发布 |
+
+buildTag 中的 `v2` 是保留的兼容协议标识。它与 V3 产品版本并行存在，不能在审核期间为统一命名而单独修改。
+
 ```mermaid
 flowchart LR
   SOURCE["公开源码与依赖锁"] --> LOCAL["npm run ci + Remotion smoke"]

@@ -1,9 +1,17 @@
 # Release Checklist
 
+## 当前发布候选
+
+- 产品：心动能量树私人版 V3
+- 小程序版本：`3.0.0`
+- 云端兼容 buildTag：`heart-tree-private-v2-20260717-release-final-v1`
+- 平台状态：`3.0.0` 已于 2026-07-22 上传并提交审核，尚未正式发布
+- 发布原则：审核通过后仍需管理员点击“发布”；审核中不得重复上传同版本或部署不兼容云函数
+
 ## 代码与公开基线
 
-- [ ] 全新克隆、无 private config、无 `motion-studio/out` 时 `npm test` 全绿且测试数不少于 203。
-- [ ] `npm run check:shared`、`check:syntax`、`check:cloud-deps`、`check:budgets` 通过。
+- [ ] 全新克隆、无 private config、无 `motion-studio/out` 时 `npm test` 全绿且测试数不少于 228。
+- [ ] `npm run check:shared`、`check:syntax`、`check:cloud-deps`、`check:budgets`、`check:docs` 通过。
 - [ ] Remotion compositions 和独立 still smoke 通过；`node_modules/`、`.cache/`、`out/` 未进入 Git。
 - [ ] GitHub Actions 三个 job 在无微信账号/无私有配置环境通过。
 - [ ] buildTag 在客户端、云函数、README 一致。

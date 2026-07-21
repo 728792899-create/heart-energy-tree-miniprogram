@@ -41,6 +41,7 @@ test('privacy lifecycle covers unbinding, export, deletion, photos, consent with
     .forEach((term) => assert.match(document, new RegExp(term)));
   assert.match(document, /当前没有.*一键解绑/);
   assert.match(document, /不能把本文当作功能已经自动化的证明/);
+  assert.match(document, /私人版 V3 \/ 小程序 `3\.0\.0`/);
 });
 
 test('release, deployment, device, license and security handoff files are present', () => {
@@ -53,5 +54,9 @@ test('release, deployment, device, license and security handoff files are presen
   ].forEach((file) => assert.ok(fs.statSync(path.join(ROOT, file)).size > 500, file));
   assert.match(read('docs/device-acceptance.md'), /Browser.*不得/);
   assert.match(read('docs/release-checklist.md'), /真实支付/);
+  assert.match(read('docs/release-checklist.md'), /小程序版本：`3\.0\.0`/);
+  assert.match(read('docs/deployment-checklist.md'), /微信审核.*已提交/);
+  assert.match(read('docs/device-acceptance.md'), /REL-03.*待审核通过/);
   assert.match(read('SECURITY.md'), /getWXContext\(\)\.OPENID/);
+  assert.match(read('SECURITY.md'), /私人版 V3 \/ 小程序 `3\.0\.0`/);
 });
