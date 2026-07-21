@@ -25,9 +25,9 @@
   ],
   "window": {
     "navigationBarTitleText": "心动能量树",
-    "navigationBarBackgroundColor": "#FFF8F8",
+    "navigationBarBackgroundColor": "#FFFDF7",
     "navigationBarTextStyle": "black",
-    "backgroundColor": "#FFF8F8",
+    "backgroundColor": "#FFFDF7",
     "backgroundTextStyle": "dark"
   },
   "usingComponents": {
@@ -42,8 +42,8 @@
     "love-dialog": "/components/love-dialog/love-dialog"
   },
   "tabBar": {
-    "color": "#544246",
-    "selectedColor": "#8F3653",
+    "color": "#596057",
+    "selectedColor": "#2E452C",
     "backgroundColor": "#FFFFFF",
     "borderStyle": "white",
     "list": [

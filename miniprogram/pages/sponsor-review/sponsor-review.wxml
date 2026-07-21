@@ -25,7 +25,7 @@
     </view>
 
     <view class="review-hero-card">
-      <image class="review-hero-image" src="/assets/stitch-original/companion-encouragement.jpg" mode="aspectFill"></image>
+      <image class="review-hero-image" src="/assets/stitch-original/checkin-yoga.jpg" mode="aspectFill"></image>
       <view class="review-hero-copy">
         <view class="review-hero-kicker">今日回应</view>
         <view class="review-hero-title">有 {{pending.length}} 条打卡等待你的回应</view>

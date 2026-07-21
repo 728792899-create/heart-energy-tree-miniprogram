@@ -26,12 +26,12 @@
 }
 
 .shop-eyebrow {
-  color: #544246;
+  color: #596057;
   font-size: 20rpx;
 }
 
 .shop-title {
-  color: #711E3C;
+  color: #2E452C;
   font-size: 30rpx;
   font-weight: 850;
 }
@@ -40,8 +40,8 @@
   width: auto;
   min-height: 64rpx;
   padding: 0 20rpx;
-  color: #8F3653;
-  background: #FFF0F2;
+  color: #2E452C;
+  background: #EEF3EA;
   font-size: 22rpx;
   font-weight: 800;
 }
@@ -51,11 +51,11 @@
   overflow: hidden;
   margin-bottom: 26rpx;
   padding: 34rpx 28rpx;
-  border: 1rpx solid rgba(217, 192, 197, 0.52);
+  border: 1rpx solid rgba(232, 225, 211, 0.52);
   border-radius: 28rpx;
   text-align: center;
-  background: linear-gradient(135deg, #FFF0F2 0%, #FBEAEC 54%, #FFFFFF 100%);
-  box-shadow: 0 14rpx 36rpx rgba(113, 30, 60, 0.08);
+  background: linear-gradient(135deg, #EEF3EA 0%, #F6F1E7 54%, #FFFFFF 100%);
+  box-shadow: 0 14rpx 36rpx rgba(46, 69, 44, 0.08);
 }
 
 .balance-glow {
@@ -76,13 +76,13 @@
 }
 
 .balance-label {
-  color: #544246;
+  color: #596057;
   font-size: 22rpx;
 }
 
 .balance-value {
   margin: 8rpx 0;
-  color: #8F3653;
+  color: #2E452C;
   font-size: 58rpx;
   font-weight: 900;
 }
@@ -90,12 +90,12 @@
 .balance-value::before {
   content: "◉";
   margin-right: 10rpx;
-  color: #D4AE6A;
+  color: #A88454;
   font-size: 36rpx;
 }
 
 .balance-hint {
-  color: #7b6970;
+  color: #7C837A;
   font-size: 20rpx;
 }
 
@@ -119,23 +119,23 @@
   align-items: center;
   justify-content: center;
   gap: 7rpx;
-  border: 1rpx solid rgba(217, 192, 197, 0.62);
+  border: 1rpx solid rgba(232, 225, 211, 0.62);
   border-radius: 999rpx;
-  color: #544246;
+  color: #596057;
   background: #FFFFFF;
   font-size: 22rpx;
   font-weight: 750;
 }
 
 .tab-icon {
-  color: #8F3653;
+  color: #2E452C;
   font-size: 20rpx;
 }
 
 .tab.active {
   color: #FFFFFF;
-  border-color: #8F3653;
-  background: #8F3653;
+  border-color: #2E452C;
+  background: #2E452C;
 }
 
 .tab.active .tab-icon {
@@ -147,13 +147,13 @@
   display: flex;
   align-items: center;
   gap: 10rpx;
-  color: #22191B;
+  color: #242920;
   font-size: 29rpx;
   font-weight: 850;
 }
 
 .shop-section-icon {
-  color: #8F3653;
+  color: #2E452C;
 }
 
 .shop-grid {
@@ -166,10 +166,10 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  border: 1rpx solid rgba(217, 192, 197, 0.56);
+  border: 1rpx solid rgba(232, 225, 211, 0.56);
   border-radius: 22rpx;
   background: #FFFFFF;
-  box-shadow: 0 12rpx 28rpx rgba(113, 30, 60, 0.06);
+  box-shadow: 0 12rpx 28rpx rgba(46, 69, 44, 0.06);
 }
 
 .reward-image,
@@ -190,7 +190,7 @@
 }
 
 .reward-name {
-  color: #22191B;
+  color: #242920;
   font-size: 27rpx;
   font-weight: 850;
 }
@@ -199,7 +199,7 @@
   overflow: hidden;
   min-height: 66rpx;
   margin-top: 7rpx;
-  color: #544246;
+  color: #596057;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
@@ -209,7 +209,7 @@
 
 .reward-price {
   margin: 12rpx 0;
-  color: #8F3653;
+  color: #2E452C;
   font-size: 23rpx;
   font-weight: 800;
 }
@@ -219,7 +219,7 @@
   min-height: 70rpx;
   margin-top: auto;
   color: #FFFFFF;
-  background: #8F3653;
+  background: #2E452C;
   font-size: 22rpx;
   font-weight: 800;
 }
@@ -232,7 +232,7 @@
   display: grid;
   grid-template-columns: 180rpx minmax(0, 1fr) 48rpx;
   align-items: center;
-  border: 1rpx solid rgba(217, 192, 197, 0.58);
+  border: 1rpx solid rgba(232, 225, 211, 0.58);
   border-radius: 24rpx;
   background: #FFFFFF;
 }
@@ -247,20 +247,20 @@
 }
 
 .long-wish-kicker {
-  color: #8F3653;
+  color: #2E452C;
   font-size: 20rpx;
   font-weight: 750;
 }
 
 .long-wish-title {
   margin: 7rpx 0;
-  color: #711E3C;
+  color: #2E452C;
   font-size: 27rpx;
   font-weight: 850;
 }
 
 .long-wish-arrow {
-  color: #8F3653;
+  color: #2E452C;
   font-size: 48rpx;
 }
 

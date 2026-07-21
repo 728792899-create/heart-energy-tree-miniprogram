@@ -1,5 +1,5 @@
 <view class="page map-page">
-  <state-panel wx:if="{{loading}}" state="loading" title="正在铺好两个人的足迹…" description="小熊正在把今天的步数放进花园路线。"></state-panel>
+  <state-panel wx:if="{{loading}}" state="loading" title="正在铺好两个人的足迹…" description="正在把今天的步数放进花园路线。"></state-panel>
   <state-panel wx:elif="{{errorMessage}}" state="error" title="成长地图暂时迷路了" description="{{errorMessage}}" bindretry="retryLoad"></state-panel>
   <block wx:else>
     <view class="map-topbar">

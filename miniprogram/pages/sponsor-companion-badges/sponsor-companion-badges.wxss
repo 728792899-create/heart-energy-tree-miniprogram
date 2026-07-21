@@ -1,13 +1,13 @@
 .companion-badges-page {
   min-height: 100vh;
-  background: #fff8f8;
+  background: #FFFDF7;
 }
 
 .companion-badges-header {
   padding: 34rpx;
-  border: 1rpx solid rgba(217, 192, 197, 0.76);
+  border: 1rpx solid rgba(232, 225, 211, 0.76);
   border-radius: 36rpx;
-  background: linear-gradient(145deg, #fff0f2 0%, #ffffff 64%, #f2f7ef 100%);
+  background: linear-gradient(145deg, #EEF3EA 0%, #ffffff 64%, #f2f7ef 100%);
   box-shadow: 0 18rpx 52rpx rgba(90, 48, 62, 0.08);
 }
 
@@ -27,12 +27,12 @@
   border: 6rpx solid rgba(255, 255, 255, 0.92);
   border-radius: 50%;
   box-sizing: border-box;
-  box-shadow: 0 10rpx 26rpx rgba(113, 30, 60, 0.13);
+  box-shadow: 0 10rpx 26rpx rgba(46, 69, 44, 0.13);
 }
 
 .companion-badges-avatar-text {
   color: #ffffff;
-  background: #8f3653;
+  background: #2E452C;
   font-size: 30rpx;
   font-weight: 900;
 }
@@ -44,7 +44,7 @@
 
 .companion-badges-kicker,
 .companion-badges-section-kicker {
-  color: #8f3653;
+  color: #2E452C;
   font-size: 20rpx;
   font-weight: 900;
   letter-spacing: 0.14em;
@@ -52,7 +52,7 @@
 
 .companion-badges-title {
   margin-top: 7rpx;
-  color: #22191b;
+  color: #242920;
   font-size: 37rpx;
   font-weight: 900;
   line-height: 1.2;
@@ -60,7 +60,7 @@
 
 .companion-badges-copy {
   margin-top: 12rpx;
-  color: #7b6970;
+  color: #7C837A;
   font-size: 22rpx;
   line-height: 1.55;
 }
@@ -74,7 +74,7 @@
 
 .companion-badges-progress-copy {
   flex: 0 0 auto;
-  color: #334d31;
+  color: #3F6548;
   font-size: 21rpx;
   font-weight: 850;
 }
@@ -92,7 +92,7 @@
   max-width: 100%;
   height: 100%;
   border-radius: inherit;
-  background: #415c3e;
+  background: #3F6548;
 }
 
 .companion-badges-summary-grid {
@@ -105,30 +105,30 @@
 .companion-badges-summary-card {
   min-width: 0;
   padding: 24rpx 12rpx;
-  border: 1rpx solid rgba(217, 192, 197, 0.72);
+  border: 1rpx solid rgba(232, 225, 211, 0.72);
   border-radius: 26rpx;
   background: #ffffff;
   text-align: center;
 }
 
 .companion-badges-summary-card.is-equipped {
-  border-color: rgba(143, 54, 83, 0.25);
-  background: #fff0f2;
+  border-color: rgba(63, 101, 72, 0.25);
+  background: #EEF3EA;
 }
 
 .companion-badges-summary-card.is-locked {
-  background: #f7f1f2;
+  background: #F6F1E7;
 }
 
 .companion-badges-summary-value {
-  color: #22191b;
+  color: #242920;
   font-size: 36rpx;
   font-weight: 900;
 }
 
 .companion-badges-summary-label {
   margin-top: 6rpx;
-  color: #7b6970;
+  color: #7C837A;
   font-size: 20rpx;
   font-weight: 700;
 }
@@ -152,14 +152,14 @@
 
 .companion-badges-section-title {
   margin-top: 7rpx;
-  color: #22191b;
+  color: #242920;
   font-size: 31rpx;
   font-weight: 900;
 }
 
 .companion-badges-section-note {
   flex: 0 0 auto;
-  color: #7b6970;
+  color: #7C837A;
   font-size: 20rpx;
 }
 
@@ -168,9 +168,9 @@
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14rpx;
   padding: 24rpx;
-  border: 1rpx solid rgba(217, 192, 197, 0.74);
+  border: 1rpx solid rgba(232, 225, 211, 0.74);
   border-radius: 32rpx;
-  background: linear-gradient(145deg, #fff0f2, #ffffff);
+  background: linear-gradient(145deg, #EEF3EA, #ffffff);
 }
 
 .companion-badges-showcase-item {
@@ -191,8 +191,8 @@
   margin: 0 auto;
   border-radius: 50%;
   color: #ffffff;
-  background: linear-gradient(145deg, #8f3653, #ff897e);
-  box-shadow: 0 9rpx 24rpx rgba(143, 54, 83, 0.18);
+  background: linear-gradient(145deg, #2E452C, #9A715B);
+  box-shadow: 0 9rpx 24rpx rgba(63, 101, 72, 0.18);
   font-size: 22rpx;
   font-weight: 900;
 }
@@ -200,7 +200,7 @@
 .companion-badges-showcase-name {
   overflow: hidden;
   margin-top: 14rpx;
-  color: #22191b;
+  color: #242920;
   font-size: 22rpx;
   font-weight: 850;
   text-overflow: ellipsis;
@@ -209,14 +209,14 @@
 
 .companion-badges-showcase-state {
   margin-top: 7rpx;
-  color: #8f3653;
+  color: #2E452C;
   font-size: 20rpx;
   font-weight: 750;
 }
 
 .companion-badges-showcase-empty {
   display: block;
-  color: #7b6970;
+  color: #7C837A;
   font-size: 22rpx;
   line-height: 1.65;
   text-align: center;
@@ -233,7 +233,7 @@
   min-width: 0;
   min-height: 300rpx;
   padding: 28rpx 22rpx 24rpx;
-  border: 1rpx solid rgba(217, 192, 197, 0.74);
+  border: 1rpx solid rgba(232, 225, 211, 0.74);
   border-radius: 30rpx;
   box-sizing: border-box;
   background: #ffffff;
@@ -241,13 +241,13 @@
 }
 
 .companion-badge-card.is-equipped {
-  border-color: rgba(143, 54, 83, 0.45);
-  background: linear-gradient(150deg, #fff0f2, #ffffff);
-  box-shadow: 0 14rpx 34rpx rgba(143, 54, 83, 0.1);
+  border-color: rgba(63, 101, 72, 0.45);
+  background: linear-gradient(150deg, #EEF3EA, #ffffff);
+  box-shadow: 0 14rpx 34rpx rgba(63, 101, 72, 0.1);
 }
 
 .companion-badge-card.is-locked {
-  background: #f7f1f2;
+  background: #F6F1E7;
 }
 
 .companion-badge-card.is-locked .companion-badge-icon,
@@ -260,7 +260,7 @@
   position: absolute;
   top: 18rpx;
   right: 20rpx;
-  color: rgba(143, 54, 83, 0.22);
+  color: rgba(63, 101, 72, 0.22);
   font-size: 27rpx;
   font-weight: 900;
 }
@@ -271,12 +271,12 @@
 }
 
 .companion-badge-card.is-unlocked:not(.is-equipped) .companion-badge-icon {
-  background: linear-gradient(145deg, #415c3e, #8eb086);
+  background: linear-gradient(145deg, #3F6548, #8eb086);
 }
 
 .companion-badge-card.is-locked .companion-badge-icon {
-  color: #544246;
-  background: #efdee1;
+  color: #596057;
+  background: #E7EFE4;
   box-shadow: none;
 }
 
@@ -287,14 +287,14 @@
 
 .companion-badge-name {
   margin-top: 16rpx;
-  color: #22191b;
+  color: #242920;
   font-size: 25rpx;
   font-weight: 900;
 }
 
 .companion-badge-description {
   margin-top: 10rpx;
-  color: #7b6970;
+  color: #7C837A;
   font-size: 20rpx;
   line-height: 1.5;
 }
@@ -304,25 +304,25 @@
   margin-top: 17rpx;
   padding: 8rpx 14rpx;
   border-radius: 999rpx;
-  color: #334d31;
+  color: #3F6548;
   background: #e8f6e4;
   font-size: 20rpx;
   font-weight: 800;
 }
 
 .companion-badge-card.is-equipped .companion-badge-state {
-  color: #7d2745;
-  background: #ffd9e0;
+  color: #3F6548;
+  background: #E7EFE4;
 }
 
 .companion-badge-card.is-locked .companion-badge-state {
-  color: #544246;
-  background: #efdee1;
+  color: #596057;
+  background: #E7EFE4;
 }
 
 .companion-badges-empty-state {
   padding: 62rpx 38rpx;
-  border: 1rpx dashed #d9c0c5;
+  border: 1rpx dashed #E8E1D3;
   border-radius: 34rpx;
   background: #ffffff;
   text-align: center;
@@ -336,14 +336,14 @@
   height: 76rpx;
   margin: 0 auto;
   border-radius: 50%;
-  color: #8f3653;
-  background: #fff0f2;
+  color: #2E452C;
+  background: #EEF3EA;
   font-size: 34rpx;
 }
 
 .companion-badges-empty-title {
   margin-top: 24rpx;
-  color: #22191b;
+  color: #242920;
   font-size: 30rpx;
   font-weight: 900;
 }
@@ -351,7 +351,7 @@
 .companion-badges-empty-copy {
   max-width: 520rpx;
   margin: 14rpx auto 0;
-  color: #7b6970;
+  color: #7C837A;
   font-size: 23rpx;
   line-height: 1.65;
 }

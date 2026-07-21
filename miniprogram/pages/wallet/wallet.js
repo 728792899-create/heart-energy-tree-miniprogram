@@ -99,7 +99,7 @@ Page({
       title: '确认领取心愿金',
       content: `确认申请领取 ¥${api.formatMoney(amountCents)} 吗？提交后这笔金额会暂时冻结，等待陪伴者处理。`,
       confirmText: '确认申请',
-      confirmColor: '#8F3653',
+      confirmColor: '#2E452C',
       success: async (res) => {
         if (!res.confirm) {
           this.setData({ requesting: false });

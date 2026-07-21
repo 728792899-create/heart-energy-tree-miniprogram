@@ -191,7 +191,7 @@ test('profile exposes accessible persisted sound and reduced-motion switches', (
 });
 
 test('legacy saturated pink surfaces are removed from page styles', () => {
-  const legacyColors = /#(?:fff7fa|f08ca7|b85270|ffe9f0|fff3f7)\b/i;
+  const legacyColors = /#(?:fff7fa|f08ca7|b85270|ffe9f0|fff3f7|8f3653|711e3c|fff0f2|f8e6ec|e77c99|b74465)\b/i;
   const pageStyles = fs.readdirSync(path.join(projectRoot, 'miniprogram/pages'))
     .flatMap((name) => {
       const file = path.join(projectRoot, 'miniprogram/pages', name, `${name}.wxss`);

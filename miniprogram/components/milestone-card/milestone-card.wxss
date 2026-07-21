@@ -2,10 +2,10 @@
   position: relative;
   overflow: hidden;
   padding: 30rpx;
-  border: 1rpx solid rgba(212, 174, 106, 0.34);
+  border: 1rpx solid rgba(135, 97, 77, 0.34);
   border-radius: 30rpx;
-  background: linear-gradient(150deg, #fffdf9, #fff4e7 54%, #f8e6ec);
-  box-shadow: 0 16rpx 38rpx rgba(125, 47, 73, 0.075);
+  background: linear-gradient(150deg, #FFFDF7, #FBF6EB 54%, #E7EFE4);
+  box-shadow: 0 16rpx 38rpx rgba(63, 101, 72, 0.075);
 }
 
 .gold-ribbon {
@@ -24,13 +24,13 @@
   position: absolute;
   right: 26rpx;
   top: 20rpx;
-  color: #b74465;
+  color: #3F6548;
   font-size: 52rpx;
 }
 
 .milestone-title {
   margin-top: 18rpx;
-  color: #7d2f49;
+  color: #3F6548;
   font-size: 31rpx;
   font-weight: 900;
 }
@@ -48,7 +48,7 @@
   justify-content: center;
   min-height: 88rpx;
   margin-top: 22rpx;
-  color: #7d2f49;
+  color: #3F6548;
   background: rgba(248, 230, 236, 0.9);
   border-radius: 26rpx;
   font-size: 25rpx;

@@ -174,7 +174,7 @@ Page({
       title: '确认保存奖励约定',
       content: `保存后，新的打卡金额、连续奖励和 ${totalLevelSteps} 天地图关卡会立即用于后续审核。`,
       confirmText: '确认保存',
-      confirmColor: '#8F3653',
+      confirmColor: '#2E452C',
       success: async (res) => {
         if (!res.confirm) {
           this.setData({ saving: false });

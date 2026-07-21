@@ -9,15 +9,16 @@ function read(relativePath) {
   return fs.readFileSync(path.join(projectRoot, relativePath), 'utf8');
 }
 
-test('app shell uses the heart-tree brand, romantic palette, and accessible touch sizes', () => {
+test('app shell uses the V3 private-garden palette and accessible touch sizes', () => {
   const app = JSON.parse(read('miniprogram/app.json'));
   const styles = read('miniprogram/app.wxss');
 
   assert.equal(app.window.navigationBarTitleText, '心动能量树');
-  assert.equal(app.window.navigationBarBackgroundColor, '#FFF8F8');
-  assert.equal(app.window.backgroundColor, '#FFF8F8');
-  ['#FFF8F8', '#FFF0F2', '#FF897E', '#8F3653', '#711E3C', '#CCEBC5', '#22191B']
+  assert.equal(app.window.navigationBarBackgroundColor, '#FFFDF7');
+  assert.equal(app.window.backgroundColor, '#FFFDF7');
+  ['#FFFDF7', '#FFFFFF', '#FBF6EB', '#242920', '#596057', '#2E452C', '#EEF3EA', '#E8E1D3', '#DCE8D5', '#F4ECD1']
     .forEach((color) => assert.match(styles, new RegExp(color, 'i')));
+  assert.match(styles, /--v3-color-action-primary\s*:\s*#2E452C/);
   assert.match(styles, /button\s*\{[^}]*min-height\s*:\s*88rpx/s);
   assert.match(styles, /padding-bottom:\s*calc\([^;]*env\(safe-area-inset-bottom\)/);
   assert.match(styles, /\.card\s*\{[^}]*border-radius\s*:\s*(?:24|28|30|32)rpx/s);
@@ -61,14 +62,29 @@ test('shared romantic UI components are globally registered and contain accessib
   assert.match(stateMarkup, /aria-label/);
 });
 
-test('core surfaces carry the companionship promise and adult bear-rabbit identity', () => {
+test('core surfaces carry the companionship promise and fixed-pair twin-path identity', () => {
   const home = read('miniprogram/pages/home/home.wxml');
   const bind = read('miniprogram/pages/bind/bind.wxml');
 
   assert.match(home + bind, /你负责好好照顾自己，我负责一直为你加油/);
   assert.match(home, /couple-hero/);
   assert.match(bind, /couple-hero/);
-  assert.match(home + bind, /暖棕小熊|奶白小兔|熊兔/);
+  assert.match(home + bind, /固定两人|双生路径|双生种子/);
+  assert.match(read('miniprogram/components/couple-hero/couple-hero.wxml'), /两条相互陪伴的成长路径/);
+  assert.doesNotMatch(home + bind, /暖棕小熊|奶白小兔|熊兔/);
+});
+
+test('V3 core states use real local assets and preserve content-safety guidance', () => {
+  const statePanel = read('miniprogram/components/state-panel/state-panel.wxml');
+  const motion = read('miniprogram/components/motion-scene/motion-scene.wxml');
+  const messages = read('miniprogram/pages/messages/messages.wxml');
+
+  assert.match(statePanel, /<image/);
+  assert.match(motion, /tree-level-5\.png/);
+  assert.match(motion, /redemption-gift\.jpg/);
+  assert.doesNotMatch(motion, /¥|TOGETHER|<view[^>]*>\s*[♥★♧]/);
+  assert.match(messages, /内容安全/);
+  assert.match(messages, /图片审核完成前仅自己可见/);
 });
 
 test('all 22 registered pages keep a responsive page root and a branded navigation title', () => {

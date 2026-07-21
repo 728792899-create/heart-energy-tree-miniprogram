@@ -18,6 +18,11 @@
       </view>
     </view>
 
+    <view class="letters-safety-note" role="note" aria-label="内容安全说明">
+      <view class="letters-safety-label">内容安全</view>
+      <view class="letters-safety-copy">图片审核完成前仅自己可见；未通过时可更换后重试。</view>
+    </view>
+
     <button wx:if="{{watchError}}" class="watch-banner" aria-label="重试信笺实时连接" bindtap="retryWatch">{{watchError}}</button>
 
     <view wx:if="{{!canSend}}" class="unbound-card">
@@ -43,7 +48,7 @@
           </button>
 
           <view wx:if="{{!messages.length}}" class="empty-letters">
-            <view class="empty-envelope">✉</view>
+            <image class="empty-envelope" src="/assets/tabbar/message.png" mode="aspectFit"></image>
             <view class="empty-title">第一封信，想从哪句话开始？</view>
             <view class="empty-copy">不用很长，今天的想念也可以只写一句。</view>
           </view>

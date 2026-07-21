@@ -1,5 +1,5 @@
 .rewards-admin-page {
-  background: #fffaf7;
+  background: #FFFDF7;
 }
 
 .admin-rewards-header {
@@ -12,7 +12,7 @@
 
 .admin-rewards-title {
   margin: 10rpx 0 8rpx;
-  color: #45343a;
+  color: #242920;
   font-size: 42rpx;
   font-weight: 900;
   line-height: 1.25;
@@ -22,7 +22,7 @@
   flex: 0 0 auto;
   min-height: 64rpx;
   padding: 0 20rpx;
-  color: #7d2f49;
+  color: #3F6548;
   background: transparent;
   font-size: 24rpx;
 }
@@ -34,14 +34,14 @@
   align-items: center;
   margin-bottom: 28rpx;
   padding: 28rpx;
-  border: 1rpx solid rgba(125, 47, 73, 0.1);
+  border: 1rpx solid rgba(63, 101, 72, 0.1);
   border-radius: 34rpx;
-  background: linear-gradient(145deg, #fffdfb, #f9e6ea);
-  box-shadow: 0 16rpx 42rpx rgba(125, 47, 73, 0.08);
+  background: linear-gradient(145deg, #FFFDF7, #F6F1E7);
+  box-shadow: 0 16rpx 42rpx rgba(63, 101, 72, 0.08);
 }
 
 .section-kicker {
-  color: #a23c5e;
+  color: #3F6548;
   font-size: 21rpx;
   font-weight: 900;
   letter-spacing: 3rpx;
@@ -49,7 +49,7 @@
 
 .reward-summary-title {
   margin: 8rpx 0;
-  color: #45343a;
+  color: #242920;
   font-size: 32rpx;
   font-weight: 900;
 }
@@ -68,7 +68,7 @@
 }
 
 .reward-summary-value {
-  color: #7d2f49;
+  color: #3F6548;
   font-size: 31rpx;
   font-weight: 900;
 }
@@ -83,7 +83,7 @@
   margin-bottom: 30rpx;
   padding: 28rpx;
   border-radius: 36rpx;
-  background: #fffdfb;
+  background: #FFFDF7;
 }
 
 .reward-editor-handle {
@@ -104,7 +104,7 @@
 
 .reward-editor-title {
   margin-top: 6rpx;
-  color: #45343a;
+  color: #242920;
   font-size: 31rpx;
   font-weight: 900;
 }
@@ -115,7 +115,7 @@
   min-height: 64rpx;
   padding: 0;
   border-radius: 50%;
-  color: #7d2f49;
+  color: #3F6548;
   background: #f7e8ec;
   font-size: 38rpx;
 }
@@ -125,9 +125,9 @@
   width: 100%;
   height: 250rpx;
   padding: 0;
-  border: 2rpx dashed #e4bec9;
+  border: 2rpx dashed #DCE8D5;
   border-radius: 28rpx;
-  background: #f8e6ec;
+  background: #E7EFE4;
 }
 
 .reward-preview,
@@ -164,14 +164,14 @@
   justify-content: center;
   border-radius: 50%;
   color: #ffffff;
-  background: #7d2f49;
+  background: #3F6548;
   font-size: 40rpx;
   font-weight: 900;
 }
 
 .reward-image-label {
   margin-top: 10rpx;
-  color: #5b474d;
+  color: #596057;
   font-size: 23rpx;
   font-weight: 900;
 }
@@ -189,7 +189,7 @@
 
 .label {
   margin-bottom: 10rpx;
-  color: #45343a;
+  color: #242920;
   font-weight: 800;
 }
 
@@ -198,7 +198,7 @@
   padding: 18rpx 20rpx;
   border: 1rpx solid #f0dce2;
   border-radius: 18rpx;
-  color: #45343a;
+  color: #242920;
   background: #ffffff;
 }
 
@@ -229,8 +229,8 @@
 
 .reward-admin-card {
   padding: 22rpx;
-  border-color: rgba(125, 47, 73, 0.1);
-  background: #fffdfb;
+  border-color: rgba(63, 101, 72, 0.1);
+  background: #FFFDF7;
 }
 
 .reward-admin-main {
@@ -244,7 +244,7 @@
   height: 150rpx;
   overflow: hidden;
   border-radius: 22rpx;
-  background: #f8e6ec;
+  background: #E7EFE4;
 }
 
 .reward-admin-thumb {
@@ -265,7 +265,7 @@
 }
 
 .reward-admin-name {
-  color: #45343a;
+  color: #242920;
   font-size: 29rpx;
   font-weight: 900;
 }
@@ -279,7 +279,7 @@
 
 .reward-admin-meta {
   margin-top: 10rpx;
-  color: #71565f;
+  color: #596057;
   font-size: 21rpx;
 }
 
@@ -301,7 +301,7 @@
 }
 
 .reward-status-active {
-  background: #7d2f49;
+  background: #3F6548;
 }
 
 .reward-status-muted {
@@ -329,7 +329,7 @@
   gap: 12rpx;
   margin-top: 16rpx;
   padding-top: 14rpx;
-  border-top: 1rpx solid rgba(125, 47, 73, 0.08);
+  border-top: 1rpx solid rgba(63, 101, 72, 0.08);
 }
 
 .reward-edit-action,
@@ -341,17 +341,17 @@
 }
 
 .reward-edit-action {
-  color: #5b474d;
+  color: #596057;
 }
 
 .reward-delete-action {
-  color: #a63d36;
+  color: #704A39;
 }
 
 .reward-empty-state {
   padding: 58rpx 30rpx;
   text-align: center;
-  border: 2rpx dashed #e4bec9;
+  border: 2rpx dashed #DCE8D5;
   border-radius: 34rpx;
   background: rgba(255, 255, 255, 0.72);
 }
@@ -365,13 +365,13 @@
   justify-content: center;
   border-radius: 28rpx;
   color: #ffffff;
-  background: #7d2f49;
+  background: #3F6548;
   font-size: 46rpx;
   font-weight: 900;
 }
 
 .reward-empty-title {
-  color: #45343a;
+  color: #242920;
   font-size: 31rpx;
   font-weight: 900;
 }
@@ -391,10 +391,10 @@
   padding: 0;
   border-radius: 28rpx;
   color: #ffffff;
-  background: #7d2f49;
+  background: #3F6548;
   font-size: 48rpx;
   font-weight: 700;
-  box-shadow: 0 14rpx 32rpx rgba(125, 47, 73, 0.28);
+  box-shadow: 0 14rpx 32rpx rgba(63, 101, 72, 0.28);
 }
 
 @media (max-width: 360px) {

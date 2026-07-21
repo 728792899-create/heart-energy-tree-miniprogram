@@ -21,9 +21,11 @@ function localImageTargets(relativePath) {
 test('README presents the product, evidence, visual tour, and private-release boundaries', () => {
   const readme = read('README.md');
 
-  assert.match(readme, /docs\/illustrations\/heart-tree-readme-hero\.jpg/);
+  assert.match(readme, /design\/prototype-v3\/assets\/scene-protected-garden\.jpg/);
   assert.match(readme, /actions\/workflows\/ci\.yml\/badge\.svg/);
-  assert.match(readme, /226%20passing/);
+  assert.match(readme, /228%20passing/);
+  assert.match(readme, /design\/prototype-v3\/README\.md/);
+  assert.match(readme, /8jtVG6uk2Z45OhUXbqLHHX/);
   assert.match(readme, /docs\/README\.md/);
   assert.match(readme, /docs\/page-catalog\.md/);
   assert.match(readme, /docs\/faq\.md/);
@@ -154,5 +156,22 @@ test('documentation gallery keeps thirteen screens and three bounded original il
     if (name !== 'heart-tree-readme-hero.jpg') {
       assert.ok(file.length <= 600 * 1024, `${name} exceeds the generated illustration budget`);
     }
+  });
+});
+
+test('V3 prototype source keeps the complete asset set and private-product boundaries', () => {
+  const handoff = read('design/prototype-v3/README.md');
+  const assets = fs.readdirSync(path.join(projectRoot, 'design/prototype-v3/assets'))
+    .filter((name) => name.endsWith('.jpg'));
+
+  assert.equal(assets.length, 12);
+  assert.match(handoff, /47 张业务画板/);
+  assert.match(handoff, /固定两人私人版/);
+  assert.match(handoff, /不接微信支付/);
+  assert.match(handoff, /远程 MP4 → 本地 poster → 原生静态三级降级/);
+  assets.forEach((name) => {
+    const image = fs.readFileSync(path.join(projectRoot, 'design/prototype-v3/assets', name));
+    assert.deepEqual(Array.from(image.subarray(0, 3)), [0xff, 0xd8, 0xff], name);
+    assert.ok(image.length <= 600 * 1024, `${name} exceeds the V3 source-image budget`);
   });
 });

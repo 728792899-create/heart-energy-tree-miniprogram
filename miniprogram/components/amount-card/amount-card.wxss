@@ -4,8 +4,8 @@
   min-height: 170rpx;
   padding: 24rpx;
   border-radius: 28rpx;
-  border: 1rpx solid rgba(183, 68, 101, 0.14);
-  background: linear-gradient(145deg, #fffdf9, #f8e6ec);
+  border: 1rpx solid rgba(63, 101, 72, 0.14);
+  background: linear-gradient(145deg, #FFFDF7, #E7EFE4);
 }
 
 .amount-card::after {
@@ -13,12 +13,12 @@
   position: absolute;
   right: 18rpx;
   top: 8rpx;
-  color: rgba(183, 68, 101, 0.09);
+  color: rgba(63, 101, 72, 0.09);
   font-size: 84rpx;
 }
 
 .amount-label {
-  color: #7b6970;
+  color: #7C837A;
   font-size: 22rpx;
 }
 
@@ -32,26 +32,26 @@
 }
 
 .amount-value {
-  color: #b74465;
+  color: #3F6548;
   font-size: 46rpx;
   font-weight: 900;
 }
 
 .amount-unit {
-  color: #7d2f49;
+  color: #3F6548;
   font-size: 20rpx;
   font-weight: 700;
 }
 
 .amount-caption {
   margin-top: 6rpx;
-  color: #7b6970;
+  color: #7C837A;
   font-size: 20rpx;
 }
 
 .tone-gold {
-  background: linear-gradient(145deg, #fffdf9, #fff1d9);
-  border-color: rgba(212, 174, 106, 0.28);
+  background: linear-gradient(145deg, #FFFDF7, #fff1d9);
+  border-color: rgba(135, 97, 77, 0.28);
 }
 
 .tone-gold .amount-value {

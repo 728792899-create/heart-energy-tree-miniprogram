@@ -8,19 +8,17 @@
         <view class="profile-cover-kicker">LOVE GARDEN</view>
         <view class="profile-cover-title">把每一天，都种成我们的纪念</view>
       </view>
-      <image class="profile-cover-image" src="/assets/generated/couple-hold.png" mode="aspectFit"></image>
-      <view class="profile-cover-heart profile-cover-heart-one">♡</view>
-      <view class="profile-cover-heart profile-cover-heart-two">♡</view>
+      <image class="profile-cover-image" src="/assets/stitch-original/profile-cover.jpg" mode="aspectFill"></image>
       <view class="profile-couple-avatar" role="button" aria-label="编辑头像和昵称" bindtap="goProfileEdit">
         <image wx:if="{{dashboard.currentUser.avatarSrc}}" src="{{dashboard.currentUser.avatarSrc}}" mode="aspectFill"></image>
         <view wx:else class="profile-couple-avatar-text">{{dashboard.currentUser.avatarText || '我'}}</view>
-        <view class="profile-heart">♡</view>
+        <view class="profile-heart">双生</view>
       </view>
     </view>
     <view class="row-between head-inner">
       <view>
         <text class="eyebrow">{{currentRoleText}}</text>
-        <view class="profile-title"><text class="profile-title-name">{{dashboard.currentUser.name}}</text><text class="profile-title-heart">♡</text><text class="profile-title-name">{{companionName}}</text></view>
+        <view class="profile-title"><text class="profile-title-name">{{dashboard.currentUser.name}}</text><text class="profile-title-heart">与</text><text class="profile-title-name">{{companionName}}</text></view>
         <view class="muted small">{{dashboard.currentRole === 'participant' ? '今天也被认真守护着' : '你在守护这棵能量树'}}</view>
       </view>
     </view>
@@ -36,7 +34,7 @@
       <view class="card-title">心动提示音</view>
       <view class="muted small">只在绑定、里程碑、约定兑现等关键时刻轻轻响起。</view>
     </view>
-    <switch checked="{{isSoundEnabled}}" color="#8F3653" aria-label="开启或关闭心动提示音" bindchange="onSoundToggle"></switch>
+    <switch checked="{{isSoundEnabled}}" color="#2E452C" aria-label="开启或关闭心动提示音" bindchange="onSoundToggle"></switch>
   </view>
 
   <view class="card passport-setting">
@@ -44,7 +42,7 @@
       <view class="card-title">简化动效</view>
       <view class="muted small">保留静态心动海报，减少循环、弹跳和爆发动画。</view>
     </view>
-    <switch checked="{{reducedMotion}}" color="#8F3653" aria-label="开启或关闭简化动效" bindchange="onReducedMotionToggle"></switch>
+    <switch checked="{{reducedMotion}}" color="#2E452C" aria-label="开启或关闭简化动效" bindchange="onReducedMotionToggle"></switch>
   </view>
 
   <block wx:if="{{dashboard.currentRole === 'participant'}}">
