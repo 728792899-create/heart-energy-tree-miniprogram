@@ -7,7 +7,7 @@
 - 候选小程序版本：`3.1.0`
 - 云端兼容 buildTag：`heart-tree-private-v2-20260717-release-final-v1`
 - 候选 releaseTag：`heart-tree-private-v3-20260723-unbind-consent-v1`
-- 平台状态：`3.1.0` 尚未部署、上传、提审或发布
+- 平台状态：`3.1.0` 兼容云函数已部署、开发版本已上传；提审与发布尚未执行
 - 发布原则：先部署向后兼容云函数并核对 buildTag + releaseTag，再上传 `3.1.0`；旧 `3.0.0` 在切换期间必须继续可用
 
 ## 代码与公开基线
