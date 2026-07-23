@@ -16,12 +16,17 @@
     <view class="relationship-opening-copy">{{inviteMode ? '接受这份邀请，从今天开始一起记录成长、鼓励和每一个认真兑现的约定。' : '种下一颗属于两个人的种子，期待在未来的日子里慢慢生根发芽。'}}</view>
   </view>
 
-  <motion-scene
-    scene-key="binding"
-    reduced-motion="{{reducedMotion}}"
-    compact
-    aria-label="两个人一起种下心动能量树"
-  ></motion-scene>
+  <view class="binding-motion-shell {{reducedMotion ? 'is-reduced-motion' : ''}}">
+    <motion-scene
+      scene-key="binding"
+      reduced-motion="{{reducedMotion}}"
+      compact
+      aria-label="两个人一起种下心动能量树"
+    ></motion-scene>
+    <view class="binding-drift binding-drift-a" aria-hidden="true"></view>
+    <view class="binding-drift binding-drift-b" aria-hidden="true"></view>
+    <view class="binding-drift binding-drift-c" aria-hidden="true"></view>
+  </view>
 
   <view class="binding-form-card">
     <view class="binding-card-heading">
@@ -68,13 +73,24 @@
         <view class="muted small">点击加入后，小程序会用你的微信身份进入这棵能量树。</view>
       </view>
     </view>
+    <view wx:elif="{{createdInviteReady}}" class="invite-card invite-card-ready">
+      <view class="invite-icon invite-icon-ready" aria-hidden="true">邀</view>
+      <view class="invite-copy">
+        <view class="invite-title">邀请卡片已经准备好</view>
+        <view class="muted small">点击下方按钮分享给另一半；TA 从卡片进入后会自动绑定到这棵新的能量树。</view>
+      </view>
+    </view>
 
     <view wx:if="{{relationshipFrozen}}" class="empty invite-empty relationship-frozen-note">
       <view class="invite-empty-title">旧关系已安全冻结</view>
-      <view>{{bindingMessage || '历史数据已保留，旧邀请和旧身份不能重新使用。如需建立新关系，请联系云环境所有者独立初始化。'}}</view>
+      <view>{{bindingMessage || '历史数据已保留，旧邀请和旧身份不能重新使用；可以创建新的固定双人关系并重新邀请另一半。'}}</view>
     </view>
-    <button wx:elif="{{inviteMode}}" class="primary-btn submit-btn" loading="{{submitting}}" disabled="{{submitting || creating}}" aria-label="加入两个人的心动能量树" bindtap="submit">{{submitting ? '正在加入…' : '接受邀请并加入'}}</button>
-    <button wx:elif="{{canCreateSponsor}}" class="primary-btn submit-btn" loading="{{creating}}" disabled="{{creating || submitting}}" aria-label="创建两个人的心动能量树" bindtap="createTree">{{creating ? '正在种下能量树…' : '创建并成为发起者'}}</button>
+    <view wx:if="{{createdInviteReady}}" class="invite-action-grid">
+      <button class="primary-btn invite-share-btn" open-type="share" aria-label="分享情侣绑定邀请卡片">微信邀请另一半</button>
+      <button class="ghost-btn invite-share-btn" aria-label="复制情侣绑定邀请路径" bindtap="copyInvitePath">复制邀请路径</button>
+    </view>
+    <button wx:elif="{{inviteMode && !relationshipFrozen}}" class="primary-btn submit-btn" loading="{{submitting}}" disabled="{{submitting || creating}}" aria-label="加入两个人的心动能量树" bindtap="submit">{{submitting ? '正在加入…' : '接受邀请并加入'}}</button>
+    <button wx:elif="{{canCreateSponsor}}" class="primary-btn submit-btn" loading="{{creating}}" disabled="{{creating || submitting}}" aria-label="创建新的两个人心动能量树并生成邀请" bindtap="createTree">{{creating ? '正在种下能量树…' : (relationshipFrozen ? '创建新的双人关系并生成邀请' : '创建并生成邀请')}}</button>
     <view wx:else class="empty invite-empty">
       <view class="invite-empty-title">还差一张专属邀请卡</view>
       <view>请让另一半在小程序“我的”页面点击邀请按钮，再从分享卡片进入这里。</view>

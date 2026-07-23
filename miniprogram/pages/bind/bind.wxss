@@ -120,6 +120,95 @@
   line-height: 1.75;
 }
 
+.binding-motion-shell {
+  position: relative;
+  overflow: hidden;
+  margin-top: 24rpx;
+  border-radius: 36rpx;
+  transform-origin: 50% 60%;
+  animation: bindingHeroFloat 6.4s ease-in-out infinite;
+}
+
+.binding-motion-shell::before {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  inset: 10rpx 16rpx auto auto;
+  width: 156rpx;
+  height: 156rpx;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 253, 247, 0.82) 0 18%, rgba(255, 238, 226, 0.44) 34%, transparent 68%);
+  opacity: 0.62;
+  pointer-events: none;
+  animation: bindingGlowPulse 4.8s ease-in-out infinite;
+}
+
+.binding-motion-shell::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  left: 12%;
+  right: 12%;
+  bottom: 18rpx;
+  height: 46rpx;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(63, 101, 72, 0.15), transparent 68%);
+  filter: blur(2rpx);
+  opacity: 0.78;
+  pointer-events: none;
+  animation: bindingShadowBreath 6.4s ease-in-out infinite;
+}
+
+.binding-drift {
+  position: absolute;
+  z-index: 3;
+  width: 24rpx;
+  height: 36rpx;
+  border: 3rpx solid rgba(63, 101, 72, 0.44);
+  border-radius: 80% 10% 80% 10%;
+  background: rgba(238, 243, 234, 0.7);
+  pointer-events: none;
+  animation: bindingLeafDrift 7.2s ease-in-out infinite;
+}
+
+.binding-drift-a {
+  left: 18%;
+  top: 28%;
+}
+
+.binding-drift-b {
+  right: 19%;
+  top: 18%;
+  width: 18rpx;
+  height: 28rpx;
+  border-color: rgba(168, 85, 112, 0.35);
+  background: rgba(255, 240, 242, 0.74);
+  animation-delay: -2.1s;
+  animation-duration: 8.4s;
+}
+
+.binding-drift-c {
+  right: 10%;
+  bottom: 26%;
+  width: 20rpx;
+  height: 30rpx;
+  border-color: rgba(146, 116, 62, 0.36);
+  background: rgba(255, 253, 247, 0.78);
+  animation-delay: -4.4s;
+  animation-duration: 7.8s;
+}
+
+.binding-motion-shell.is-reduced-motion,
+.binding-motion-shell.is-reduced-motion::before,
+.binding-motion-shell.is-reduced-motion::after,
+.binding-motion-shell.is-reduced-motion .binding-drift {
+  animation: none;
+}
+
+.binding-motion-shell.is-reduced-motion .binding-drift {
+  opacity: 0.36;
+}
+
 .binding-form-card {
   position: relative;
   overflow: hidden;
@@ -321,6 +410,31 @@
   font-weight: 900;
 }
 
+.invite-card-ready {
+  border-color: rgba(168, 85, 112, 0.16);
+  background: linear-gradient(135deg, #FFFDF7 0%, #F9ECE6 54%, #E7EFE4 100%);
+}
+
+.invite-icon-ready {
+  color: #70443F;
+  font-size: 26rpx;
+  font-weight: 900;
+}
+
+.invite-action-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16rpx;
+  margin-top: 24rpx;
+}
+
+.invite-share-btn {
+  width: 100%;
+  margin: 0;
+}
+
 .invite-empty {
   position: relative;
   z-index: 1;
@@ -376,6 +490,61 @@
   line-height: 1.6;
 }
 
+@keyframes bindingHeroFloat {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+
+  50% {
+    transform: translateY(-8rpx) scale(1.006);
+  }
+}
+
+@keyframes bindingGlowPulse {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(0.96);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: scale(1.06);
+  }
+}
+
+@keyframes bindingShadowBreath {
+  0%,
+  100% {
+    opacity: 0.56;
+    transform: scaleX(0.94);
+  }
+
+  50% {
+    opacity: 0.82;
+    transform: scaleX(1.04);
+  }
+}
+
+@keyframes bindingLeafDrift {
+  0%,
+  100% {
+    opacity: 0.34;
+    transform: translate3d(0, 0, 0) rotate(18deg);
+  }
+
+  45% {
+    opacity: 0.72;
+    transform: translate3d(18rpx, -18rpx, 0) rotate(42deg);
+  }
+
+  70% {
+    opacity: 0.5;
+    transform: translate3d(-10rpx, -26rpx, 0) rotate(28deg);
+  }
+}
+
 @media (max-width: 360px) {
   .relationship-opening-card {
     padding: 50rpx 28rpx 46rpx;
@@ -390,6 +559,10 @@
   }
 
   .binding-step-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .invite-action-grid {
     grid-template-columns: minmax(0, 1fr);
   }
 }

@@ -375,8 +375,11 @@ function findCurrentUser(state, openid) {
 }
 
 function bindingRequiredPayload(state) {
-  const relationship = state && state.relationships && state.relationships[0];
-  const relationshipFrozen = Boolean(relationship && relationship.lifecycleStatus === 'frozen');
+  const relationships = (state && state.relationships) || [];
+  const activeRelationship = relationships.find((item) => item.lifecycleStatus !== 'frozen');
+  const hasFrozenHistory = relationships.some((item) => item.lifecycleStatus === 'frozen');
+  const relationship = activeRelationship || relationships[0];
+  const relationshipFrozen = Boolean(!activeRelationship && hasFrozenHistory);
   return {
     needsBinding: true,
     currentRole: 'guest',
@@ -386,10 +389,10 @@ function bindingRequiredPayload(state) {
     },
     relationship: null,
     bindingStatus: relationship ? {
-      sponsorBound: Boolean(relationship.sponsorOpenid),
-      participantBound: Boolean(relationship.participantOpenid),
+      sponsorBound: Boolean(activeRelationship && activeRelationship.sponsorOpenid),
+      participantBound: Boolean(activeRelationship && activeRelationship.participantOpenid),
       relationshipFrozen,
-      canCreateSponsor: !relationshipFrozen && !relationship.sponsorOpenid
+      canCreateSponsor: activeRelationship ? !activeRelationship.sponsorOpenid : true
     } : {
       sponsorBound: false,
       participantBound: false,
@@ -397,7 +400,7 @@ function bindingRequiredPayload(state) {
       canCreateSponsor: true
     },
     message: relationshipFrozen
-      ? '旧关系已冻结并保留历史数据；如需建立新关系，请由云环境所有者执行独立初始化'
+      ? '旧关系已冻结并保留历史数据；可以创建新的固定双人关系并重新邀请另一半'
       : '请先创建或通过分享邀请加入情侣能量树'
   };
 }
@@ -440,6 +443,68 @@ function bindRole(state, relationship, role, openid, displayName, auditAction) {
   return appService.getDashboard({ authContext: { openid } });
 }
 
+function nextCloudId(state, prefix) {
+  state.meta = state.meta || { nextId: 1 };
+  if (!state.meta.nextId) state.meta.nextId = 1;
+  const value = `${prefix}_${String(state.meta.nextId).padStart(4, '0')}`;
+  state.meta.nextId += 1;
+  return value;
+}
+
+function activeRelationship(state) {
+  return (state.relationships || []).find((relationship) => relationship.lifecycleStatus !== 'frozen') || null;
+}
+
+function relationshipForOpenid(state, openid) {
+  return (state.relationships || []).find((relationship) => (
+    relationship.lifecycleStatus !== 'frozen'
+    && (relationship.sponsorOpenid === openid || relationship.participantOpenid === openid)
+  )) || null;
+}
+
+function createNewPrivateRelationship(state, displayName) {
+  const template = appService.__private.createInitialState();
+  const sponsorTemplate = template.users.find((user) => user.role === 'sponsor') || template.users[1];
+  const participantTemplate = template.users.find((user) => user.role === 'participant') || template.users[0];
+  const relationshipTemplate = template.relationships[0];
+  const sponsorId = nextCloudId(state, 'user');
+  const participantId = nextCloudId(state, 'user');
+  const relationshipId = nextCloudId(state, 'rel');
+  const sponsorName = displayName || '男朋友';
+  const sponsor = {
+    ...clone(sponsorTemplate),
+    id: sponsorId,
+    name: sponsorName,
+    openid: '',
+    avatarText: sponsorName.slice(0, 1) || '你'
+  };
+  const participant = {
+    ...clone(participantTemplate),
+    id: participantId,
+    name: '小鹿',
+    openid: '',
+    avatarText: '她'
+  };
+  const relationship = {
+    ...clone(relationshipTemplate),
+    id: relationshipId,
+    lifecycleStatus: 'active',
+    unbindRequest: null,
+    title: '我们的运动能量树',
+    sponsorId,
+    participantId,
+    sponsorOpenid: '',
+    participantOpenid: '',
+    inviteTokens: {
+      participant: randomToken()
+    }
+  };
+  state.users.push(sponsor, participant);
+  state.relationships.push(relationship);
+  state.activeRelationshipId = relationship.id;
+  return relationship;
+}
+
 function runCloudIdentityMutation(state, payload, openid, action, handler) {
   return appService.__private.runMutationWithReceipt(action, {
     ...(payload || {}),
@@ -451,11 +516,8 @@ function runCloudIdentityMutation(state, payload, openid, action, handler) {
 
 function bindAsSponsor(state, payload, openid) {
   return runCloudIdentityMutation(state, payload, openid, 'identity.createSponsor', () => {
-    const relationship = state.relationships[0];
-    if (relationship.lifecycleStatus === 'frozen') {
-      throw new Error('旧关系已冻结，不能重新绑定；新关系需要独立初始化');
-    }
     const displayName = String((payload && payload.displayName) || '').trim();
+    const relationship = activeRelationship(state) || createNewPrivateRelationship(state, displayName);
     if (relationship.sponsorOpenid && relationship.sponsorOpenid !== openid) {
       throw new Error('这棵能量树已经有发起者了，请让对方从小程序内分享邀请给你');
     }
@@ -466,18 +528,16 @@ function bindAsSponsor(state, payload, openid) {
 
 function bindByInvite(state, payload, openid) {
   return runCloudIdentityMutation(state, payload, openid, 'identity.bind.participant', () => {
-    const relationship = state.relationships[0];
-    if (relationship.lifecycleStatus === 'frozen') {
-      throw new Error('旧关系已冻结，不能通过旧邀请重新绑定');
-    }
     const inviteToken = String((payload && payload.inviteToken) || '').trim();
     const displayName = String((payload && payload.displayName) || '').trim();
-    const inviteTokens = relationship.inviteTokens || {};
-    let role = '';
-    if (inviteToken && inviteToken === inviteTokens.participant) role = 'participant';
-    if (!role) throw new Error('邀请已失效，请让对方重新从小程序内分享邀请给你');
+    const relationship = (state.relationships || []).find((item) => (
+      item.lifecycleStatus !== 'frozen'
+      && inviteToken
+      && inviteToken === ((item.inviteTokens || {}).participant)
+    ));
+    if (!relationship) throw new Error('邀请已失效，请让对方重新从小程序内分享邀请给你');
 
-    const dashboard = bindRole(state, relationship, role, openid, displayName, `identity.bind.${role}`);
+    const dashboard = bindRole(state, relationship, 'participant', openid, displayName, 'identity.bind.participant');
     relationship.inviteTokens = {
       ...relationship.inviteTokens,
       participant: randomToken()
@@ -489,10 +549,8 @@ function bindByInvite(state, payload, openid) {
 
 function generatePartnerInvite(state, payload, openid) {
   return runCloudIdentityMutation(state, payload, openid, 'identity.generateInvite', () => {
-    const relationship = state.relationships[0];
-    if (relationship.lifecycleStatus === 'frozen') {
-      throw new Error('旧关系已冻结，不能生成新的绑定邀请');
-    }
+    const relationship = relationshipForOpenid(state, openid);
+    if (!relationship) throw new Error('请先创建新的心动能量树');
     if (relationship.unbindRequest && relationship.unbindRequest.status === 'pending') {
       throw new Error('关系解除申请等待双方确认中，不能生成新的绑定邀请');
     }

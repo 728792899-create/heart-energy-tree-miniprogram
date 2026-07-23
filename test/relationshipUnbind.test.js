@@ -257,20 +257,49 @@ test('dashboard exposes only actor-safe unbind status and hides internal request
   assert.equal(JSON.stringify(participant).includes('demo_openid_sponsor'), false);
 });
 
-test('cloud binding status prevents a frozen private relationship from being reused', () => {
+test('cloud binding status allows a new private relationship after frozen history', () => {
   const state = cloudFunction.__private.createCloudInitialState();
   state.relationships[0].lifecycleStatus = 'frozen';
   state.relationships[0].sponsorOpenid = '';
   state.relationships[0].participantOpenid = '';
 
-  const payload = cloudFunction.__private.bindingRequiredPayload(state);
-  assert.equal(payload.needsBinding, true);
-  assert.equal(payload.bindingStatus.relationshipFrozen, true);
-  assert.equal(payload.bindingStatus.canCreateSponsor, false);
-  assert.match(payload.message, /旧关系已冻结/);
-  assert.throws(() => {
-    cloudFunction.__private.bindAsSponsor(state, { displayName: '新用户' }, 'new-openid');
-  }, /旧关系已冻结/);
+  try {
+    const payload = cloudFunction.__private.bindingRequiredPayload(state);
+    assert.equal(payload.needsBinding, true);
+    assert.equal(payload.bindingStatus.relationshipFrozen, true);
+    assert.equal(payload.bindingStatus.canCreateSponsor, true);
+    assert.match(payload.message, /创建新的固定双人关系/);
+
+    const sponsorDashboard = cloudFunction.__private.bindAsSponsor(state, {
+      displayName: '新用户',
+      clientRequestId: 'create-after-frozen-history'
+    }, 'new-openid');
+    assert.equal(sponsorDashboard.currentRole, 'sponsor');
+    assert.equal(state.relationships.length, 2);
+    assert.equal(state.relationships[0].lifecycleStatus, 'frozen');
+
+    const freshRelationship = state.relationships.find((relationship) => relationship.lifecycleStatus !== 'frozen');
+    assert.ok(freshRelationship, 'a fresh active relationship should be created after frozen history');
+    assert.equal(freshRelationship.sponsorOpenid, 'new-openid');
+    assert.equal(freshRelationship.participantOpenid, '');
+    assert.notEqual(freshRelationship.id, state.relationships[0].id);
+
+    const invite = cloudFunction.__private.generatePartnerInvite(state, {
+      clientRequestId: 'invite-after-frozen-history'
+    }, 'new-openid');
+    assert.match(invite.path, /\/pages\/bind\/bind\?inviteRole=participant&inviteToken=/);
+
+    const participantDashboard = cloudFunction.__private.bindByInvite(state, {
+      displayName: '新伙伴',
+      inviteToken: invite.inviteToken,
+      clientRequestId: 'join-after-frozen-history'
+    }, 'partner-openid');
+    assert.equal(participantDashboard.currentRole, 'participant');
+    assert.equal(freshRelationship.participantOpenid, 'partner-openid');
+    assert.equal(state.relationships[0].participantOpenid, '');
+  } finally {
+    appService.resetDemo();
+  }
 });
 
 test('cloud revokes both members direct inbox and unread-state access without deleting retained messages', async () => {

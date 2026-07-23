@@ -53,8 +53,16 @@ test('binding page follows the original first-day relationship hierarchy with na
   assert.match(binding, /class="binding-form-card/);
   assert.match(binding, /class="binding-mode-badge/);
   assert.match(binding, /class="binding-step-grid/);
+  assert.match(binding, /class="binding-motion-shell/);
+  assert.match(binding, /open-type="share"/);
+  assert.match(binding, /创建新的双人关系并生成邀请/);
   assert.match(bindingScript, /api\.bindByInvite/);
   assert.match(bindingScript, /api\.bindAsSponsor/);
+  assert.match(bindingScript, /api\.queryPartnerInvite/);
+  assert.match(bindingScript, /copyInvitePath/);
+  assert.match(bindingScript, /onShareAppMessage/);
+  assert.match(bindingStyles, /@keyframes\s+bindingHeroFloat/);
+  assert.match(bindingStyles, /\.binding-motion-shell\.is-reduced-motion/);
   assert.match(bindingStyles, /@media\s*\(max-width:\s*360px\)[\s\S]*?\.binding-step-grid[\s\S]*?grid-template-columns\s*:\s*minmax\(0,\s*1fr\)/);
   assert.doesNotMatch(binding, /视觉优化版|灵动交互版/);
   assert.doesNotMatch(binding, /tailwind|className=|<div\b/i);
