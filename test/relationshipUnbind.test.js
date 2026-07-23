@@ -312,17 +312,16 @@ test('cloud revokes both members direct inbox and unread-state access without de
   assert.equal(fake.documents.get('coupleMessageInbox/other').recipientOpenid, 'openid-a');
 });
 
-test('cloud refuses unbind while an asynchronous image safety check is pending', async () => {
+test('cloud does not block relationship unbind on pending asynchronous image checks', async () => {
   const fake = createProjectionDb({
     'mediaCheckTasks/task-1': {
       relationshipId: 'rel-main',
       status: 'pending'
     }
   });
-  await assert.rejects(
-    cloudFunction.__private.assertNoPendingMediaChecks(fake.db, 'rel-main'),
-    /图片内容安全检查待完成/
-  );
+  const pendingCount = await cloudFunction.__private.countPendingMediaChecks(fake.db, 'rel-main');
+  assert.equal(pendingCount, 1);
+  assert.equal(fake.documents.get('mediaCheckTasks/task-1').status, 'pending');
 });
 
 test('client and profile wire all unbind mutations with double warning UI and in-flight locks', () => {

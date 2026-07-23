@@ -26,7 +26,7 @@
 | `coupleMessageInbox` | `relationshipId` 升序 + `recipientOpenid` 升序 | `3.1.0` 必需 | 双方确认解除时分批撤销旧收件投影访问 |
 | `coupleMessageStates` | `relationshipId` 升序 + `recipientOpenid` 升序 | `3.1.0` 必需 | 双方确认解除时撤销旧未读状态访问 |
 | `mediaCheckTasks` | `traceId` 升序 | 必需 | `wxa_media_check` 回调按 traceId 定位唯一任务 |
-| `mediaCheckTasks` | `relationshipId` 升序 + `status` 升序 | `3.1.0` 必需 | 发起和确认解除前阻止仍有 pending 图片任务的关系 |
+| `mediaCheckTasks` | `relationshipId` 升序 + `status` 升序 | `3.1.x` 运维建议 | 统计关系内 pending 图片任务；解除关系不再因此被硬阻断 |
 | `mediaCheckTasks` | `status` 升序 + `createdAt` 升序 | 运维建议 | 查找超时 pending/orphan 任务，不参与在线业务判断 |
 | `coupleMessages` | `relationshipId` 升序 + `sortKey` 降序 | 运维建议 | 关系内审计与恢复核对 |
 

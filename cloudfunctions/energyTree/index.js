@@ -937,7 +937,7 @@ async function revokeRelationshipRealtimeAccess(db, relationshipId, openids, rev
   return { updated };
 }
 
-async function assertNoPendingMediaChecks(db, relationshipId) {
+async function countPendingMediaChecks(db, relationshipId) {
   const response = await db.collection('mediaCheckTasks')
     .where({
       relationshipId: String(relationshipId || '').trim(),
@@ -945,27 +945,10 @@ async function assertNoPendingMediaChecks(db, relationshipId) {
     })
     .limit(1)
     .get();
-  if (response && response.data && response.data.length) {
-    throw new Error('仍有图片内容安全检查待完成，请稍后再解除关系');
-  }
-}
-
-function relationshipForTrustedOpenid(state, openid) {
-  const currentUser = assertBound(state, openid);
-  const relationship = (state.relationships || []).find((item) => (
-    item.sponsorId === currentUser.id || item.participantId === currentUser.id
-  ));
-  if (!relationship) throw new Error('找不到当前情侣关系');
-  return relationship;
+  return ((response && response.data) || []).length;
 }
 
 async function handleRelationshipUnbindRequest(event) {
-  const authContext = getAuthContext(event);
-  const db = getDb();
-  await ensureCollections();
-  const state = await loadCloudState(db);
-  const relationship = relationshipForTrustedOpenid(state, authContext.openid);
-  await assertNoPendingMediaChecks(db, relationship.id);
   return handleStateAction(event);
 }
 
@@ -1009,7 +992,6 @@ async function handleRelationshipUnbindConfirmation(event) {
     authContext
   });
 
-  await assertNoPendingMediaChecks(db, validation.relationshipId);
   await revokeRelationshipRealtimeAccess(
     db,
     validation.relationshipId,
@@ -1154,7 +1136,7 @@ exports.main = async (event) => {
 
 exports.__private = {
   COUPLE_MESSAGE_ACTIONS,
-  assertNoPendingMediaChecks,
+  countPendingMediaChecks,
   bindAsSponsor,
   bindByInvite,
   bindingRequiredPayload,

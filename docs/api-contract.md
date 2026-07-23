@@ -23,7 +23,7 @@
   - 关系对象只返回 `sponsorBound` / `participantBound` 和当前成员可见的 `unbindStatus`，不向页面返回双方原始 OPENID 或内部解除申请字段。
 - `requestRelationshipUnbind({ confirmed, confirmedTwice })`
   - 任一已绑定成员完成两次警告后发起。必须由可信 OPENID 定位关系；`confirmed` 和 `confirmedTwice` 都必须为 `true`。
-  - 有待审核打卡、冻结/待处理心愿金、待处理兑换或 pending 图片内容安全任务时拒绝。
+  - 有待审核打卡、冻结/待处理心愿金或待处理兑换时拒绝；pending 图片内容安全任务继续保留并等待异步回调，不阻断关系解除。
 - `cancelRelationshipUnbind()`
   - 仅发起方可在另一方确认前撤回；另一方不能代撤回。
 - `confirmRelationshipUnbind({ confirmed, confirmedTwice })`
