@@ -8,6 +8,9 @@ const MUTATION_ACTIONS = new Set([
   'bindAsSponsor',
   'bindByInvite',
   'generatePartnerInvite',
+  'requestRelationshipUnbind',
+  'cancelRelationshipUnbind',
+  'confirmRelationshipUnbind',
   'updateProfile',
   'equipBadges',
   'queryCompanionDetail',
@@ -77,20 +80,30 @@ function isCloudMode() {
 
 function deploymentHint(result, action) {
   const cloudBuildTag = result && result.buildTag;
-  const suffix = cloudBuildTag ? `（当前云端版本：${cloudBuildTag}）` : '';
+  const cloudReleaseTag = result && result.releaseTag;
+  const suffix = cloudBuildTag || cloudReleaseTag
+    ? `（当前云端协议：${cloudBuildTag || 'unknown'}；发布能力：${cloudReleaseTag || 'missing'}）`
+    : '';
   return `云函数版本过旧，动作 ${action} 需要重新部署 energyTree 后再试${suffix}`;
 }
 
 function assertCloudBuildTag(result, action) {
   const cloudBuildTag = result && result.buildTag;
-  if (cloudBuildTag === config.buildTag) return;
+  const cloudReleaseTag = result && result.releaseTag;
+  if (
+    cloudBuildTag === config.buildTag
+    && (!config.releaseTag || cloudReleaseTag === config.releaseTag)
+  ) return;
   const error = new Error(deploymentHint(result, action));
   error.code = 'CLOUD_BUILD_MISMATCH';
   error.cloudBuildTag = cloudBuildTag || '';
+  error.cloudReleaseTag = cloudReleaseTag || '';
   console.error('[energy-tree] cloud build tag mismatch', {
     action,
     expectedBuildTag: config.buildTag,
-    cloudBuildTag: error.cloudBuildTag
+    cloudBuildTag: error.cloudBuildTag,
+    expectedReleaseTag: config.releaseTag || '',
+    cloudReleaseTag: error.cloudReleaseTag
   });
   throw error;
 }
@@ -235,6 +248,21 @@ function bindByInvite(payload) {
 function bindAsSponsor(payload) {
   if (isCloudMode()) return callCloud('bindAsSponsor', payload);
   return appService.login({ role: 'sponsor' });
+}
+
+function requestRelationshipUnbind(payload) {
+  if (isCloudMode()) return callCloud('requestRelationshipUnbind', payload);
+  return appService.requestRelationshipUnbind(withMutationAuth('requestRelationshipUnbind', payload));
+}
+
+function cancelRelationshipUnbind(payload) {
+  if (isCloudMode()) return callCloud('cancelRelationshipUnbind', payload);
+  return appService.cancelRelationshipUnbind(withMutationAuth('cancelRelationshipUnbind', payload));
+}
+
+function confirmRelationshipUnbind(payload) {
+  if (isCloudMode()) return callCloud('confirmRelationshipUnbind', payload);
+  return appService.confirmRelationshipUnbind(withMutationAuth('confirmRelationshipUnbind', payload));
 }
 
 function queryPartnerInvite(payload) {
@@ -618,6 +646,7 @@ module.exports = {
   bindAsSponsor,
   bootstrapCoupleMessages,
   bindByInvite,
+  cancelRelationshipUnbind,
   centsFromYuan: appService.centsFromYuan,
   cleanupUploadedFile,
   createClientRequestId,
@@ -627,6 +656,7 @@ module.exports = {
   formatMoney: appService.moneyText,
   isCloudMode,
   login,
+  confirmRelationshipUnbind,
   markCoupleMessagesRead,
   markEncouragementRead,
   markMilestoneSeen,
@@ -657,6 +687,7 @@ module.exports = {
   queryWithdrawals,
   redeemReward,
   requestWithdrawal,
+  requestRelationshipUnbind,
   requestCancelRedemption,
   processCancelRedemption,
   resetDemo: appService.resetDemo,

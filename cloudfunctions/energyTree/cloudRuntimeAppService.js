@@ -190,6 +190,8 @@ function createInitialState() {
       {
         id: DEMO_IDS.relationship,
         type: 'pair',
+        lifecycleStatus: 'active',
+        unbindRequest: null,
         title: '我们的运动能量树',
         sponsorId: DEMO_IDS.sponsor,
         participantId: DEMO_IDS.participant,
@@ -270,8 +272,33 @@ function ensureStateShape(state) {
   next.relationships.forEach((rel) => {
     const sponsor = next.users.find((user) => user.id === rel.sponsorId);
     const participant = next.users.find((user) => user.id === rel.participantId);
-    rel.sponsorOpenid = rel.sponsorOpenid || (sponsor && sponsor.openid) || '';
-    rel.participantOpenid = rel.participantOpenid || (participant && participant.openid) || '';
+    rel.lifecycleStatus = rel.lifecycleStatus === 'frozen' ? 'frozen' : 'active';
+    if (rel.lifecycleStatus === 'frozen') {
+      rel.sponsorOpenid = '';
+      rel.participantOpenid = '';
+      if (sponsor) sponsor.openid = '';
+      if (participant) participant.openid = '';
+    } else {
+      rel.sponsorOpenid = rel.sponsorOpenid || (sponsor && sponsor.openid) || '';
+      rel.participantOpenid = rel.participantOpenid || (participant && participant.openid) || '';
+    }
+    rel.unbindRequest = rel.unbindRequest && typeof rel.unbindRequest === 'object'
+      ? {
+        id: String(rel.unbindRequest.id || ''),
+        status: ['pending', 'releasing', 'completed'].includes(rel.unbindRequest.status)
+          ? rel.unbindRequest.status
+          : 'pending',
+        requestedByUserId: String(rel.unbindRequest.requestedByUserId || ''),
+        requestedByRole: rel.unbindRequest.requestedByRole === 'sponsor' ? 'sponsor' : 'participant',
+        requestedAt: String(rel.unbindRequest.requestedAt || ''),
+        confirmedByUserIds: Array.isArray(rel.unbindRequest.confirmedByUserIds)
+          ? Array.from(new Set(rel.unbindRequest.confirmedByUserIds.filter(Boolean)))
+          : [],
+        confirmedAt: String(rel.unbindRequest.confirmedAt || ''),
+        releaseStartedAt: String(rel.unbindRequest.releaseStartedAt || ''),
+        completedAt: String(rel.unbindRequest.completedAt || '')
+      }
+      : null;
     rel.rewardRule = rewardEngine.normalizeRule(rel.rewardRule);
     rel.balance = { ...createDefaultBalance(), ...(rel.balance || {}) };
     rel.tree = { ...createDefaultTree(), ...(rel.tree || {}) };
@@ -339,6 +366,14 @@ function operationReceiptKey(openid, action, clientRequestId) {
   return `${openid}:${action}:${clientRequestId}`;
 }
 
+function findOperationReceipt(state, action, input = {}) {
+  const actorOpenid = String((input.authContext && input.authContext.openid) || '').trim();
+  const clientRequestId = clientRequestIdFromInput(input);
+  if (!actorOpenid || !clientRequestId) return null;
+  const key = operationReceiptKey(actorOpenid, action, clientRequestId);
+  return (state.operationReceipts || []).find((receipt) => receipt.key === key) || null;
+}
+
 function pruneOperationReceipts(state) {
   const cutoff = new Date(nowIso()).getTime() - OPERATION_RECEIPT_TTL_MS;
   state.operationReceipts = (state.operationReceipts || [])
@@ -355,8 +390,9 @@ function mutationTargetId(result, input = {}, action = '') {
   if (result && result.checkIn && result.checkIn.id) return result.checkIn.id;
   if (result && result.redemption && result.redemption.id) return result.redemption.id;
   if (result && result.withdrawal && result.withdrawal.id) return result.withdrawal.id;
-  if (result && result.relationship && result.relationship.id) return result.relationship.id;
   if (result && result.id) return result.id;
+  if (result && result.relationship && result.relationship.id) return result.relationship.id;
+  if (result && result.relationshipId) return result.relationshipId;
   return input.checkInId
     || input.withdrawalId
     || input.redemptionId
@@ -370,7 +406,11 @@ function runMutationWithReceipt(action, input = {}, handler, options = {}) {
     const beforeState = getState();
     const clientRequestId = clientRequestIdFromInput(input);
     let actor = null;
-    let actorOpenid = String(options.actorOpenid || '').trim();
+    let actorOpenid = String(
+      options.actorOpenid
+      || (input.authContext && input.authContext.openid)
+      || ''
+    ).trim();
     let receiptKey = '';
     if (clientRequestId) {
       actor = actorOpenid ? null : getActor(beforeState, input);
@@ -385,6 +425,23 @@ function runMutationWithReceipt(action, input = {}, handler, options = {}) {
           action,
           revision: Number(beforeState.meta.revision || 0)
         };
+      }
+    }
+
+    const mutationAction = String(action || '');
+    if (
+      !mutationAction.startsWith('relationship.unbind.')
+      && !mutationAction.startsWith('identity.')
+      && mutationAction !== 'relationship.create'
+    ) {
+      const trustedOpenid = String((input.authContext && input.authContext.openid) || '').trim();
+      if (trustedOpenid) {
+        const mutationActor = getActor(beforeState, input);
+        const mutationRelationship = getRelationshipForActor(beforeState, mutationActor);
+        const unbindStatus = mutationRelationship.unbindRequest && mutationRelationship.unbindRequest.status;
+        if (unbindStatus === 'releasing') {
+          throw new Error('关系解除正在安全收尾，新的业务操作已暂停');
+        }
       }
     }
 
@@ -488,6 +545,262 @@ function addAuditLog(state, input) {
   });
 }
 
+function assertRelationshipActive(rel) {
+  if (!rel || rel.lifecycleStatus === 'frozen') {
+    throw new Error('旧关系已冻结，不能继续操作或重新绑定');
+  }
+}
+
+function assertDoubleRelationshipConfirmation(input = {}) {
+  if (input.confirmed !== true || input.confirmedTwice !== true) {
+    throw new Error('请完整阅读警告并完成两次确认');
+  }
+}
+
+function relationshipUnbindBlockers(state, rel) {
+  const blockers = [];
+  const submittedCheckIns = state.checkIns.filter((item) => (
+    item.relationshipId === rel.id && item.status === CHECKIN_STATUS.SUBMITTED
+  )).length;
+  const pendingWithdrawals = state.withdrawals.filter((item) => (
+    item.relationshipId === rel.id
+    && item.status !== WITHDRAWAL_STATUS.PAID
+    && item.status !== WITHDRAWAL_STATUS.REJECTED
+  )).length;
+  const pendingRedemptions = state.redemptions.filter((item) => (
+    item.relationshipId === rel.id
+    && (item.status === REDEMPTION_STATUS.PENDING || item.status === REDEMPTION_STATUS.CANCEL_REQUESTED)
+  )).length;
+  const frozenCents = Number((rel.balance && rel.balance.frozenCents) || 0);
+
+  if (submittedCheckIns) blockers.push(`待审核打卡 ${submittedCheckIns} 条`);
+  if (pendingWithdrawals) blockers.push(`待处理心愿金 ${pendingWithdrawals} 条`);
+  if (pendingRedemptions) blockers.push(`待处理兑换 ${pendingRedemptions} 条`);
+  if (frozenCents > 0) blockers.push('仍有冻结心愿金');
+  return blockers;
+}
+
+function assertRelationshipCanUnbind(state, rel) {
+  const blockers = relationshipUnbindBlockers(state, rel);
+  if (blockers.length) {
+    throw new Error(`请先处理关系内的待处理事项：${blockers.join('、')}`);
+  }
+}
+
+function decorateRelationshipUnbindStatus(rel, currentUser) {
+  const request = rel && rel.unbindRequest;
+  if (!request || request.status === 'completed') {
+    return {
+      state: 'none',
+      requestId: '',
+      requestedAt: '',
+      requestedByMe: false,
+      canCancel: false,
+      canConfirm: false,
+      message: '双方确认后才会解除关系'
+    };
+  }
+  const requestedByMe = Boolean(currentUser && request.requestedByUserId === currentUser.id);
+  if (request.status === 'releasing') {
+    return {
+      state: 'finalizing',
+      requestId: request.id,
+      requestedAt: request.requestedAt,
+      requestedByMe,
+      canCancel: false,
+      canConfirm: !requestedByMe,
+      message: '双方已确认，正在撤销旧关系访问；失败时可由确认方安全重试'
+    };
+  }
+  return {
+    state: requestedByMe ? 'waiting_for_partner' : 'action_required',
+    requestId: request.id,
+    requestedAt: request.requestedAt,
+    requestedByMe,
+    canCancel: requestedByMe,
+    canConfirm: !requestedByMe,
+    message: requestedByMe
+      ? '已发起，等待另一方完成两次确认'
+      : '另一方申请解除关系，需要你完成两次确认'
+  };
+}
+
+function requestRelationshipUnbind(input = {}) {
+  const state = getState();
+  const { actor, rel } = resolveRelationshipForActor(state, input);
+  assertRelationshipActive(rel);
+  assertDoubleRelationshipConfirmation(input);
+  if (!rel.sponsorOpenid || !rel.participantOpenid) {
+    throw new Error('另一方尚未绑定，不能发起双方解除流程');
+  }
+  assertRelationshipCanUnbind(state, rel);
+
+  if (rel.unbindRequest && rel.unbindRequest.status !== 'completed') {
+    if (rel.unbindRequest.status === 'releasing') {
+      throw new Error('关系解除正在安全收尾，请勿重复发起');
+    }
+    if (rel.unbindRequest.requestedByUserId === actor.user.id) {
+      throw new Error('解除申请已发出，正在等待另一方确认');
+    }
+    throw new Error('另一方已经发起解除申请，请在关系设置中确认或暂不处理');
+  }
+
+  const request = {
+    id: nextId(state, 'unbind'),
+    status: 'pending',
+    requestedByUserId: actor.user.id,
+    requestedByRole: actor.user.role,
+    requestedAt: nowIso(),
+    confirmedByUserIds: [actor.user.id],
+    confirmedAt: '',
+    releaseStartedAt: '',
+    completedAt: ''
+  };
+  rel.unbindRequest = request;
+  addAuditLog(state, {
+    relationshipId: rel.id,
+    actorOpenid: actor.openid,
+    action: 'relationship.unbind.request',
+    targetId: request.id,
+    note: actor.user.role
+  });
+  saveState(state);
+  return decorateRelationshipUnbindStatus(rel, actor.user);
+}
+
+function cancelRelationshipUnbind(input = {}) {
+  const state = getState();
+  const { actor, rel } = resolveRelationshipForActor(state, input);
+  assertRelationshipActive(rel);
+  const request = rel.unbindRequest;
+  if (!request || request.status !== 'pending') throw new Error('当前没有待确认的解除申请');
+  if (request.requestedByUserId !== actor.user.id) throw new Error('只有解除申请的发起方可以撤回');
+
+  const requestId = request.id;
+  rel.unbindRequest = null;
+  addAuditLog(state, {
+    relationshipId: rel.id,
+    actorOpenid: actor.openid,
+    action: 'relationship.unbind.cancel',
+    targetId: requestId,
+    note: actor.user.role
+  });
+  saveState(state);
+  return decorateRelationshipUnbindStatus(rel, actor.user);
+}
+
+function validateRelationshipUnbindConfirmation(state, input = {}) {
+  const { actor, rel } = resolveRelationshipForActor(state, input);
+  assertRelationshipActive(rel);
+  assertDoubleRelationshipConfirmation(input);
+  const request = rel.unbindRequest;
+  if (!request || !['pending', 'releasing'].includes(request.status)) {
+    throw new Error('当前没有待确认的解除申请');
+  }
+  if (request.requestedByUserId === actor.user.id) {
+    throw new Error('解除关系必须由另一方确认，发起方不能单独完成');
+  }
+  assertRelationshipCanUnbind(state, rel);
+  return {
+    actor,
+    rel,
+    relationshipId: rel.id,
+    relationshipOpenids: [rel.sponsorOpenid, rel.participantOpenid].filter(Boolean)
+  };
+}
+
+function beginRelationshipUnbindConfirmation(input = {}) {
+  const state = getState();
+  const {
+    actor,
+    rel,
+    relationshipOpenids
+  } = validateRelationshipUnbindConfirmation(state, input);
+  const request = rel.unbindRequest;
+  if (request.status === 'pending') {
+    const confirmedAt = nowIso();
+    request.status = 'releasing';
+    request.confirmedByUserIds = Array.from(new Set([
+      ...(request.confirmedByUserIds || []),
+      actor.user.id
+    ]));
+    request.confirmedAt = confirmedAt;
+    request.releaseStartedAt = confirmedAt;
+    addAuditLog(state, {
+      relationshipId: rel.id,
+      actorOpenid: actor.openid,
+      action: 'relationship.unbind.confirm',
+      targetId: request.id,
+      note: actor.user.role
+    });
+    saveState(state);
+  } else if (!(request.confirmedByUserIds || []).includes(actor.user.id)) {
+    throw new Error('只有已完成双方确认的账号可以继续解除收尾');
+  }
+  return {
+    releasePending: true,
+    relationshipId: rel.id,
+    relationshipOpenids
+  };
+}
+
+function completeRelationshipUnbind(input = {}) {
+  const state = getState();
+  const { actor, rel } = resolveRelationshipForActor(state, input);
+  assertRelationshipActive(rel);
+  assertDoubleRelationshipConfirmation(input);
+  const request = rel.unbindRequest;
+  if (!request || request.status !== 'releasing') throw new Error('关系解除尚未完成双方确认');
+  if (request.requestedByUserId === actor.user.id || !(request.confirmedByUserIds || []).includes(actor.user.id)) {
+    throw new Error('只有完成确认的另一方可以执行解除收尾');
+  }
+  assertRelationshipCanUnbind(state, rel);
+  const trustedOpenids = [rel.sponsorOpenid, rel.participantOpenid].filter(Boolean);
+
+  const completedAt = nowIso();
+  request.status = 'completed';
+  request.completedAt = completedAt;
+  rel.lifecycleStatus = 'frozen';
+  rel.inviteTokens = { participant: '' };
+
+  const relationshipOpenids = new Set(trustedOpenids);
+  addAuditLog(state, {
+    relationshipId: rel.id,
+    actorOpenid: actor.openid,
+    action: 'relationship.unbind.complete',
+    targetId: request.id,
+    note: '双方确认；旧关系冻结保留'
+  });
+  state.subscriptionGrants.forEach((grant) => {
+    if (grant.relationshipId !== rel.id) return;
+    grant.status = 'revoked';
+    grant.revokedAt = completedAt;
+    grant.openid = '';
+  });
+  state.companionViewNotices.forEach((notice) => {
+    if (notice.relationshipId !== rel.id) return;
+    notice.targetOpenid = '';
+    notice.viewerOpenid = '';
+  });
+  state.users.forEach((user) => {
+    if (relationshipOpenids.has(user.openid)) user.openid = '';
+  });
+  rel.sponsorOpenid = '';
+  rel.participantOpenid = '';
+  saveState(state);
+  return {
+    released: true,
+    needsBinding: true,
+    relationshipId: rel.id,
+    message: '关系已解除；旧数据已冻结保留，不会重新分配给其他账号'
+  };
+}
+
+function confirmRelationshipUnbind(input = {}) {
+  beginRelationshipUnbindConfirmation(input);
+  return completeRelationshipUnbind(input);
+}
+
 function profileUsageForField(user, field, currentMonth = monthKey()) {
   user.profileEditUsage = user.profileEditUsage || createDefaultProfileEditUsage(currentMonth);
   const current = user.profileEditUsage[field] || {};
@@ -529,8 +842,9 @@ function decorateProfileEditState(user, rel) {
 
 function decorateUser(user, rel) {
   if (!user) return null;
+  const { openid, ...safeUser } = user;
   return {
-    ...user,
+    ...safeUser,
     profileEditState: rel ? decorateProfileEditState(user, rel) : null
   };
 }
@@ -622,9 +936,17 @@ function latestTodayCheckIn(state, relationshipId, today) {
 }
 
 function decorateRelationship(rel) {
-  const { inviteTokens, ...safeRelationship } = rel;
+  const {
+    inviteTokens,
+    unbindRequest,
+    sponsorOpenid,
+    participantOpenid,
+    ...safeRelationship
+  } = rel;
   return {
     ...safeRelationship,
+    sponsorBound: Boolean(sponsorOpenid),
+    participantBound: Boolean(participantOpenid),
     balanceText: {
       available: rewardEngine.moneyText(rel.balance.availableCents),
       frozen: rewardEngine.moneyText(rel.balance.frozenCents),
@@ -750,6 +1072,7 @@ function getDashboard(input = {}) {
     companionUser: currentRole === 'sponsor' ? decorateUser(participant, rel) : decorateUser(sponsor, rel),
     relationship: {
       ...decorateRelationship(rel),
+      unbindStatus: decorateRelationshipUnbindStatus(rel, currentUser),
       wishFund: decorateWishFund(state, rel),
       adventure: adventure.adventure,
       stats,
@@ -2256,6 +2579,8 @@ function createRelationship(input) {
   const rel = {
     id: nextId(state, 'rel'),
     type: input.type || 'pair',
+    lifecycleStatus: 'active',
+    unbindRequest: null,
     title: input.title || '新的能量树',
     sponsorId,
     participantId,
@@ -2304,6 +2629,10 @@ module.exports = {
   queryMilestones,
   querySponsorDashboard,
   queryWeeklyRecap,
+  requestRelationshipUnbind: withMutationReceipt('relationship.unbind.request', requestRelationshipUnbind),
+  cancelRelationshipUnbind: withMutationReceipt('relationship.unbind.cancel', cancelRelationshipUnbind),
+  confirmRelationshipUnbind: withMutationReceipt('relationship.unbind.confirm', confirmRelationshipUnbind),
+  completeRelationshipUnbind: withMutationReceipt('relationship.unbind.confirm', completeRelationshipUnbind),
   recordCompanionView: withMutationReceipt('companion.view', recordCompanionView),
   rejectCheckIn: withMutationReceipt('checkin.reject', rejectCheckIn),
   rejectCancelRedemption: withMutationReceipt('redemption.cancelReject', rejectCancelRedemption),
@@ -2330,11 +2659,16 @@ module.exports = {
     ENCOURAGEMENT_TEMPLATES,
     MILESTONE_PRIORITIES,
     addMilestone,
+    assertRelationshipCanUnbind,
+    beginRelationshipUnbindConfirmation,
     createInitialState,
+    decorateRelationshipUnbindStatus,
+    findOperationReceipt,
     PROFILE_EDIT_EXTRA_COST_CENTS,
     pruneOperationReceipts,
     runMutationWithReceipt,
     selectPrimaryMilestone,
-    setNowForTests
+    setNowForTests,
+    validateRelationshipUnbindConfirmation
   }
 };

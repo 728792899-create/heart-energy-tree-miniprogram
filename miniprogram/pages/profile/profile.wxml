@@ -145,5 +145,52 @@
       </view>
     </view>
   </block>
+
+  <view class="section-title relationship-settings-title">关系与隐私</view>
+  <view class="card relationship-settings-card">
+    <view class="relationship-settings-heading">
+      <view>
+        <view class="card-title">解除双人关系</view>
+        <view class="muted small">必须由双方分别完成两次确认；解除不会自动删除历史数据。</view>
+      </view>
+      <view class="relationship-safety-badge">双方确认</view>
+    </view>
+
+    <view wx:if="{{dashboard.relationship.unbindStatus.state === 'waiting_for_partner' || (dashboard.relationship.unbindStatus.state === 'finalizing' && dashboard.relationship.unbindStatus.requestedByMe)}}" class="relationship-unbind-status is-waiting">
+      <view class="relationship-unbind-status-title">{{dashboard.relationship.unbindStatus.state === 'finalizing' ? '双方已确认，正在安全收尾' : '已等待对方确认'}}</view>
+      <view class="small">{{dashboard.relationship.unbindStatus.state === 'finalizing' ? '旧关系访问正在撤销。请保持网络连接；若失败，由另一方重新打开本页重试。' : '对方确认前，当前关系和正常功能不会改变。你可以随时撤回申请。'}}</view>
+      <button
+        wx:if="{{dashboard.relationship.unbindStatus.canCancel}}"
+        class="relationship-action-btn is-neutral"
+        loading="{{unbindSubmitting}}"
+        disabled="{{unbindSubmitting}}"
+        aria-label="撤回解除关系申请"
+        bindtap="cancelRelationshipUnbind"
+      >{{unbindSubmitting ? '正在处理…' : '撤回解除申请'}}</button>
+    </view>
+
+    <view wx:elif="{{dashboard.relationship.unbindStatus.state === 'action_required' || dashboard.relationship.unbindStatus.state === 'finalizing'}}" class="relationship-unbind-status is-required">
+      <view class="relationship-unbind-status-title">{{dashboard.relationship.unbindStatus.state === 'finalizing' ? '解除收尾需要重试' : '对方申请解除关系'}}</view>
+      <view class="small">{{dashboard.relationship.unbindStatus.state === 'finalizing' ? '双方确认已经记录，但旧信笺访问尚未完全撤销。请重新确认以继续安全收尾，不会重复冻结或删除数据。' : '只有你再次完成两次警告确认，解除才会生效；不操作不会自动解除。'}}</view>
+      <button
+        class="relationship-action-btn is-danger"
+        loading="{{unbindSubmitting}}"
+        disabled="{{unbindSubmitting}}"
+        aria-label="确认解除关系"
+        bindtap="confirmRelationshipUnbind"
+      >{{unbindSubmitting ? '正在处理…' : '查看警告并确认'}}</button>
+    </view>
+
+    <view wx:else class="relationship-unbind-intro">
+      <view class="small">发起后需等待另一方确认。生效后双方绑定、旧邀请与实时访问会失效，账本、信笺和照片按隐私说明冻结保留。</view>
+      <button
+        class="relationship-action-btn is-danger-outline"
+        loading="{{unbindSubmitting}}"
+        disabled="{{unbindSubmitting}}"
+        aria-label="发起解除关系申请"
+        bindtap="requestRelationshipUnbind"
+      >{{unbindSubmitting ? '正在处理…' : '申请解除关系'}}</button>
+    </view>
+  </view>
   </block>
 </view>

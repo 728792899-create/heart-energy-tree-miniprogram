@@ -142,6 +142,12 @@
   background: rgba(255, 240, 242, 0.82);
 }
 
+.relationship-frozen-note {
+  color: #70443F;
+  border: 1rpx solid #E3C6BF;
+  background: #FAE9E4;
+}
+
 .binding-card-heading {
   position: relative;
   z-index: 1;

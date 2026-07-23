@@ -12,6 +12,7 @@ function loadCloudApi() {
           result: {
             ok: true,
             buildTag: config.buildTag,
+            releaseTag: config.releaseTag,
             data: {
               action: options.data.action,
               payload: options.data.payload

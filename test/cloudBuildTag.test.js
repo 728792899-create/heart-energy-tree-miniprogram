@@ -5,7 +5,7 @@ const test = require('node:test');
 
 const config = require('../miniprogram/config/env');
 
-function loadApiWithCloudBuildTag(buildTag) {
+function loadApiWithCloudBuildTag(buildTag, releaseTag = config.releaseTag) {
   const apiPath = require.resolve('../miniprogram/services/api');
   global.wx = {
     cloud: {
@@ -14,6 +14,7 @@ function loadApiWithCloudBuildTag(buildTag) {
           result: {
             ok: true,
             buildTag,
+            releaseTag,
             data: { source: 'cloud' }
           }
         };
@@ -31,7 +32,9 @@ test('successful cloud responses require the exact public client build tag', asy
   const cloudEntry = fs.readFileSync(path.resolve(__dirname, '../cloudfunctions/energyTree/index.js'), 'utf8');
   const readme = fs.readFileSync(path.resolve(__dirname, '../README.md'), 'utf8');
   assert.match(cloudEntry, new RegExp(`CLOUD_BUILD_TAG = ['"]${config.buildTag}['"]`));
+  assert.match(cloudEntry, new RegExp(`CLOUD_RELEASE_TAG = ['"]${config.releaseTag}['"]`));
   assert.match(readme, new RegExp(config.buildTag));
+  assert.match(readme, new RegExp(config.releaseTag));
 
   const originalConsoleError = console.error;
   const logs = [];
@@ -42,11 +45,17 @@ test('successful cloud responses require the exact public client build tag', asy
     delete require.cache[require.resolve('../miniprogram/services/api')];
   });
 
-  for (const buildTag of ['', 'heart-tree-private-v2-stale']) {
-    const { api, apiPath } = loadApiWithCloudBuildTag(buildTag);
+  for (const [buildTag, releaseTag] of [
+    ['', config.releaseTag],
+    ['heart-tree-private-v2-stale', config.releaseTag],
+    [config.buildTag, ''],
+    [config.buildTag, 'heart-tree-private-v3-stale']
+  ]) {
+    const { api, apiPath } = loadApiWithCloudBuildTag(buildTag, releaseTag);
     await assert.rejects(api.queryDashboard(), (error) => {
       assert.equal(error.code, 'CLOUD_BUILD_MISMATCH');
       assert.equal(error.cloudBuildTag, buildTag);
+      assert.equal(error.cloudReleaseTag, releaseTag);
       assert.match(error.message, /云函数版本过旧/);
       return true;
     });
@@ -55,10 +64,11 @@ test('successful cloud responses require the exact public client build tag', asy
 
   const { api } = loadApiWithCloudBuildTag(config.buildTag);
   assert.deepEqual(await api.queryDashboard(), { source: 'cloud' });
-  assert.equal(logs.length, 2);
+  assert.equal(logs.length, 4);
   logs.forEach((entry) => {
     assert.equal(entry[0], '[energy-tree] cloud build tag mismatch');
     assert.equal(entry[1].expectedBuildTag, config.buildTag);
+    assert.equal(entry[1].expectedReleaseTag, config.releaseTag);
     assert.equal(Object.hasOwn(entry[1], 'payload'), false);
   });
 });

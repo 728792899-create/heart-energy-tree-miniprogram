@@ -21,9 +21,12 @@
 
 | 集合 | 字段与方向 | 级别 | 目的 |
 | --- | --- | --- | --- |
-| `coupleMessageInbox` | `recipientOpenid` 升序 + `sortKey` 降序 | 必需 | 分页读取当前用户最新信笺 |
-| `coupleMessageStates` | `recipientOpenid` 升序 | 必需 | 未读 watcher 精确限定当前用户 |
+| `coupleMessageInbox` | `recipientOpenid` 升序 + `sortKey` 降序 | 必需 | 分页读取当前用户最新信笺；解除收尾按关系与旧 recipientOpenid 撤销访问 |
+| `coupleMessageStates` | `recipientOpenid` 升序 | 必需 | 未读 watcher 精确限定当前用户；解除后清空旧 recipientOpenid |
+| `coupleMessageInbox` | `relationshipId` 升序 + `recipientOpenid` 升序 | `3.1.0` 必需 | 双方确认解除时分批撤销旧收件投影访问 |
+| `coupleMessageStates` | `relationshipId` 升序 + `recipientOpenid` 升序 | `3.1.0` 必需 | 双方确认解除时撤销旧未读状态访问 |
 | `mediaCheckTasks` | `traceId` 升序 | 必需 | `wxa_media_check` 回调按 traceId 定位唯一任务 |
+| `mediaCheckTasks` | `relationshipId` 升序 + `status` 升序 | `3.1.0` 必需 | 发起和确认解除前阻止仍有 pending 图片任务的关系 |
 | `mediaCheckTasks` | `status` 升序 + `createdAt` 升序 | 运维建议 | 查找超时 pending/orphan 任务，不参与在线业务判断 |
 | `coupleMessages` | `relationshipId` 升序 + `sortKey` 降序 | 运维建议 | 关系内审计与恢复核对 |
 
@@ -63,7 +66,7 @@ flowchart LR
 
 ## 版本迁移
 
-当前 `appStates/main.state.version` 为 `4`。`ensureStateShape` 在读取时执行向前兼容的形状补全，包括 revision、operation receipts、资料修改额度、鼓励卡和共同里程碑字段；它不会清空既有数组。
+当前 `appStates/main.state.version` 为 `4`（保持不变）。`3.1.0` 只增加向前兼容的 `relationship.lifecycleStatus` 与 `unbindRequest` 形状，不提升主状态版本；`ensureStateShape` 还会补全 revision、operation receipts、资料修改额度、鼓励卡和共同里程碑字段，不会清空既有数组。旧状态首次读取时默认关系为 `active`、解除申请为空。
 
 迁移发布顺序：
 

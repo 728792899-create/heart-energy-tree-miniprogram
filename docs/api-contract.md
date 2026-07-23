@@ -20,6 +20,16 @@
   - 仅用于本地 demo 演示，正式版由云函数 openid 和服务端 relationship 权限决定。
 - `queryDashboard()`
   - 返回当前关系、余额、成长树、探险地图摘要、统计、今日打卡、待审核数、待处理心愿金数、徽章和日历摘要。
+  - 关系对象只返回 `sponsorBound` / `participantBound` 和当前成员可见的 `unbindStatus`，不向页面返回双方原始 OPENID 或内部解除申请字段。
+- `requestRelationshipUnbind({ confirmed, confirmedTwice })`
+  - 任一已绑定成员完成两次警告后发起。必须由可信 OPENID 定位关系；`confirmed` 和 `confirmedTwice` 都必须为 `true`。
+  - 有待审核打卡、冻结/待处理心愿金、待处理兑换或 pending 图片内容安全任务时拒绝。
+- `cancelRelationshipUnbind()`
+  - 仅发起方可在另一方确认前撤回；另一方不能代撤回。
+- `confirmRelationshipUnbind({ confirmed, confirmedTwice })`
+  - 仅发起方以外的另一位可信成员可确认，同样要求两次警告。
+  - 云端先记录双方确认并进入不可撤回的 `releasing`，撤销信笺实时投影访问，再清除绑定、作废邀请和冻结旧关系；同一 `clientRequestId` 重试不会重复完成。
+  - 返回 `needsBinding=true` 只代表旧访问已解除，不代表创建了新关系或删除了历史数据。
 - `queryAdventure()`
   - 返回关卡列表、当前关卡、进度百分比和剩余步数。
 - `queryBadges()` / `queryCalendarStats()`
@@ -75,6 +85,7 @@
 
 ## 不变量
 
+- 云响应的兼容 `buildTag` 与候选 `releaseTag` 都必须和客户端配置匹配；兼容 tag 允许线上旧客户端继续使用向后兼容的新云函数。
 - 页面不能直接修改余额。
 - 审核通过是奖励入账、地图前进、徽章解锁的唯一入口。
 - 最终关卡通关奖励只发一次。
@@ -82,3 +93,4 @@
 - 心愿金领取只通过状态机改变余额：申请冻结、兑现出账、拒绝退回。
 - 每笔奖励和心愿金领取都必须归属到 `relationshipId`，避免多人使用时串账。
 - 所有高权限和资金状态变更都必须写审计日志。
+- 单方不能解除关系；旧关系冻结后不能由新 OPENID 复用。关系解除不自动删除账本、信笺、照片或审计，也不触发支付。

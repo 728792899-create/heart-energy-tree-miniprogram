@@ -7,6 +7,8 @@ Page({
     inviteToken: '',
     inviteMode: false,
     canCreateSponsor: false,
+    relationshipFrozen: false,
+    bindingMessage: '',
     creating: false,
     submitting: false,
     reducedMotion: experience.isReducedMotionEnabled()
@@ -31,7 +33,9 @@ Page({
         return;
       }
       this.setData({
-        canCreateSponsor: Boolean(dashboard && dashboard.bindingStatus && dashboard.bindingStatus.canCreateSponsor)
+        canCreateSponsor: Boolean(dashboard && dashboard.bindingStatus && dashboard.bindingStatus.canCreateSponsor),
+        relationshipFrozen: Boolean(dashboard && dashboard.bindingStatus && dashboard.bindingStatus.relationshipFrozen),
+        bindingMessage: String((dashboard && dashboard.message) || '')
       });
     } catch (error) {
       wx.showToast({ title: error.message, icon: 'none' });
@@ -43,6 +47,10 @@ Page({
   },
 
   async submit() {
+    if (this.data.relationshipFrozen) {
+      wx.showToast({ title: '旧关系已冻结，旧邀请不能再使用', icon: 'none' });
+      return;
+    }
     if (!String(this.data.inviteToken || '').trim()) {
       wx.showToast({ title: '请从另一半分享的邀请卡片进入', icon: 'none' });
       return;
@@ -65,6 +73,10 @@ Page({
   },
 
   async createTree() {
+    if (this.data.relationshipFrozen) {
+      wx.showToast({ title: '旧关系已冻结，不能重新绑定', icon: 'none' });
+      return;
+    }
     this.setData({ creating: true });
     try {
       await api.bindAsSponsor({

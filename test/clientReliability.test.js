@@ -15,7 +15,14 @@ function loadCloudApi(overrides = {}) {
   global.wx = {
     cloud: {
       async callFunction(options) {
-        return { result: { ok: true, buildTag: config.buildTag, data: options.data } };
+        return {
+          result: {
+            ok: true,
+            buildTag: config.buildTag,
+            releaseTag: config.releaseTag,
+            data: options.data
+          }
+        };
       },
       async deleteFile(options) {
         deleted.push(options);

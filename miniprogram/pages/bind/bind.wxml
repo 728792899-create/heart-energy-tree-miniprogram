@@ -61,7 +61,7 @@
       />
     </view>
 
-    <view wx:if="{{inviteMode}}" class="invite-card">
+    <view wx:if="{{inviteMode && !relationshipFrozen}}" class="invite-card">
       <view class="invite-icon" aria-hidden="true">♡</view>
       <view class="invite-copy">
         <view class="invite-title">来自另一半的专属邀请</view>
@@ -69,7 +69,11 @@
       </view>
     </view>
 
-    <button wx:if="{{inviteMode}}" class="primary-btn submit-btn" loading="{{submitting}}" disabled="{{submitting || creating}}" aria-label="加入两个人的心动能量树" bindtap="submit">{{submitting ? '正在加入…' : '接受邀请并加入'}}</button>
+    <view wx:if="{{relationshipFrozen}}" class="empty invite-empty relationship-frozen-note">
+      <view class="invite-empty-title">旧关系已安全冻结</view>
+      <view>{{bindingMessage || '历史数据已保留，旧邀请和旧身份不能重新使用。如需建立新关系，请联系云环境所有者独立初始化。'}}</view>
+    </view>
+    <button wx:elif="{{inviteMode}}" class="primary-btn submit-btn" loading="{{submitting}}" disabled="{{submitting || creating}}" aria-label="加入两个人的心动能量树" bindtap="submit">{{submitting ? '正在加入…' : '接受邀请并加入'}}</button>
     <button wx:elif="{{canCreateSponsor}}" class="primary-btn submit-btn" loading="{{creating}}" disabled="{{creating || submitting}}" aria-label="创建两个人的心动能量树" bindtap="createTree">{{creating ? '正在种下能量树…' : '创建并成为发起者'}}</button>
     <view wx:else class="empty invite-empty">
       <view class="invite-empty-title">还差一张专属邀请卡</view>

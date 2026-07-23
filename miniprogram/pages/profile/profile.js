@@ -11,6 +11,18 @@ function normalizeUser(user, fallbackName) {
   };
 }
 
+function showRelationshipWarning(options) {
+  return new Promise((resolve) => {
+    wx.showModal({
+      cancelText: '暂不操作',
+      confirmColor: '#963F3F',
+      ...options,
+      success: (result) => resolve(Boolean(result && result.confirm)),
+      fail: () => resolve(false)
+    });
+  });
+}
+
 Page({
   data: {
     loading: true,
@@ -19,7 +31,12 @@ Page({
       relationship: {
         balanceText: {},
         stats: {},
-        equippedBadges: []
+        equippedBadges: [],
+        unbindStatus: {
+          state: 'none',
+          canCancel: false,
+          canConfirm: false
+        }
       },
       currentUser: {},
       companionUser: {}
@@ -34,6 +51,7 @@ Page({
     inviteShare: null,
     isCloudMode: false,
     showInvitePartner: false,
+    unbindSubmitting: false,
     isSoundEnabled: experience.isSoundEnabled(),
     reducedMotion: experience.isReducedMotionEnabled()
   },
@@ -78,7 +96,7 @@ Page({
         };
       });
       const isCloudMode = api.isCloudMode();
-      const showInvitePartner = isCloudMode && dashboard.currentRole === 'sponsor' && !dashboard.relationship.participantOpenid;
+      const showInvitePartner = isCloudMode && dashboard.currentRole === 'sponsor' && !dashboard.relationship.participantBound;
       const inviteShare = showInvitePartner ? await api.queryPartnerInvite() : null;
       const companionFallback = dashboard.currentRole === 'sponsor' ? '她' : '他';
       const companionUser = normalizeUser(dashboard.companionUser, companionFallback);
@@ -146,6 +164,89 @@ Page({
       this.load();
     } catch (error) {
       wx.showToast({ title: error.message, icon: 'none' });
+    }
+  },
+
+  async requestRelationshipUnbind() {
+    if (this.data.unbindSubmitting) return;
+    const firstConfirmed = await showRelationshipWarning({
+      title: '解除关系前请确认',
+      content: '提交后会等待另一方确认；在对方确认前，当前关系和正常功能不会改变。已有账本、信笺、照片和审计不会自动删除。',
+      confirmText: '我已了解'
+    });
+    if (!firstConfirmed) return;
+    const secondConfirmed = await showRelationshipWarning({
+      title: '第二次警告',
+      content: '这不是单方退出：只有另一方也完成两次确认后，双方才会失去旧关系访问权。旧关系将被冻结且不能重新绑定。',
+      confirmText: '继续发起'
+    });
+    if (!secondConfirmed) return;
+
+    this.setData({ unbindSubmitting: true });
+    try {
+      await api.requestRelationshipUnbind({
+        confirmed: true,
+        confirmedTwice: true
+      });
+      wx.showToast({ title: '已等待对方确认', icon: 'none' });
+      await this.load();
+    } catch (error) {
+      wx.showToast({ title: error.message || '解除申请提交失败', icon: 'none' });
+    } finally {
+      this.setData({ unbindSubmitting: false });
+    }
+  },
+
+  async cancelRelationshipUnbind() {
+    if (this.data.unbindSubmitting) return;
+    const confirmed = await showRelationshipWarning({
+      title: '撤回解除申请？',
+      content: '撤回后会恢复关系内的正常操作；之后仍可重新发起。',
+      confirmText: '确认撤回'
+    });
+    if (!confirmed) return;
+
+    this.setData({ unbindSubmitting: true });
+    try {
+      await api.cancelRelationshipUnbind({});
+      wx.showToast({ title: '解除申请已撤回', icon: 'success' });
+      await this.load();
+    } catch (error) {
+      wx.showToast({ title: error.message || '撤回失败', icon: 'none' });
+    } finally {
+      this.setData({ unbindSubmitting: false });
+    }
+  },
+
+  async confirmRelationshipUnbind() {
+    if (this.data.unbindSubmitting) return;
+    const firstConfirmed = await showRelationshipWarning({
+      title: '对方申请解除关系',
+      content: '确认后，双方会失去旧关系的业务与信笺访问权。历史数据会冻结保留，不会自动删除，也不会自动触发任何支付或转账。',
+      confirmText: '我已了解'
+    });
+    if (!firstConfirmed) return;
+    const secondConfirmed = await showRelationshipWarning({
+      title: '最后一次确认',
+      content: '解除生效后旧邀请立即作废，旧关系不能重新绑定。如需新关系，必须由云环境所有者独立初始化。确定继续吗？',
+      confirmText: '确认解除'
+    });
+    if (!secondConfirmed) return;
+
+    const app = getApp();
+    if (app && typeof app.closeMessageUnreadWatch === 'function') app.closeMessageUnreadWatch();
+    this.setData({ unbindSubmitting: true });
+    try {
+      await api.confirmRelationshipUnbind({
+        confirmed: true,
+        confirmedTwice: true
+      });
+      if (wx.removeTabBarBadge) wx.removeTabBarBadge({ index: 4 });
+      wx.reLaunch({ url: '/pages/bind/bind' });
+    } catch (error) {
+      if (app && typeof app.startMessageUnreadWatch === 'function') app.startMessageUnreadWatch();
+      wx.showToast({ title: error.message || '解除确认失败', icon: 'none' });
+      this.setData({ unbindSubmitting: false });
     }
   },
 

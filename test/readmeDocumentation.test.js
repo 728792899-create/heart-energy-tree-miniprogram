@@ -23,8 +23,8 @@ test('README presents the product, evidence, visual tour, and private-release bo
 
   assert.match(readme, /design\/prototype-v3\/assets\/scene-protected-garden\.jpg/);
   assert.match(readme, /actions\/workflows\/ci\.yml\/badge\.svg/);
-  assert.match(readme, /version-3\.0\.0/);
-  assert.match(readme, /228%20passing/);
+  assert.match(readme, /version-3\.1\.0/);
+  assert.match(readme, /239%20passing/);
   assert.match(readme, /design\/prototype-v3\/README\.md/);
   assert.match(readme, /8jtVG6uk2Z45OhUXbqLHHX/);
   assert.match(readme, /docs\/README\.md/);
@@ -35,15 +35,15 @@ test('README presents the product, evidence, visual tour, and private-release bo
   assert.match(readme, /```mermaid/);
   assert.match(readme, /不接真实支付/);
   assert.match(readme, /固定两人关系|固定两人私人版/);
-  assert.match(readme, /2026-07-22 提交微信审核/);
-  assert.match(readme, /审核中，尚未点击发布/);
-  assert.match(readme, /兼容协议标识/);
+  assert.match(readme, /3\.0\.0.*2026-07-23.*正式发布/);
+  assert.match(readme, /3\.1\.0.*候选/);
+  assert.match(readme, /双方.*两次确认|两次警告.*双方确认/);
   assert.doesNotMatch(readme, /私人版 V2 体验|为 V2 新增动效素材/);
   assert.doesNotMatch(readme, /docs\/screenshots|assets\/motion\/.*\.jpg|assets\/generated\/tree-level/);
   assert.match(readme, /旧版粉色模拟器截图和熊兔营销插画已经从当前文档移除/);
 
   const packageJson = JSON.parse(read('package.json'));
-  assert.equal(packageJson.version, '3.0.0');
+  assert.equal(packageJson.version, '3.1.0');
 });
 
 test('V3 README hero is a bounded non-empty JPEG outside the mini-program package', () => {

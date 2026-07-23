@@ -285,6 +285,104 @@
   width: 100%;
 }
 
+.relationship-settings-title {
+  margin-top: 42rpx;
+}
+
+.relationship-settings-card {
+  margin-bottom: 24rpx;
+  border-color: #E9D8D2;
+  background: #FFFCFA;
+}
+
+.relationship-settings-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20rpx;
+}
+
+.relationship-settings-heading > view:first-child {
+  min-width: 0;
+}
+
+.relationship-safety-badge {
+  flex: 0 0 auto;
+  min-height: 44rpx;
+  padding: 0 16rpx;
+  display: flex;
+  align-items: center;
+  border-radius: 999rpx;
+  color: #70443F;
+  background: #F5E1D4;
+  font-size: 22rpx;
+  font-weight: 800;
+}
+
+.relationship-unbind-intro,
+.relationship-unbind-status {
+  margin-top: 22rpx;
+  padding: 22rpx;
+  border-radius: 20rpx;
+  color: #554744;
+  background: #F9F4EF;
+  line-height: 1.65;
+}
+
+.relationship-unbind-status.is-waiting {
+  color: #5C512E;
+  background: #F7F0D9;
+}
+
+.relationship-unbind-status.is-required {
+  color: #713C39;
+  background: #FAE9E4;
+}
+
+.relationship-unbind-status-title {
+  margin-bottom: 8rpx;
+  font-size: 27rpx;
+  font-weight: 900;
+}
+
+.relationship-action-btn {
+  width: 100%;
+  min-height: 88rpx;
+  margin-top: 20rpx;
+  border: 0;
+  border-radius: 18rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  font-weight: 800;
+}
+
+.relationship-action-btn::after {
+  border: 0;
+}
+
+.relationship-action-btn.is-danger {
+  color: #FFFFFF;
+  background: #963F3F;
+}
+
+.relationship-action-btn.is-danger-outline {
+  color: #873B3B;
+  border: 2rpx solid #B96B67;
+  background: #FFFFFF;
+}
+
+.relationship-action-btn.is-neutral {
+  color: #2E452C;
+  border: 2rpx solid #71806C;
+  background: #FFFFFF;
+}
+
+.relationship-action-btn[disabled] {
+  opacity: 0.58;
+}
+
 /* “我们”资料页：恋爱花园封面、动态头像和双列 Bento 统计 */
 .profile-page {
   padding-top: 18rpx;
@@ -474,6 +572,14 @@
 
   .profile-cover-image {
     height: 220rpx;
+  }
+
+  .relationship-settings-heading {
+    flex-direction: column;
+  }
+
+  .relationship-safety-badge {
+    align-self: flex-start;
   }
 }
 

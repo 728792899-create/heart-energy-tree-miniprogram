@@ -42,6 +42,7 @@ const STATE_COLLECTION = 'appStates';
 const STATE_DOC_ID = 'main';
 const STATE_KEY = appService.__private.DB_KEY;
 const CLOUD_BUILD_TAG = 'heart-tree-private-v2-20260717-release-final-v1';
+const CLOUD_RELEASE_TAG = 'heart-tree-private-v3-20260723-unbind-consent-v1';
 
 const SNAPSHOT_COLLECTIONS = {
   users: 'users',
@@ -375,6 +376,7 @@ function findCurrentUser(state, openid) {
 
 function bindingRequiredPayload(state) {
   const relationship = state && state.relationships && state.relationships[0];
+  const relationshipFrozen = Boolean(relationship && relationship.lifecycleStatus === 'frozen');
   return {
     needsBinding: true,
     currentRole: 'guest',
@@ -386,13 +388,17 @@ function bindingRequiredPayload(state) {
     bindingStatus: relationship ? {
       sponsorBound: Boolean(relationship.sponsorOpenid),
       participantBound: Boolean(relationship.participantOpenid),
-      canCreateSponsor: !relationship.sponsorOpenid
+      relationshipFrozen,
+      canCreateSponsor: !relationshipFrozen && !relationship.sponsorOpenid
     } : {
       sponsorBound: false,
       participantBound: false,
+      relationshipFrozen: false,
       canCreateSponsor: true
     },
-    message: '请先创建或通过分享邀请加入情侣能量树'
+    message: relationshipFrozen
+      ? '旧关系已冻结并保留历史数据；如需建立新关系，请由云环境所有者执行独立初始化'
+      : '请先创建或通过分享邀请加入情侣能量树'
   };
 }
 
@@ -446,6 +452,9 @@ function runCloudIdentityMutation(state, payload, openid, action, handler) {
 function bindAsSponsor(state, payload, openid) {
   return runCloudIdentityMutation(state, payload, openid, 'identity.createSponsor', () => {
     const relationship = state.relationships[0];
+    if (relationship.lifecycleStatus === 'frozen') {
+      throw new Error('旧关系已冻结，不能重新绑定；新关系需要独立初始化');
+    }
     const displayName = String((payload && payload.displayName) || '').trim();
     if (relationship.sponsorOpenid && relationship.sponsorOpenid !== openid) {
       throw new Error('这棵能量树已经有发起者了，请让对方从小程序内分享邀请给你');
@@ -458,6 +467,9 @@ function bindAsSponsor(state, payload, openid) {
 function bindByInvite(state, payload, openid) {
   return runCloudIdentityMutation(state, payload, openid, 'identity.bind.participant', () => {
     const relationship = state.relationships[0];
+    if (relationship.lifecycleStatus === 'frozen') {
+      throw new Error('旧关系已冻结，不能通过旧邀请重新绑定');
+    }
     const inviteToken = String((payload && payload.inviteToken) || '').trim();
     const displayName = String((payload && payload.displayName) || '').trim();
     const inviteTokens = relationship.inviteTokens || {};
@@ -478,6 +490,12 @@ function bindByInvite(state, payload, openid) {
 function generatePartnerInvite(state, payload, openid) {
   return runCloudIdentityMutation(state, payload, openid, 'identity.generateInvite', () => {
     const relationship = state.relationships[0];
+    if (relationship.lifecycleStatus === 'frozen') {
+      throw new Error('旧关系已冻结，不能生成新的绑定邀请');
+    }
+    if (relationship.unbindRequest && relationship.unbindRequest.status === 'pending') {
+      throw new Error('关系解除申请等待双方确认中，不能生成新的绑定邀请');
+    }
     assertBound(state, openid);
     const actor = appService.getState().users.find((user) => user.openid === openid);
     if (!actor || actor.openid !== relationship.sponsorOpenid) {
@@ -697,6 +715,12 @@ async function handleStateAction(event) {
         return appService.queryMilestones(input);
       case 'queryWeeklyRecap':
         return appService.queryWeeklyRecap(input);
+      case 'requestRelationshipUnbind':
+        return appService.requestRelationshipUnbind(input);
+      case 'cancelRelationshipUnbind':
+        return appService.cancelRelationshipUnbind(input);
+      case 'confirmRelationshipUnbind':
+        return appService.confirmRelationshipUnbind(input);
       case 'generatePartnerInvite':
         return generatePartnerInvite(state, payload, authContext.openid);
       case 'sendEncouragement':
@@ -758,6 +782,10 @@ function resolveCoupleMessageContext(state, openid) {
     item.sponsorId === currentUser.id || item.participantId === currentUser.id
   ));
   if (!relationship) throw new Error('找不到当前情侣关系');
+  if (relationship.lifecycleStatus === 'frozen') throw new Error('旧关系已冻结，不能继续访问信笺');
+  if (relationship.unbindRequest && relationship.unbindRequest.status === 'releasing') {
+    throw new Error('关系解除正在安全收尾，信笺互动已暂停');
+  }
   const currentRole = currentUser.id === relationship.sponsorId ? 'sponsor' : 'participant';
   const companionId = currentRole === 'sponsor' ? relationship.participantId : relationship.sponsorId;
   const companionUser = (state.users || []).find((item) => item.id === companionId) || null;
@@ -875,6 +903,126 @@ async function handleCoupleMessageAction(event) {
   throw new Error(`未知云函数动作：${action}`);
 }
 
+async function revokeRelationshipRealtimeAccess(db, relationshipId, openids, revokedAt = nowIso()) {
+  const trustedRelationshipId = String(relationshipId || '').trim();
+  const trustedOpenids = Array.from(new Set((openids || []).map((value) => String(value || '').trim()).filter(Boolean)));
+  if (!trustedRelationshipId || !trustedOpenids.length) {
+    throw new Error('关系实时访问撤销参数不完整');
+  }
+
+  let updated = 0;
+  for (const collectionName of ['coupleMessageInbox', 'coupleMessageStates']) {
+    for (const recipientOpenid of trustedOpenids) {
+      while (true) {
+        const response = await db.collection(collectionName)
+          .where({ relationshipId: trustedRelationshipId, recipientOpenid })
+          .limit(100)
+          .get();
+        const rows = (response && response.data) || [];
+        if (!rows.length) break;
+        for (const row of rows) {
+          if (!row || !row._id) throw new Error('信笺访问投影缺少文档标识，无法安全撤销');
+          await db.collection(collectionName).doc(row._id).update({
+            data: {
+              recipientOpenid: '',
+              accessRevokedAt: revokedAt
+            }
+          });
+          updated += 1;
+        }
+        if (rows.length < 100) break;
+      }
+    }
+  }
+  return { updated };
+}
+
+async function assertNoPendingMediaChecks(db, relationshipId) {
+  const response = await db.collection('mediaCheckTasks')
+    .where({
+      relationshipId: String(relationshipId || '').trim(),
+      status: 'pending'
+    })
+    .limit(1)
+    .get();
+  if (response && response.data && response.data.length) {
+    throw new Error('仍有图片内容安全检查待完成，请稍后再解除关系');
+  }
+}
+
+function relationshipForTrustedOpenid(state, openid) {
+  const currentUser = assertBound(state, openid);
+  const relationship = (state.relationships || []).find((item) => (
+    item.sponsorId === currentUser.id || item.participantId === currentUser.id
+  ));
+  if (!relationship) throw new Error('找不到当前情侣关系');
+  return relationship;
+}
+
+async function handleRelationshipUnbindRequest(event) {
+  const authContext = getAuthContext(event);
+  const db = getDb();
+  await ensureCollections();
+  const state = await loadCloudState(db);
+  const relationship = relationshipForTrustedOpenid(state, authContext.openid);
+  await assertNoPendingMediaChecks(db, relationship.id);
+  return handleStateAction(event);
+}
+
+async function handleRelationshipUnbindConfirmation(event) {
+  const payload = (event && event.payload) || {};
+  const db = getDb();
+  await ensureCollections();
+  const authContext = getAuthContext(event);
+  const initialState = await loadCloudState(db);
+  const existingReceipt = appService.__private.findOperationReceipt(
+    initialState,
+    'relationship.unbind.confirm',
+    {
+      ...payload,
+      authContext
+    }
+  );
+  if (existingReceipt) {
+    return {
+      deduped: true,
+      released: true,
+      needsBinding: true,
+      relationshipId: existingReceipt.targetId,
+      targetId: existingReceipt.targetId,
+      action: existingReceipt.action,
+      revision: Number((initialState.meta && initialState.meta.revision) || 0),
+      message: '关系已解除；重复请求未再次执行'
+    };
+  }
+
+  await runWithCloudState(event, async (_state, authContext) => {
+    return appService.__private.beginRelationshipUnbindConfirmation({
+      ...payload,
+      authContext
+    });
+  }, { mutation: true });
+
+  const state = await loadCloudState(db);
+  const validation = appService.__private.validateRelationshipUnbindConfirmation(state, {
+    ...payload,
+    authContext
+  });
+
+  await assertNoPendingMediaChecks(db, validation.relationshipId);
+  await revokeRelationshipRealtimeAccess(
+    db,
+    validation.relationshipId,
+    validation.relationshipOpenids
+  );
+  return runWithCloudState(event, async (_state, trustedAuthContext) => {
+    return appService.completeRelationshipUnbind({
+      ...payload,
+      authContext: trustedAuthContext
+    });
+  }, { mutation: true });
+}
+
 async function projectLegacyMessageBestEffort(event, action, result) {
   const legacy = action === 'sendEncouragement'
     ? result
@@ -923,6 +1071,12 @@ async function projectLegacyMessageBestEffort(event, action, result) {
 async function handleAction(event) {
   if (COUPLE_MESSAGE_ACTIONS.has(event && event.action)) {
     return handleCoupleMessageAction(event || {});
+  }
+  if (event && event.action === 'requestRelationshipUnbind') {
+    return handleRelationshipUnbindRequest(event);
+  }
+  if (event && event.action === 'confirmRelationshipUnbind') {
+    return handleRelationshipUnbindConfirmation(event);
   }
   const result = await handleStateAction(event || {});
   if (['sendEncouragement', 'recordCompanionView', 'queryCompanionDetail'].includes(event && event.action)) {
@@ -984,6 +1138,7 @@ exports.main = async (event) => {
     return {
       ok: true,
       buildTag: CLOUD_BUILD_TAG,
+      releaseTag: CLOUD_RELEASE_TAG,
       data: await handleAuthorizedAction(event || {})
     };
   } catch (error) {
@@ -991,13 +1146,15 @@ exports.main = async (event) => {
       ok: false,
       code: error.code || 'ENERGY_TREE_ERROR',
       message: error.message || '云端请求失败',
-      buildTag: CLOUD_BUILD_TAG
+      buildTag: CLOUD_BUILD_TAG,
+      releaseTag: CLOUD_RELEASE_TAG
     };
   }
 };
 
 exports.__private = {
   COUPLE_MESSAGE_ACTIONS,
+  assertNoPendingMediaChecks,
   bindAsSponsor,
   bindByInvite,
   bindingRequiredPayload,
@@ -1010,6 +1167,8 @@ exports.__private = {
   handleAuthorizedAction,
   handleCoupleMessageAction,
   handleMediaCheckResult,
+  handleRelationshipUnbindRequest,
+  handleRelationshipUnbindConfirmation,
   hideRiskyStateMedia,
   hydrateAuthorizedMedia,
   isMutationAction,
@@ -1017,6 +1176,7 @@ exports.__private = {
   projectLegacyMessageBestEffort,
   recordPendingMediaChecks,
   resolveCoupleMessageContext,
+  revokeRelationshipRealtimeAccess,
   runWithCloudState,
   runStateMutationTransaction,
   trySendCompanionViewSubscription
